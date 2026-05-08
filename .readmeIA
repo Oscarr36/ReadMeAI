@@ -30,16 +30,16 @@ You are the keeper of this file. Your responsibilities:
 
 | Field | Value |
 |-------|-------|
-| **Name** | ReadMeIA |
-| **Version** | 1.0.0 |
-| **Phase** | `ready-to-publish` |
-| **Type** | `open-source / specification` |
-| **Language** | English |
-| **Last Updated** | 2026-05-09 |
-| **Updated By** | Claude (claude-sonnet-4-6) |
+| **Name** | — |
+| **Version** | 0.1.0 |
+| **Phase** | `planning` |
+| **Type** | — |
+| **Language** | — |
+| **Last Updated** | — |
+| **Updated By** | — |
 
 **Description:**
-A self-updating AI context file system for structured web application development. Provides persistent context across AI sessions, enforces MVC-like architecture, and eliminates the chaos of unstructured projects.
+_AI: fill this with a one-paragraph summary of what this project does once the user describes it._
 
 ---
 
@@ -47,9 +47,9 @@ A self-updating AI context file system for structured web application developmen
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| — | — | — | Stack defined per project using this template |
+| — | — | — | — |
 
-> **AI:** Fill this table when a project adopts this template. One row per major dependency. Keep versions current.
+> **AI:** Fill this table as the stack is defined. One row per major dependency. Keep versions current.
 
 ---
 
@@ -142,51 +142,32 @@ project-root/
 ## 🎯 CURRENT CONTEXT
 
 **What we're working on right now:**
-Defining the ReadMeIA specification and publishing the GitHub repository.
+_AI: fill this when the user starts working. Keep it to 1–2 sentences._
 
 **Last decision made:**
-Initial architecture and convention set defined. Repository structure established.
+_AI: update after each meaningful architectural or design decision._
 
 **Blockers / open questions:**
-- None currently.
+_AI: list anything unresolved that will affect next steps._
 
 ---
 
 ## ✅ PROGRESS
 
 ### Completed
-- [x] `2026-05-09` — Core concept defined: self-updating AI context file for web projects
-- [x] `2026-05-09` — Architecture pattern selected (MVC-inspired)
-- [x] `2026-05-09` — Naming conventions established
-- [x] `2026-05-09` — AI protocol rules written
-- [x] `2026-05-09` — `.readmeIA` v1.0 template created
-- [x] `2026-05-09` — `README.md` (English) created with badges and language selector
-- [x] `2026-05-09` — `docs/README.es.md` Spanish translation created
-- [x] `2026-05-09` — `docs/README.pt.md` Portuguese translation created
-- [x] `2026-05-09` — `docs/README.fr.md` French translation created
-- [x] `2026-05-09` — `LICENSE` (MIT) created
-- [x] `2026-05-09` — `CONTRIBUTING.md` created
-- [x] `2026-05-09` — `CODE_OF_CONDUCT.md` created
-- [x] `2026-05-09` — `CHANGELOG.md` created
-- [x] `2026-05-09` — `.gitignore` created
-- [x] `2026-05-09` — `.github/ISSUE_TEMPLATE/` (3 templates) created
-- [x] `2026-05-09` — `.github/PULL_REQUEST_TEMPLATE.md` created
+_AI: append entries here as tasks are finished. Format: `- [x] YYYY-MM-DD — description`_
 
 ### In Progress
-- [ ] Publish repository to GitHub (pending git init + push)
-- [ ] Create example project using the template
+_AI: move here when a task is actively being worked on._
 
 ### Backlog
-- [ ] VS Code snippet for auto-inserting `.readmeIA` template
-- [ ] CLI tool: `readmeia init` to scaffold a project with the enforced structure
-- [ ] Multi-project workspace support (linking sibling `.readmeIA` files)
-- [ ] AI validation script: checks that the project structure matches the `.readmeIA` spec
+_AI: add future tasks here when the user mentions them._
 
 ---
 
 ## 🔗 CROSS-PROJECT REFERENCES
 
-> **AI:** When a project declares siblings or dependencies here, read their `.readmeIA` files before answering questions that span projects. List them as: `[alias] → path/or/url | relationship | last-sync-date`.
+> **AI:** When a project declares siblings or dependencies here, read their `.readmeIA` files before answering questions that span projects.
 
 | Alias | Location | Relationship | Last Sync |
 |-------|----------|-------------|-----------|
@@ -200,7 +181,7 @@ Initial architecture and convention set defined. Repository structure establishe
 |------|---------|---------|
 | — | — | — |
 
-> **AI:** Fill when a project adopts this template. Include Node version, package manager, build tool, linter, formatter, test runner.
+> **AI:** Fill as tools are introduced. Include runtime version, package manager, build tool, linter, formatter, test runner.
 
 ---
 
@@ -210,20 +191,16 @@ Initial architecture and convention set defined. Repository structure establishe
 
 | Date | Actor | Summary |
 |------|-------|---------|
-| 2026-05-09 | Claude (claude-sonnet-4-6) | Full GitHub repo scaffold: 4 READMEs (EN/ES/PT/FR), LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG, .gitignore, 3 issue templates, PR template. Version bumped to 1.0.0. |
-| 2026-05-09 | Claude (claude-sonnet-4-6) | Initial `.readmeIA` v1.0 created. Full spec defined. |
+| — | — | — |
 
 ---
 
 <!--
-  HOW TO USE THIS FILE IN YOUR PROJECT
-  ─────────────────────────────────────
-  1. Copy this file to the root of your new project.
-  2. Fill in PROJECT IDENTITY (name, version, type, description).
-  3. Tell your AI assistant: "Read the .readmeIA file and then let's start."
-  4. The AI will read it, understand the conventions, and follow the structure.
-  5. At the end of each session, ask the AI: "Update the .readmeIA with what we did."
-  6. Next session: "Read the .readmeIA and continue where we left off."
-
-  That's it. The file grows with the project. The AI stays oriented.
+  HOW TO USE THIS FILE
+  ─────────────────────
+  1. Copy this file to the root of your project.
+  2. Tell your AI: "Read the .readmeIA and let's start."
+  3. The AI fills in the blanks as you work.
+  4. End each session with: "Update the .readmeIA with what we did."
+  5. Next session: "Read the .readmeIA and continue where we left off."
 -->
