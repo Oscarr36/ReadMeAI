@@ -1,0 +1,229 @@
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  READMEIA v1.0 — AI-MANAGED PROJECT CONTEXT FILE               ║
+  ║  Auto-maintained. Updated by AI after every prompt.            ║
+  ║  Do not edit manually unless you know what you're doing.       ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+
+# .readmeIA
+
+---
+
+## ⚙️ AI PROTOCOL
+
+> **AI: Read this section first, every time, without exception.**
+
+You are the keeper of this file. Your responsibilities:
+
+1. **On session start** — Read this file completely before writing a single line of code or answering a question about this project. This is the single source of truth.
+2. **On session end** — Update this file to reflect what changed: new files, decisions made, tasks completed, conventions established.
+3. **Language rule** — Detect the language of the user's prompt. Rewrite any section of this file in that language if switching languages. Consistency within a session takes priority over historical language.
+4. **Incremental, not destructive** — Append to logs. Only overwrite fields that are genuinely outdated. Never delete history entries.
+5. **Conflict resolution** — If code and this file disagree, trust the code. Update this file to match reality.
+6. **Structure enforcement** — If a file is created outside the defined architecture, flag it and suggest the correct location.
+7. **Scope** — Only record what is non-obvious from reading the code. No redundant documentation.
+
+---
+
+## 📋 PROJECT IDENTITY
+
+| Field | Value |
+|-------|-------|
+| **Name** | ReadMeIA |
+| **Version** | 1.0.0 |
+| **Phase** | `ready-to-publish` |
+| **Type** | `open-source / specification` |
+| **Language** | English |
+| **Last Updated** | 2026-05-09 |
+| **Updated By** | Claude (claude-sonnet-4-6) |
+
+**Description:**
+A self-updating AI context file system for structured web application development. Provides persistent context across AI sessions, enforces MVC-like architecture, and eliminates the chaos of unstructured projects.
+
+---
+
+## 🛠 TECH STACK
+
+| Layer | Technology | Version | Notes |
+|-------|-----------|---------|-------|
+| — | — | — | Stack defined per project using this template |
+
+> **AI:** Fill this table when a project adopts this template. One row per major dependency. Keep versions current.
+
+---
+
+## 🏗 ARCHITECTURE
+
+### Pattern
+MVC-inspired separation of concerns adapted for web applications.
+
+### Enforced Structure
+
+```
+project-root/
+│
+├── .readmeIA               ← This file. AI context. Always at root.
+├── README.md               ← Human-facing documentation
+│
+├── config/                 ← All configuration. No config leaking into src/
+│   ├── app.config.js       ← Application-level settings
+│   ├── db.config.js        ← Database connection config
+│   └── .env.example        ← Environment variable template (never commit .env)
+│
+├── src/
+│   ├── controllers/        ← Business logic. One file per domain entity.
+│   ├── models/             ← Data schemas and database interaction
+│   ├── views/              ← Templates, pages, partials
+│   ├── routes/             ← Route definitions only. No logic here.
+│   ├── middleware/         ← Auth, validation, logging middleware
+│   └── services/           ← External API calls, shared utilities
+│
+├── public/                 ← Static assets served directly
+│   ├── css/                ← Stylesheets only. No inline styles in views.
+│   │   ├── base/           ← Reset, typography, variables
+│   │   ├── components/     ← Reusable component styles
+│   │   └── pages/          ← Page-specific styles
+│   ├── js/                 ← Client-side scripts only
+│   │   ├── components/     ← UI component scripts
+│   │   └── pages/          ← Page-specific scripts
+│   └── assets/             ← Images, fonts, icons
+│       ├── images/
+│       └── fonts/
+│
+├── tests/
+│   ├── unit/               ← One test file mirrors one src file
+│   └── integration/        ← Full-flow tests
+│
+└── docs/                   ← Architecture decisions, API docs, diagrams
+```
+
+### Rules enforced by AI
+- CSS lives in `public/css/`. Never in `views/` or `src/`.
+- Client-side JS lives in `public/js/`. Never mixed with server logic.
+- Config lives in `config/`. No hardcoded values in `src/`.
+- Routes define paths and delegate to controllers. Zero business logic in routes.
+- Models own data shape and DB queries. Controllers never query the DB directly.
+
+---
+
+## 📐 CONVENTIONS
+
+### File Naming
+| Type | Convention | Example |
+|------|-----------|---------|
+| Controllers | `camelCase.controller.js` | `userAuth.controller.js` |
+| Models | `PascalCase.model.js` | `UserProfile.model.js` |
+| Views | `kebab-case.view.html` | `user-dashboard.view.html` |
+| CSS files | `kebab-case.css` | `nav-header.css` |
+| JS client files | `camelCase.js` | `formValidation.js` |
+| Config files | `domain.config.js` | `db.config.js` |
+| Test files | `[name].test.js` | `userAuth.controller.test.js` |
+
+### CSS
+- Variables defined in `public/css/base/variables.css`
+- BEM methodology: `.block__element--modifier`
+- No inline styles. No `!important` except as last resort (must be commented).
+- Mobile-first breakpoints.
+
+### JavaScript
+- `const` by default. `let` only when reassignment is required. Never `var`.
+- Named exports over default exports.
+- Async/await over promise chains.
+- Functions named with verbs: `getUser`, `validateEmail`, `renderDashboard`.
+
+### Git
+- Branch format: `feature/short-description`, `fix/short-description`, `chore/short-description`
+- Commit format: `type(scope): description` — e.g., `feat(auth): add JWT refresh logic`
+- No direct commits to `main`.
+
+---
+
+## 🎯 CURRENT CONTEXT
+
+**What we're working on right now:**
+Defining the ReadMeIA specification and publishing the GitHub repository.
+
+**Last decision made:**
+Initial architecture and convention set defined. Repository structure established.
+
+**Blockers / open questions:**
+- None currently.
+
+---
+
+## ✅ PROGRESS
+
+### Completed
+- [x] `2026-05-09` — Core concept defined: self-updating AI context file for web projects
+- [x] `2026-05-09` — Architecture pattern selected (MVC-inspired)
+- [x] `2026-05-09` — Naming conventions established
+- [x] `2026-05-09` — AI protocol rules written
+- [x] `2026-05-09` — `.readmeIA` v1.0 template created
+- [x] `2026-05-09` — `README.md` (English) created with badges and language selector
+- [x] `2026-05-09` — `docs/README.es.md` Spanish translation created
+- [x] `2026-05-09` — `docs/README.pt.md` Portuguese translation created
+- [x] `2026-05-09` — `docs/README.fr.md` French translation created
+- [x] `2026-05-09` — `LICENSE` (MIT) created
+- [x] `2026-05-09` — `CONTRIBUTING.md` created
+- [x] `2026-05-09` — `CODE_OF_CONDUCT.md` created
+- [x] `2026-05-09` — `CHANGELOG.md` created
+- [x] `2026-05-09` — `.gitignore` created
+- [x] `2026-05-09` — `.github/ISSUE_TEMPLATE/` (3 templates) created
+- [x] `2026-05-09` — `.github/PULL_REQUEST_TEMPLATE.md` created
+
+### In Progress
+- [ ] Publish repository to GitHub (pending git init + push)
+- [ ] Create example project using the template
+
+### Backlog
+- [ ] VS Code snippet for auto-inserting `.readmeIA` template
+- [ ] CLI tool: `readmeia init` to scaffold a project with the enforced structure
+- [ ] Multi-project workspace support (linking sibling `.readmeIA` files)
+- [ ] AI validation script: checks that the project structure matches the `.readmeIA` spec
+
+---
+
+## 🔗 CROSS-PROJECT REFERENCES
+
+> **AI:** When a project declares siblings or dependencies here, read their `.readmeIA` files before answering questions that span projects. List them as: `[alias] → path/or/url | relationship | last-sync-date`.
+
+| Alias | Location | Relationship | Last Sync |
+|-------|----------|-------------|-----------|
+| — | — | — | — |
+
+---
+
+## 🔧 ENVIRONMENT & TOOLS
+
+| Tool | Purpose | Version |
+|------|---------|---------|
+| — | — | — |
+
+> **AI:** Fill when a project adopts this template. Include Node version, package manager, build tool, linter, formatter, test runner.
+
+---
+
+## 📜 CHANGE LOG
+
+> Auto-appended by AI. Newest entry first. Format: `YYYY-MM-DD | actor | summary`
+
+| Date | Actor | Summary |
+|------|-------|---------|
+| 2026-05-09 | Claude (claude-sonnet-4-6) | Full GitHub repo scaffold: 4 READMEs (EN/ES/PT/FR), LICENSE, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG, .gitignore, 3 issue templates, PR template. Version bumped to 1.0.0. |
+| 2026-05-09 | Claude (claude-sonnet-4-6) | Initial `.readmeIA` v1.0 created. Full spec defined. |
+
+---
+
+<!--
+  HOW TO USE THIS FILE IN YOUR PROJECT
+  ─────────────────────────────────────
+  1. Copy this file to the root of your new project.
+  2. Fill in PROJECT IDENTITY (name, version, type, description).
+  3. Tell your AI assistant: "Read the .readmeIA file and then let's start."
+  4. The AI will read it, understand the conventions, and follow the structure.
+  5. At the end of each session, ask the AI: "Update the .readmeIA with what we did."
+  6. Next session: "Read the .readmeIA and continue where we left off."
+
+  That's it. The file grows with the project. The AI stays oriented.
+-->
