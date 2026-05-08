@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="../Icon.png" alt="ReadMeIA" width="128" />
+
 # ReadMeIA
 
 **Un fichier de contexte IA auto-mis à jour pour le développement structuré d'applications web.**
@@ -9,6 +11,22 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](../CONTRIBUTING.md)
 
 **Langues :** [English](../README.md) · [Español](README.es.md) · [Português](README.pt.md) · [Français](README.fr.md)
+
+**Compatible avec :** Claude · ChatGPT · GitHub Copilot · Gemini · Cursor · tout assistant IA
+
+---
+
+### Télécharger le fichier — une seule commande
+
+```bash
+# bash / mac / linux
+curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
+```
+
+```powershell
+# PowerShell / Windows
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA" -OutFile ".readmeIA"
+```
 
 </div>
 

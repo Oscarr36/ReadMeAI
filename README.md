@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="Icon.png" alt="ReadMeIA" width="128" />
+
 # ReadMeIA
 
 **A self-updating AI context file for structured web application development.**
@@ -10,11 +12,14 @@
 
 **Languages:** [English](README.md) · [Español](docs/README.es.md) · [Português](docs/README.pt.md) · [Français](docs/README.fr.md)
 
+**Works with:** Claude · ChatGPT · GitHub Copilot · Gemini · Cursor · any AI assistant
+
 ---
 
 ### Get the file — one command
 
 ```bash
+# bash / mac / linux
 curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
 ```
 
@@ -100,7 +105,7 @@ project/
     └── integration/
 ```
 
-The AI is instructed to flag any deviation from this structure and suggest corrections.
+The AI is instructed to flag any deviation from this structure and suggest the correct location.
 
 ---
 
