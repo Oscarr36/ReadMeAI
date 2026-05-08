@@ -96,7 +96,7 @@ L'IA a pour instruction de signaler tout écart par rapport à cette structure e
 **1. Copiez le template `.readmeIA` à la racine de votre projet**
 
 ```bash
-curl -o .readmeIA https://raw.githubusercontent.com/YOUR_USERNAME/readmeia/main/.readmeIA
+curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
 ```
 
 **2. Remplissez la section PROJECT IDENTITY**

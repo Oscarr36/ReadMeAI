@@ -10,6 +10,19 @@
 
 **Languages:** [English](README.md) · [Español](docs/README.es.md) · [Português](docs/README.pt.md) · [Français](docs/README.fr.md)
 
+---
+
+### Get the file — one command
+
+```bash
+curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
+```
+
+```powershell
+# PowerShell / Windows
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA" -OutFile ".readmeIA"
+```
+
 </div>
 
 ---
@@ -96,7 +109,7 @@ The AI is instructed to flag any deviation from this structure and suggest corre
 **1. Copy the `.readmeIA` template to your project root**
 
 ```bash
-curl -o .readmeIA https://raw.githubusercontent.com/YOUR_USERNAME/readmeia/main/.readmeIA
+curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
 ```
 
 **2. Fill in the PROJECT IDENTITY section**

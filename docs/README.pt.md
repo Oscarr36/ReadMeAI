@@ -96,7 +96,7 @@ A IA tem instruções para sinalizar qualquer desvio desta estrutura e sugerir c
 **1. Copie o template `.readmeIA` para a raiz do seu projeto**
 
 ```bash
-curl -o .readmeIA https://raw.githubusercontent.com/YOUR_USERNAME/readmeia/main/.readmeIA
+curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
 ```
 
 **2. Preencha a seção PROJECT IDENTITY**
