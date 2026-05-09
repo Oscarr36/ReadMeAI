@@ -1,8 +1,7 @@
 <div align="center">
 
-<img src="../img/Icon.png" alt="ReadMeAI" width="200" />
+<img src="../img/Icon.png" alt="ReadMeAI" width="300" />
 
-<h1>ReadMeAI</h1>
 
 <p><strong>Un fichier de contexte IA auto-mis à jour qui maintient chaque session parfaitement orientée — sans réexplications, sans dérive de contexte, sans structure chaotique.</strong></p>
 
