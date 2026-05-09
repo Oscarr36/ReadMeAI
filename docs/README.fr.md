@@ -1,14 +1,15 @@
 <div align="center">
 
-<img src="../Icon.png" alt="ReadMeIA" width="128" />
+<img src="../Icon.png" alt="ReadMeIA" width="200" />
 
-# ReadMeIA
+<h1>ReadMeIA</h1>
 
-**Un fichier de contexte IA auto-mis à jour pour le développement structuré d'applications web.**
+<p><strong>Un fichier de contexte IA auto-mis à jour qui maintient chaque session parfaitement orientée — sans réexplications, sans dérive de contexte, sans structure chaotique.</strong></p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](../.readmeIA)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](../CONTRIBUTING.md)
+[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](../.readmeIA)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](../CONTRIBUTING.md)
+[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](../.readmeIA)
 
 **Langues :** [English](../README.md) · [Español](README.es.md) · [Português](README.pt.md) · [Français](README.fr.md)
 
@@ -16,7 +17,7 @@
 
 ---
 
-### Télécharger le fichier — une seule commande
+### ↓ Téléchargez-le en une seule commande
 
 ```bash
 # bash / mac / linux
@@ -32,31 +33,59 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main
 
 ---
 
-Arrêtez de perdre le contexte entre les sessions IA. Arrêtez de lutter contre des structures de projets désordonnées. ReadMeIA est un seul fichier — `.readmeIA` — qui vit à la racine de votre projet et garde votre assistant IA parfaitement orienté, à tout moment.
-
----
-
 ## Le problème
 
 Vous démarrez un projet avec un assistant IA. Ça se passe bien. Vous fermez la session.
 
-Le lendemain : l'IA n'a aucune idée de ce que vous avez construit, des décisions que vous avez prises, des conventions que vous avez établies ou de l'endroit où vous vous étiez arrêté. Vous passez 10 minutes à tout réexpliquer. L'IA met du CSS dans les templates HTML. La logique métier se retrouve dans les gestionnaires de routes. Les valeurs de configuration sont codées en dur. Le projet devient un chaos.
+**Le lendemain :** l'IA n'a aucune idée de ce que vous avez construit, des décisions que vous avez prises, des conventions établies ou de l'endroit où vous vous étiez arrêté. Vous passez 10 minutes à tout réexpliquer. Le CSS se retrouve dans les templates HTML. La logique métier fuit dans les gestionnaires de routes. Les valeurs de config sont hardcodées. Le projet devient un chaos.
 
-L'IA est puissante. Le problème, c'est le contexte — il se réinitialise.
+L'IA est puissante. **Le problème, c'est le contexte — il se réinitialise.**
 
 ---
 
 ## La solution
 
-Un fichier `.readmeIA` à la racine de chaque projet. Un seul fichier que l'IA lit complètement avant de faire quoi que ce soit, et qu'elle met à jour après chaque session. Il contient :
+Déposez un fichier `.readmeIA` à la racine de n'importe quel projet. Un seul fichier que l'IA lit entièrement avant de faire quoi que ce soit, et qu'elle met à jour silencieusement à la fin de chaque session.
 
-- **Identité du projet** — nom, version, phase actuelle, stack technique
-- **Architecture** — la structure de dossiers imposée avec les règles de ce qui va où
-- **Conventions** — nommage des fichiers, méthodologie CSS, style JS, format git
-- **Contexte actuel** — ce sur quoi on travaille maintenant, dernière décision prise, blocages
-- **Journal de progression** — jalons complétés et tâches actives
-- **Historique des changements** — enregistrement auto-incrémental de ce que l'IA a fait à chaque session
-- **Références croisées** — liens vers les projets frères que l'IA doit également lire
+| Sans ReadMeIA | Avec ReadMeIA |
+|--------------|--------------|
+| Réexpliquer l'architecture à chaque session | L'IA charge le contexte complet en secondes |
+| L'IA invente sa propre structure | Règles de dossiers imposées, à chaque fois |
+| Nommage et style incohérents | Conventions verrouillées et appliquées |
+| Décisions et historique perdus | Journal des décisions croît automatiquement |
+| « Où en étions-nous ? » | L'IA reprend depuis l'exact dernier pas |
+| L'IA lit chaque fichier pour trouver des choses | Index de symboles → saut direct vers fichier:ligne |
+
+---
+
+## Ce que contient le template
+
+Le fichier `.readmeIA` est organisé en **23 sections**, chacune maintenue automatiquement par l'IA :
+
+```
+⚙️  AI PROTOCOL          — règles de session, efficacité des tokens, quality gate
+🧭  PROJECT CONTEXT       — but, objectifs, contraintes, règles métier
+📋  PROJECT IDENTITY      — nom, version, phase, type, repo
+🛠  TECH STACK            — chaque couche avec ses versions
+🏗  STRUCTURE MAP         — arborescence annotée (remplace le scan du filesystem)
+🔍  SYMBOL INDEX          — chaque fonction/classe clé à son fichier:ligne exact
+📐  CONVENTIONS           — nommage de fichiers, CSS, JS, git, politique de commentaires
+✅  CODE QUALITY          — checklist pré-livraison, sémantique de noms, patterns interdits
+🔌  API & DATA CONTRACTS  — endpoints, APIs externes, modèles de données, vars d'environnement
+🔐  SECURITY              — modèle d'auth, données sensibles, surface d'attaque
+⚡  PERFORMANCE           — SLAs, goulots d'étranglement, stratégie de cache, règles BD
+🧪  TESTING STRATEGY      — carte de couverture, règles de mocks, fixtures, exigences CI
+🚨  ERROR HANDLING        — modèle de propagation, format de réponse, règles de log
+📦  DEPENDENCIES          — packages critiques, conflits, politique de mise à jour
+🎯  CURRENT SESSION STATE — snapshot en direct : objectif, dernière action, prochain pas
+📚  DECISIONS LOG         — chaque décision architecturale avec son raisonnement
+🐛  KNOWN ISSUES          — bugs, contournements, dette technique
+✅  PROGRESS              — terminé, en cours, backlog
+🔗  CROSS-PROJECT REFS    — liens vers les projets frères
+🔧  ENVIRONMENT           — outils, séquence de setup, commandes courantes
+🗒  AI NOTES              — bloc-notes libre pour observations non évidentes
+📜  CHANGE LOG            — historique session par session
+```
 
 ---
 
@@ -64,147 +93,163 @@ Un fichier `.readmeIA` à la racine de chaque projet. Un seul fichier que l'IA l
 
 ```
 Session 1 :
-  Vous → "Lis le .readmeIA et construisons un système d'authentification"
-  IA   → lit le fichier, comprend la stack, la structure, les conventions
-  IA   → construit l'auth en suivant exactement l'architecture du fichier
-  IA   → ajoute au journal des changements, met à jour la progression et le contexte
+  Vous → « Lis le .readmeIA et construisons un système d'auth »
+  IA   → lit le fichier, charge contexte, structure, conventions, règles de sécurité
+  IA   → construit l'auth en suivant exactement l'architecture définie
+  IA   → met à jour change log, progression, état de session — silencieusement
 
 Session 2 (quelques jours plus tard) :
-  Vous → "Lis le .readmeIA et continue"
+  Vous → « Lis le .readmeIA et continue »
   IA   → contexte complet restauré instantanément
-  IA   → sait ce qui a été construit, ce qui suit, quelles décisions ont été prises
-  IA   → continue sans réexplication
+  IA   → ouvre le fichier auth directement à la bonne ligne (index de symboles)
+  IA   → continue sans aucune réexplication
 ```
 
-Le fichier grandit avec le projet. Plus vous l'utilisez, plus il contient de contexte.
+> Le fichier grandit avec le projet. Plus il y a de sessions, plus le contexte est riche.
 
 ---
 
-## Architecture imposée
+## Structure imposée
 
-ReadMeIA impose une structure inspirée du MVC pour les applications web, avec une stricte séparation des responsabilités :
+L'IA impose une stricte séparation des responsabilités. Chaque répertoire a des règles explicites sur ce qu'il **possède** et ce qu'il **ne doit pas contenir** :
 
 ```
 project/
-├── .readmeIA               ← Fichier de contexte IA (ce système)
-├── README.md
-├── config/                 ← Toute la config ici. Jamais dans src/.
+├── .readmeIA               ← Contexte IA. Ne jamais déplacer. Ne jamais supprimer.
+├── config/                 ← Toute la config. Jamais dans src/.
 ├── src/
-│   ├── controllers/        ← Logique métier
-│   ├── models/             ← Données + interaction avec la BD
-│   ├── views/              ← Templates et pages
-│   ├── routes/             ← Définitions de routes uniquement, pas de logique
-│   ├── middleware/
-│   └── services/           ← APIs externes, utilitaires partagés
+│   ├── controllers/        ← Logique métier uniquement. Pas de queries BD.
+│   ├── models/             ← Schémas de données + queries. Pas d'HTTP.
+│   ├── views/              ← Templates. Pas de styles ni logique inline.
+│   ├── routes/             ← Définitions de routes uniquement. Délèguent aux controllers.
+│   ├── middleware/         ← Auth, validation, logging.
+│   └── services/           ← APIs externes, utilitaires partagés.
 ├── public/
 │   ├── css/                ← Toutes les feuilles de style. Jamais dans views.
-│   ├── js/                 ← Tous les scripts client. Jamais mélangés avec le serveur.
+│   ├── js/                 ← Côté client uniquement. Jamais mélangé avec le serveur.
 │   └── assets/
 └── tests/
-    ├── unit/
+    ├── unit/               ← Miroir de la structure src/.
     └── integration/
 ```
 
-L'IA a pour instruction de signaler tout écart par rapport à cette structure et de suggérer des corrections.
+Tout fichier placé en dehors de cette structure est signalé immédiatement.
+
+---
+
+## Qualité de code intégrée
+
+Chaque livraison de code est vérifiée contre une checklist intégrée avant d'être présentée :
+
+- Responsabilité unique par fonction
+- Pas d'imbrication plus profonde que 3 niveaux
+- Pas de valeurs hardcodées — toujours des constantes ou de la config
+- Sémantique de nommage imposée (fonctions = verbes, booléens = `is/has/can`, etc.)
+- Patterns interdits bloqués : `eval`, SQL concaténé, catch vides, secrets dans le code
+- Règle de cohérence : si un pattern existe dans le codebase, il est répliqué exactement
+
+---
+
+## Efficacité des tokens
+
+Le **Symbol Index** est la fonctionnalité centrale d'économie de tokens. Au lieu de scanner le projet à chaque session, l'IA enregistre chaque symbole clé à son `fichier:ligne` exact :
+
+```
+Besoin de modifier le flux de login ?
+→ Cherchez « login » dans le Symbol Index
+→ Lisez uniquement src/auth/login.js:23-67
+→ Terminé. Pas de glob. Pas de scan.
+```
+
+Après le premier setup, l'IA ne relit jamais le projet en entier.
 
 ---
 
 ## Démarrage rapide
 
-**1. Copiez le template `.readmeIA` à la racine de votre projet**
-
+**1. Copiez le template à la racine de votre projet**
 ```bash
 curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
 ```
 
-**2. Remplissez la section PROJECT IDENTITY**
+**2. Demandez à votre IA de le configurer** *(une seule fois)*
+> « Lis le fichier `.readmeIA`. Scanne le projet, remplis tout ce que tu peux inférer, puis demande-moi seulement ce que tu ne peux pas déterminer. »
 
-Ouvrez le fichier et mettez à jour :
-- Nom, version, phase, type
-- Description de ce que fait le projet
-- Tableau du stack technique
+**3. Commencez à construire**
+> « Lis le `.readmeIA` et faisons [tâche]. »
 
-**3. Démarrez votre première session**
-
-Dites à votre IA :
-> « Lis le fichier `.readmeIA` à la racine du projet. Ce fichier définit notre architecture, nos conventions et notre état actuel. Suis-le strictement. Après chaque réponse qui change le projet, mets à jour le fichier. »
-
-**4. Terminez les sessions avec une mise à jour**
-
-> « Mets à jour le `.readmeIA` avec ce qu'on a fait aujourd'hui. »
-
-**5. Reprenez à tout moment**
-
+**4. Reprenez à tout moment**
 > « Lis le `.readmeIA` et continue là où on s'est arrêtés. »
+
+L'IA met à jour le fichier silencieusement à la fin de chaque session. Vous n'avez jamais besoin de le demander.
 
 ---
 
-## Règles de mise à jour de l'IA
+## Prompts recommandés
 
-Le fichier `.readmeIA` contient un protocole intégré qui instruit l'IA :
+```
+Premier setup :
+« Lis le fichier .readmeIA à la racine du projet. Scanne le projet,
+remplis toutes les sections que tu peux inférer, puis demande-moi
+seulement ce que tu ne peux pas déterminer du code. »
 
-- Lire le fichier complet avant de répondre
-- Détecter la langue de la session et réécrire les sections pertinentes si elle change
-- Ne jamais supprimer l'historique — seulement ajouter
-- Mettre à jour le contexte actuel après chaque changement significatif
-- Signaler les fichiers créés en dehors de la structure définie
-- Maintenir le tableau du stack technique à jour avec les versions réelles
+Chaque session suivante :
+« Lis le .readmeIA et continue là où on s'est arrêtés. »
+
+Tâche spécifique :
+« Lis le .readmeIA puis [tâche]. Suis l'architecture,
+les conventions et les règles de qualité définies dans le fichier. »
+```
 
 ---
 
 ## Espaces de travail multi-projets
 
-Si vous travaillez sur plusieurs projets connexes (ex. : app frontend + API backend + bibliothèque partagée), chacun a son propre `.readmeIA`. Vous pouvez les croiser :
+Chaque projet a son propre `.readmeIA`. Référencez-les croisés et l'IA les lira tous avant de répondre aux questions couvrant plusieurs projets :
 
 ```markdown
 ## 🔗 RÉFÉRENCES CROISÉES
-| Alias  | Emplacement     | Relation                            |
-|--------|-----------------|-------------------------------------|
-| api    | ../my-api       | Backend de ce frontend              |
-| shared | ../shared-lib   | Composants et utilitaires partagés  |
+| Alias  | Emplacement   | Relation                        |
+|--------|---------------|---------------------------------|
+| api    | ../my-api     | Backend de ce frontend          |
+| shared | ../shared-lib | Composants + utilitaires communs|
 ```
-
-L'IA lit tous les fichiers `.readmeIA` référencés avant de répondre aux questions couvrant plusieurs projets.
 
 ---
 
 ## Principes de conception
 
-**1. Un fichier, contexte complet.**
-Pas de docs éparpillés, pas de pages wiki, pas de bases de données Notion. Un fichier que l'IA peut toujours trouver.
-
-**2. Ajouter, ne pas écraser.**
-L'historique n'est jamais supprimé. Le fichier grandit avec le projet.
-
-**3. Structure avant le code.**
-Les conventions sont définies dès le départ. C'est l'IA qui les impose, pas vous.
-
-**4. Agnostique à la langue.**
-L'IA détecte la langue de l'utilisateur et écrit le fichier dans cette langue. Français, anglais, espagnol — elle vous suit.
-
-**5. La réalité prime sur la documentation.**
-Si le code contredit le fichier, mettez à jour le fichier pour correspondre au code. La source de vérité est toujours le code.
+| Principe | Ce que ça signifie |
+|----------|-------------------|
+| **Un fichier, contexte complet** | Pas de docs éparpillés, pas de wikis, pas de Notion. Un fichier que l'IA trouve toujours. |
+| **Ajouter, ne pas écraser** | L'historique est permanent. Le fichier ne fait que grandir. |
+| **Structure avant le code** | Les conventions définies dès le départ. C'est l'IA qui les impose, pas vous. |
+| **La réalité prime** | Le code contredit le fichier ? Mettez le fichier à jour. Le codebase est toujours la source de vérité. |
+| **Dépendance humaine zéro** | Une IA froide lisant ce fichier seule doit pouvoir continuer sans poser une seule question. |
+| **Efficacité des tokens** | Symbol Index + Structure Map remplacent entièrement le scan du filesystem. |
 
 ---
 
 ## Feuille de route
 
-- [ ] CLI `readmeia init` — scaffolde un projet avec la structure complète en une commande
+- [ ] CLI `readmeia init` — scaffold d'un projet avec la structure complète en une commande
 - [ ] Extension VS Code — coloration syntaxique et snippets pour `.readmeIA`
-- [ ] Variantes de template — SPA, REST API, monorepo fullstack
+- [ ] Variantes de template — SPA, REST API, monorepo fullstack, outil CLI
 - [ ] Mode workspace — lire plusieurs fichiers `.readmeIA` en une session IA
-- [ ] Script de validation — vérifie que la structure du projet correspond à la spécification
+- [ ] Script de validation — vérifie que la structure du projet correspond à la spec
 
 ---
 
 ## Contribuer
 
-C'est une spécification ouverte. Si vous l'utilisez et l'améliorez, ouvrez une PR avec vos modifications au template.
+C'est une spécification ouverte. Si vous l'utilisez et l'améliorez, ouvrez une PR.
 
 Lisez [CONTRIBUTING.md](../CONTRIBUTING.md) pour les directives.
 
 ---
 
-## Licence
+<div align="center">
 
 [MIT](../LICENSE) — utilisez-le, forkez-le, adaptez-le.
+
+</div>

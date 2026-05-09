@@ -1,14 +1,15 @@
 <div align="center">
 
-<img src="Icon.png" alt="ReadMeIA" width="128" />
+<img src="Icon.png" alt="ReadMeIA" width="200" />
 
-# ReadMeIA
+<h1>ReadMeIA</h1>
 
-**A self-updating AI context file for structured web application development.**
+<p><strong>A self-updating AI context file that keeps every session fully oriented — no re-explaining, no context drift, no messy structure.</strong></p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](.readmeIA)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](.readmeIA)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
+[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](.readmeIA)
 
 **Languages:** [English](README.md) · [Español](docs/README.es.md) · [Português](docs/README.pt.md) · [Français](docs/README.fr.md)
 
@@ -16,7 +17,7 @@
 
 ---
 
-### Get the file — one command
+### ↓ Get it in one command
 
 ```bash
 # bash / mac / linux
@@ -32,31 +33,59 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main
 
 ---
 
-Stop losing context between AI sessions. Stop fighting messy project structures. ReadMeIA is a single file — `.readmeIA` — that lives at the root of your project and keeps your AI assistant fully oriented, every time.
-
----
-
 ## The problem
 
 You start a project with an AI assistant. It goes well. You close the session.
 
-Next day: the AI has no idea what you built, what decisions you made, what conventions you agreed on, or where you left off. You spend 10 minutes re-explaining everything. The AI puts CSS inside HTML templates. Business logic ends up in route handlers. Config values are hardcoded. The project turns into a mess.
+**Next day:** the AI has no idea what you built, what decisions you made, what conventions you agreed on, or where you left off. You spend 10 minutes re-explaining everything. CSS ends up inside HTML templates. Business logic leaks into route handlers. Config is hardcoded. The project becomes a mess.
 
-The AI is powerful. The problem is context — it resets.
+The AI is powerful. **The problem is context — it resets.**
 
 ---
 
 ## The solution
 
-A `.readmeIA` file at the root of every project. One file that the AI reads completely before doing anything, and updates after every session. It contains:
+Drop a `.readmeIA` file at the root of any project. One file the AI reads completely before doing anything, and updates silently after every session.
 
-- **Project identity** — name, version, current phase, tech stack
-- **Architecture** — the enforced folder structure with rules for what goes where
-- **Conventions** — file naming, CSS methodology, JS style, git format
-- **Current context** — what's being worked on right now, last decision made, blockers
-- **Progress log** — completed milestones and active tasks
-- **Change history** — auto-appended record of what the AI did each session
-- **Cross-project references** — links to sibling projects the AI should also read
+| Without ReadMeIA | With ReadMeIA |
+|-----------------|--------------|
+| Re-explain architecture every session | AI loads full context in seconds |
+| AI invents its own structure | Enforced folder rules, every time |
+| Inconsistent naming and style | Conventions locked and applied |
+| Lost decisions and history | Decisions log grows automatically |
+| "Where did we leave off?" | AI resumes from the exact last step |
+| AI reads every file to find things | Symbol index → direct file:line jumps |
+
+---
+
+## What's inside the template
+
+The `.readmeIA` file is organized into **23 sections**, each maintained automatically by the AI:
+
+```
+⚙️  AI PROTOCOL          — session rules, token efficiency, quality gate
+🧭  PROJECT CONTEXT       — purpose, goals, constraints, domain rules
+📋  PROJECT IDENTITY      — name, version, phase, type, repo
+🛠  TECH STACK            — every layer with versions
+🏗  STRUCTURE MAP         — full annotated file tree (replaces filesystem scanning)
+🔍  SYMBOL INDEX          — every key function/class at exact file:line
+📐  CONVENTIONS           — file naming, CSS, JS, git, comments policy
+✅  CODE QUALITY          — pre-output checklist, naming semantics, forbidden patterns
+🔌  API & DATA CONTRACTS  — endpoints, external APIs, data models, env vars
+🔐  SECURITY              — auth model, sensitive data, attack surface, hard blocks
+⚡  PERFORMANCE           — SLAs, bottlenecks, caching strategy, DB rules
+🧪  TESTING STRATEGY      — coverage map, mock rules, fixtures, CI requirements
+🚨  ERROR HANDLING        — propagation model, response format, logging rules
+📦  DEPENDENCIES          — critical packages, conflicts, update policy, banned list
+🎯  CURRENT SESSION STATE — live snapshot: objective, last action, next step
+📚  DECISIONS LOG         — every architectural decision with rationale
+🐛  KNOWN ISSUES          — bugs, workarounds, tech debt
+✅  PROGRESS              — completed, in-progress, backlog
+🔗  CROSS-PROJECT REFS    — links to sibling projects
+🔧  ENVIRONMENT           — tools, setup sequence, common commands
+🗒  AI NOTES              — free-form scratchpad for non-obvious observations
+📜  CHANGE LOG            — session-by-session history
+```
 
 ---
 
@@ -65,125 +94,139 @@ A `.readmeIA` file at the root of every project. One file that the AI reads comp
 ```
 Session 1:
   You → "Read the .readmeIA and let's build a user auth system"
-  AI  → reads file, understands stack, structure, conventions
-  AI  → builds auth following the exact architecture in the file
-  AI  → appends to change log, updates progress, updates context
+  AI  → reads file, loads context, structure, conventions, security rules
+  AI  → builds auth following the exact architecture defined
+  AI  → updates change log, progress, session state — silently
 
 Session 2 (days later):
   You → "Read the .readmeIA and continue"
-  AI  → full context instantly restored
-  AI  → knows what was built, what's next, what decisions were made
-  AI  → continues without re-explanation
+  AI  → full context restored instantly
+  AI  → opens auth file directly at the right line (symbol index)
+  AI  → continues without a single re-explanation
 ```
 
-The file grows with the project. The more you use it, the more context it holds.
+> The file grows with the project. The more sessions, the richer the context.
 
 ---
 
-## Architecture enforced
+## Structure enforced
 
-ReadMeIA enforces an MVC-inspired structure for web applications, with strict separation of concerns:
+The AI enforces strict separation of concerns. Every directory has explicit rules for what it **owns** and what it **must not contain**:
 
 ```
 project/
-├── .readmeIA               ← AI context file (this system)
-├── README.md
-├── config/                 ← All config here. Never in src/.
+├── .readmeIA               ← AI context. Never move. Never delete.
+├── config/                 ← All config. Never in src/.
 ├── src/
-│   ├── controllers/        ← Business logic
-│   ├── models/             ← Data + DB interaction
-│   ├── views/              ← Templates and pages
-│   ├── routes/             ← Route definitions only, no logic
-│   ├── middleware/
-│   └── services/           ← External APIs, shared utilities
+│   ├── controllers/        ← Business logic only. No DB queries.
+│   ├── models/             ← Data schemas + DB queries. No HTTP.
+│   ├── views/              ← Templates. No inline styles or logic.
+│   ├── routes/             ← Route definitions only. Delegate to controllers.
+│   ├── middleware/         ← Auth, validation, logging.
+│   └── services/           ← External APIs, shared utilities.
 ├── public/
 │   ├── css/                ← All stylesheets. Never in views.
-│   ├── js/                 ← All client scripts. Never mixed with server.
+│   ├── js/                 ← Client-side only. Never mixed with server.
 │   └── assets/
 └── tests/
-    ├── unit/
+    ├── unit/               ← Mirrors src/ structure.
     └── integration/
 ```
 
-The AI is instructed to flag any deviation from this structure and suggest the correct location.
+Any file placed outside this structure is flagged immediately.
+
+---
+
+## Code quality built in
+
+Every code output is checked against a built-in checklist before delivery:
+
+- Single responsibility per function
+- No nesting deeper than 3 levels
+- No hardcoded values — constants or config always
+- Semantic naming enforced (functions = verbs, booleans = `is/has/can`, etc.)
+- Forbidden patterns blocked: `eval`, raw SQL, empty catch blocks, secrets in code
+- Consistency rule: if a pattern exists in the codebase, match it exactly
+
+---
+
+## Token efficiency
+
+The **Symbol Index** is the core token-saving feature. Instead of scanning the project each session, the AI records every key symbol at its exact `file:line`:
+
+```
+Need to modify the login flow?
+→ Look up "login" in Symbol Index
+→ Read src/auth/login.js:23-67 only
+→ Done. No glob. No scan.
+```
+
+After the first setup, the AI never re-reads the whole project.
 
 ---
 
 ## Quickstart
 
-**1. Copy the `.readmeIA` template to your project root**
-
+**1. Copy the template to your project root**
 ```bash
 curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
 ```
 
-**2. Fill in the PROJECT IDENTITY section**
+**2. Tell your AI to set it up** *(do this once)*
+> "Read the `.readmeIA` file. Scan the project, fill in everything you can infer, then ask me only for what you can't."
 
-Open the file and update:
-- Name, version, phase, type
-- Description of what the project does
-- Tech stack table
+**3. Start building**
+> "Read the `.readmeIA` and let's [task]."
 
-**3. Start your first session**
-
-Tell your AI:
-> "Read the `.readmeIA` file at the project root. That file defines our architecture, conventions, and current state. Follow it strictly. After each response that changes the project, update the file."
-
-**4. End sessions with an update**
-
-> "Update the `.readmeIA` with what we did today."
-
-**5. Resume any time**
-
+**4. Resume any time**
 > "Read the `.readmeIA` and continue where we left off."
+
+The AI updates the file silently at the end of every session. You never need to ask.
 
 ---
 
-## AI update rules
+## Recommended start prompts
 
-The `.readmeIA` file contains an embedded protocol that instructs the AI:
+```
+First setup:
+"Read the .readmeIA file at the project root. Scan the project,
+fill in every section you can infer, then ask me only for what
+you can't determine from the code."
 
-- Read the full file before responding
-- Detect the session language and rewrite relevant sections if it changes
-- Never delete history — only append
-- Update current context after every meaningful change
-- Flag files created outside the defined structure
-- Keep the tech stack table current with real versions
+Every other session:
+"Read the .readmeIA and continue where we left off."
+
+Specific task:
+"Read the .readmeIA, then [task]. Follow the architecture,
+conventions, and quality rules defined in the file."
+```
 
 ---
 
 ## Multi-project workspaces
 
-If you're working on multiple related projects (e.g., a frontend app + backend API + shared library), each gets its own `.readmeIA`. You can cross-reference them:
+Each project gets its own `.readmeIA`. Cross-reference related projects and the AI reads all of them before answering cross-project questions:
 
 ```markdown
 ## 🔗 CROSS-PROJECT REFERENCES
-| Alias  | Location        | Relationship                        |
-|--------|-----------------|-------------------------------------|
-| api    | ../my-api       | Backend for this frontend           |
-| shared | ../shared-lib   | Shared components and utilities     |
+| Alias  | Location      | Relationship                    |
+|--------|---------------|---------------------------------|
+| api    | ../my-api     | Backend for this frontend       |
+| shared | ../shared-lib | Shared components + utilities   |
 ```
-
-The AI reads all referenced `.readmeIA` files before answering cross-project questions.
 
 ---
 
 ## Design principles
 
-**1. One file, complete context.**
-No scattered docs, no wiki pages, no Notion databases. One file the AI can always find.
-
-**2. Append, don't overwrite.**
-History is never deleted. The file grows as the project grows.
-
-**3. Structure before code.**
-Conventions are defined upfront. The AI enforces them, not you.
-
-**4. Language-agnostic.**
-The AI detects the user's language and writes the file in that language. Spanish, English, Portuguese — it follows you.
-
-**5. Reality over documentation.**
-If code contradicts the file, update the file to match the code. The source of truth is always the codebase.
+| Principle | What it means |
+|-----------|--------------|
+| **One file, complete context** | No scattered docs, no wikis, no Notion. One file the AI always finds. |
+| **Append, never delete** | History is permanent. The file only grows. |
+| **Structure before code** | Conventions defined upfront. The AI enforces them, not you. |
+| **Reality over documentation** | Code contradicts the file? Update the file. The codebase is always the source of truth. |
+| **Zero human dependency** | A cold AI reading this file alone must be able to continue without asking a single question. |
+| **Token efficiency** | Symbol Index + Structure Map replace filesystem scanning entirely. |
 
 ---
 
@@ -191,7 +234,7 @@ If code contradicts the file, update the file to match the code. The source of t
 
 - [ ] `readmeia init` CLI — scaffold a project with the full structure in one command
 - [ ] VS Code extension — syntax highlighting and snippets for `.readmeIA`
-- [ ] Template variants — SPA, REST API, fullstack monorepo
+- [ ] Template variants — SPA, REST API, fullstack monorepo, CLI tool
 - [ ] Workspace mode — read multiple `.readmeIA` files in one AI session
 - [ ] Validation script — checks that the project structure matches the spec
 
@@ -199,12 +242,14 @@ If code contradicts the file, update the file to match the code. The source of t
 
 ## Contributing
 
-This is an open specification. If you use it and improve it, open a PR with your changes to the template.
+This is an open specification. If you use it and improve it, open a PR.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-## License
+<div align="center">
 
 [MIT](LICENSE) — use it, fork it, adapt it.
+
+</div>

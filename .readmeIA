@@ -1,28 +1,87 @@
 <!--
-  ╔══════════════════════════════════════════════════════════════════╗
-  ║  READMEIA v1.0 — AI-MANAGED PROJECT CONTEXT FILE               ║
-  ║  Auto-maintained. Updated by AI after every prompt.            ║
-  ║  Do not edit manually unless you know what you're doing.       ║
-  ╚══════════════════════════════════════════════════════════════════╝
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  READMEIA v2.3 — AI-TO-AI PROJECT CONTEXT FILE                     ║
+  ║  Written by AI. Read by AI. Zero human dependency.                 ║
+  ║  Purpose: eliminate project re-scanning, enforce structure,        ║
+  ║  maintain code quality, security, and semantic consistency.        ║
+  ║  Made by: Oscarr36                                                 ║
+  ╚══════════════════════════════════════════════════════════════════════╝
 -->
 
 # .readmeIA
 
 ---
 
-## ⚙️ AI PROTOCOL
+## ⚙️ AI PROTOCOL — READ FIRST, EVERY TIME
 
-> **AI: Read this section first, every time, without exception.**
+> **Non-negotiable. Follow exactly.**
 
-You are the keeper of this file. Your responsibilities:
+### Token efficiency rules — highest priority
+- **If STRUCTURE MAP and SYMBOL INDEX are filled: do NOT scan the filesystem.** Use them to navigate directly. A scan wastes tokens; this file exists to replace it.
+- **Never read a file you don't need.** Look up the exact location in SYMBOL INDEX before opening anything.
+- **Never read a whole file when you only need part of it.** Use the line hints in SYMBOL INDEX.
+- **Never re-infer what is already recorded here.** Trust stack, architecture, and conventions as written.
+- **One read, one reason.** Before reading any file, state what specific information you need. If you can't state it, you don't need to read it.
 
-1. **On session start** — Read this file completely before writing a single line of code or answering a question about this project. This is the single source of truth.
-2. **On session end** — Update this file to reflect what changed: new files, decisions made, tasks completed, conventions established.
-3. **Language rule** — Detect the language of the user's prompt. Rewrite any section of this file in that language if switching languages. Consistency within a session takes priority over historical language.
-4. **Incremental, not destructive** — Append to logs. Only overwrite fields that are genuinely outdated. Never delete history entries.
-5. **Conflict resolution** — If code and this file disagree, trust the code. Update this file to match reality.
-6. **Structure enforcement** — If a file is created outside the defined architecture, flag it and suggest the correct location.
-7. **Scope** — Only record what is non-obvious from reading the code. No redundant documentation.
+### Session start sequence
+1. Read this file completely. This is the only mandatory full read per session.
+2. Load CURRENT SESSION STATE. Resume without asking the user to recap.
+3. Verify STRUCTURE MAP against the task. Update stale entries at session end, not now.
+4. **First-time setup only** (sections blank): scan the project once, fill every section, ask only for what cannot be inferred. Never repeat this scan.
+
+### Session end sequence — mandatory, silent, no user prompt needed
+1. Overwrite CURRENT SESSION STATE with live work state.
+2. Append to DECISIONS LOG any architectural or design decision made this session.
+3. Append to CHANGE LOG.
+4. Update STRUCTURE MAP for files created, moved, or deleted.
+5. Update SYMBOL INDEX for new functions, classes, or entry points.
+6. Update PROGRESS: complete tasks, add new backlog items.
+7. Update KNOWN ISSUES if any bug was found, fixed, or introduced.
+8. Update DEPENDENCIES if a package was added, removed, or pinned.
+9. Append to AI NOTES any non-obvious observation made this session.
+10. Zero-dependency check: could a cold AI continue from this file alone? If not, fill the gaps now.
+
+### Core rules
+- **Zero dependency principle** — This file alone must be enough for any AI to continue without human input.
+- **Trust order** — Code > this file > memory. If they disagree, trust the code and update this file.
+- **Language mirroring** — Write new content in the user's prompt language. Consistent within a session.
+- **Append, never delete** — Logs are append-only. Overwrite only genuinely stale fields.
+- **No redundancy** — Only record what is non-obvious from reading the code.
+- **Structure enforcement** — File created outside defined architecture → flag it, propose correct location, do not silently accept drift.
+- **Quality gate** — Before delivering any code, run the checklist in CODE QUALITY. Do not skip it.
+- **Scope creep guard** — Request outside current scope → record in Backlog, flag to user, do not implement without approval.
+
+---
+
+## 🧭 PROJECT CONTEXT
+
+> **Most critical section. An AI that understands WHY this exists makes correct decisions autonomously.**
+
+### Purpose
+_AI: One paragraph. What problem does this solve? For whom? Why does it need to exist?_
+
+### Goals
+1. —
+
+### Non-goals
+_AI: What is explicitly OUT of scope?_
+- —
+
+### Target users
+_AI: Who uses this? Technical level? What do they expect?_
+
+### Key constraints
+| Constraint | Detail | Impact |
+|-----------|--------|--------|
+| — | — | — |
+
+### Business / domain rules
+_AI: Non-obvious rules that govern behavior. The kind that causes bugs when unknown._
+- —
+
+### Assumptions
+_AI: Things assumed true that, if wrong, would require rethinking the approach._
+- —
 
 ---
 
@@ -32,14 +91,14 @@ You are the keeper of this file. Your responsibilities:
 |-------|-------|
 | **Name** | — |
 | **Version** | 0.1.0 |
-| **Phase** | `planning` |
-| **Type** | — |
-| **Language** | — |
-| **Last Updated** | — |
-| **Updated By** | — |
-
-**Description:**
-_AI: fill this with a one-paragraph summary of what this project does once the user describes it._
+| **Phase** | `planning` · `development` · `testing` · `production` |
+| **Type** | — _(web app / CLI / library / API / mobile / desktop / other)_ |
+| **Primary language** | — |
+| **Secondary languages** | — |
+| **Repository** | — |
+| **Deployment target** | — |
+| **Last updated** | — |
+| **Updated by** | AI |
 
 ---
 
@@ -47,147 +106,600 @@ _AI: fill this with a one-paragraph summary of what this project does once the u
 
 | Layer | Technology | Version | Notes |
 |-------|-----------|---------|-------|
-| — | — | — | — |
-
-> **AI:** Fill this table as the stack is defined. One row per major dependency. Keep versions current.
+| Runtime | — | — | — |
+| Framework | — | — | — |
+| Database | — | — | — |
+| ORM / Query layer | — | — | — |
+| Auth | — | — | — |
+| Styling | — | — | — |
+| Build tool | — | — | — |
+| Package manager | — | — | — |
+| Linter / Formatter | — | — | — |
+| Test runner | — | — | — |
+| CI/CD | — | — | — |
+| Hosting | — | — | — |
 
 ---
 
-## 🏗 ARCHITECTURE
+## 🏗 STRUCTURE MAP
 
-### Pattern
-MVC-inspired separation of concerns adapted for web applications.
+> **Replaces filesystem scanning. Once filled, navigate from here — never glob or list directories.**
+> **First session: scan project, fill actual tree below. Every session after: update deltas only.**
 
-### Enforced Structure
+### Actual file tree
+_AI: Fill with the real project tree on first setup. Annotate every file with its role._
+_Format per entry: `path/to/file.ext  ← what it contains / what it does`_
+_Collapse noise: `node_modules/ [collapsed]`, `.git/ [collapsed]`, `dist/ [collapsed]`_
 
 ```
 project-root/
 │
-├── .readmeIA               ← This file. AI context. Always at root.
-├── README.md               ← Human-facing documentation
+├── .readmeIA                   ← AI context index. Never move. Never delete.
 │
-├── config/                 ← All configuration. No config leaking into src/
-│   ├── app.config.js       ← Application-level settings
-│   ├── db.config.js        ← Database connection config
-│   └── .env.example        ← Environment variable template (never commit .env)
+```
+
+### Architecture pattern
+_AI: Identify the pattern (MVC, hexagonal, JAMstack, microservices, monolith, etc.). One sentence._
+
+### Enforced directory rules
+> These rules are active every session. Violations must be flagged immediately.
+
+| Directory | Owns | Must NOT contain |
+|-----------|------|-----------------|
+| `config/` | All configuration, env templates | Business logic, UI code |
+| `src/controllers/` | Business logic, orchestration | Direct DB queries, UI rendering |
+| `src/models/` | Data schemas, DB queries | Business logic, HTTP concerns |
+| `src/routes/` | Route definitions, middleware wiring | Business logic (delegate to controllers) |
+| `src/services/` | External API calls, shared utilities | Route or controller logic |
+| `src/middleware/` | Auth, validation, logging, error handling | Business logic |
+| `src/views/` | Templates, components, pages | Inline styles, inline scripts, logic |
+| `public/css/` | All stylesheets | JavaScript, server logic |
+| `public/js/` | Client-side scripts only | Server logic, direct DB access |
+| `public/assets/` | Images, fonts, icons | Code of any kind |
+| `tests/unit/` | Unit tests mirroring `src/` structure | Integration concerns |
+| `tests/integration/` | Full-flow tests | Unit-level mocks |
+
+_AI: Adapt this table to the actual project stack. Add rows for project-specific directories. Remove rows for layers that don't exist._
+
+### Default reference structure
+_AI: Use this as a starting point on first setup. Replace with the actual structure once scanned._
+_If the project uses a different pattern (React, Django, Go, etc.), restructure accordingly._
+
+```
+project-root/
+│
+├── .readmeIA
+├── README.md                   ← human-facing docs
+│
+├── config/
+│   ├── app.config.js           ← application settings
+│   ├── db.config.js            ← database connection
+│   └── .env.example            ← env template (never commit .env)
 │
 ├── src/
-│   ├── controllers/        ← Business logic. One file per domain entity.
-│   ├── models/             ← Data schemas and database interaction
-│   ├── views/              ← Templates, pages, partials
-│   ├── routes/             ← Route definitions only. No logic here.
-│   ├── middleware/         ← Auth, validation, logging middleware
-│   └── services/           ← External API calls, shared utilities
+│   ├── controllers/            ← business logic, one file per domain entity
+│   ├── models/                 ← data schemas and DB interaction
+│   ├── views/                  ← templates, pages, partials
+│   ├── routes/                 ← route definitions only, no logic
+│   ├── middleware/             ← auth, validation, logging
+│   └── services/               ← external APIs, shared utilities
 │
-├── public/                 ← Static assets served directly
-│   ├── css/                ← Stylesheets only. No inline styles in views.
-│   │   ├── base/           ← Reset, typography, variables
-│   │   ├── components/     ← Reusable component styles
-│   │   └── pages/          ← Page-specific styles
-│   ├── js/                 ← Client-side scripts only
-│   │   ├── components/     ← UI component scripts
-│   │   └── pages/          ← Page-specific scripts
-│   └── assets/             ← Images, fonts, icons
+├── public/
+│   ├── css/
+│   │   ├── base/               ← reset, typography, variables
+│   │   ├── components/         ← reusable component styles
+│   │   └── pages/              ← page-specific styles
+│   ├── js/
+│   │   ├── components/         ← UI component scripts
+│   │   └── pages/              ← page-specific scripts
+│   └── assets/
 │       ├── images/
 │       └── fonts/
 │
 ├── tests/
-│   ├── unit/               ← One test file mirrors one src file
-│   └── integration/        ← Full-flow tests
+│   ├── unit/                   ← mirrors src/ structure
+│   └── integration/
 │
-└── docs/                   ← Architecture decisions, API docs, diagrams
+└── docs/                       ← architecture decisions, API docs, diagrams
 ```
 
-### Rules enforced by AI
-- CSS lives in `public/css/`. Never in `views/` or `src/`.
-- Client-side JS lives in `public/js/`. Never mixed with server logic.
-- Config lives in `config/`. No hardcoded values in `src/`.
-- Routes define paths and delegate to controllers. Zero business logic in routes.
-- Models own data shape and DB queries. Controllers never query the DB directly.
+---
+
+## 🔍 SYMBOL INDEX
+
+> **Token-saving core. Jump directly to any symbol without scanning.**
+> **Update whenever a symbol is added, renamed, or moved.**
+
+### Entry points
+| Symbol | Location | Description |
+|--------|----------|-------------|
+| — | —:— | — |
+
+### Core functions / methods
+| Symbol | Location | Description |
+|--------|----------|-------------|
+| — | —:— | — |
+
+### Key classes / modules
+| Symbol | Location | Description |
+|--------|----------|-------------|
+| — | —:— | — |
+
+### Configuration & constants
+| Symbol | Location | Description |
+|--------|----------|-------------|
+| — | —:— | — |
+
+### Types / schemas / interfaces
+| Symbol | Location | Description |
+|--------|----------|-------------|
+| — | —:— | — |
+
+> **Usage:** need to modify login flow → find "login" here → read `src/auth/login.js:23-67` only → done.
 
 ---
 
 ## 📐 CONVENTIONS
 
-### File Naming
-| Type | Convention | Example |
-|------|-----------|---------|
+> **AI: These are active from day one. Enforce them in every line of code written this session.**
+
+### File naming
+| Asset type | Convention | Example |
+|-----------|-----------|---------|
 | Controllers | `camelCase.controller.js` | `userAuth.controller.js` |
 | Models | `PascalCase.model.js` | `UserProfile.model.js` |
-| Views | `kebab-case.view.html` | `user-dashboard.view.html` |
+| Views / templates | `kebab-case.view.html` | `user-dashboard.view.html` |
 | CSS files | `kebab-case.css` | `nav-header.css` |
-| JS client files | `camelCase.js` | `formValidation.js` |
+| Client-side JS | `camelCase.js` | `formValidation.js` |
 | Config files | `domain.config.js` | `db.config.js` |
-| Test files | `[name].test.js` | `userAuth.controller.test.js` |
+| Test files | `[mirrors-src].test.js` | `userAuth.controller.test.js` |
+| Services | `camelCase.service.js` | `emailNotification.service.js` |
 
-### CSS
-- Variables defined in `public/css/base/variables.css`
-- BEM methodology: `.block__element--modifier`
-- No inline styles. No `!important` except as last resort (must be commented).
-- Mobile-first breakpoints.
+_AI: Adapt to the actual project stack. For non-JS projects, replace with equivalent conventions._
 
-### JavaScript
+### CSS rules
+- All CSS variables in `public/css/base/variables.css`. No magic color values anywhere else.
+- BEM methodology: `.block__element--modifier`. No exceptions.
+- No inline styles in HTML/templates. No `style=""` attributes.
+- No `!important` unless it is a documented last resort with a comment explaining why.
+- Mobile-first: base styles for mobile, `@media (min-width: …)` for larger screens.
+- No styles in JavaScript files. Use class toggling instead.
+
+### JavaScript rules
 - `const` by default. `let` only when reassignment is required. Never `var`.
 - Named exports over default exports.
-- Async/await over promise chains.
-- Functions named with verbs: `getUser`, `validateEmail`, `renderDashboard`.
+- `async/await` over `.then()` chains.
+- No callback hell. Max 2 levels of nesting in async code.
+- No `any` type (TypeScript). Explicit types always.
+- No magic numbers or magic strings. Extract to named constants.
 
 ### Git
-- Branch format: `feature/short-description`, `fix/short-description`, `chore/short-description`
-- Commit format: `type(scope): description` — e.g., `feat(auth): add JWT refresh logic`
-- No direct commits to `main`.
+- Branch format: `feature/short-description` · `fix/short-description` · `chore/short-description`
+- Commit format: `type(scope): description` — e.g. `feat(auth): add JWT refresh logic`
+- No direct commits to `main` or `master`.
+- PR required for any change that touches more than one module.
+
+### Comments policy
+- No comments that explain WHAT the code does. Names do that.
+- Comments only for WHY: hidden constraint, workaround for a specific bug, non-obvious invariant.
+- No TODO comments in committed code — open a Backlog item here instead.
+- No commented-out code. Delete it; git has the history.
 
 ---
 
-## 🎯 CURRENT CONTEXT
+## ✅ CODE QUALITY
 
-**What we're working on right now:**
-_AI: fill this when the user starts working. Keep it to 1–2 sentences._
+> **AI: Run this checklist mentally before delivering any code. This is not optional.**
+> **If any item fails, fix it before showing the code to the user.**
 
-**Last decision made:**
-_AI: update after each meaningful architectural or design decision._
+### Pre-output checklist
+- [ ] Every function does exactly one thing. If you can describe it with "and", split it.
+- [ ] No function longer than ~30 lines. If longer, extract helper functions.
+- [ ] No nesting deeper than 3 levels (if / for / try). Use early returns to flatten.
+- [ ] No duplicated logic. If the same block appears twice, extract it.
+- [ ] No hardcoded values (strings, numbers, URLs, credentials). Use constants or config.
+- [ ] All variables and functions named semantically (see Naming Semantics below).
+- [ ] No unused variables, imports, or parameters.
+- [ ] Error paths handled. No silent failures, no swallowed exceptions.
+- [ ] No inline styles or logic-in-templates.
+- [ ] New files placed in the correct directory per STRUCTURE MAP rules.
 
-**Blockers / open questions:**
-_AI: list anything unresolved that will affect next steps._
+### Naming semantics — enforced
+| Identifier type | Rule | Examples |
+|----------------|------|---------|
+| Functions / methods | Must start with a verb | `getUser`, `validateEmail`, `buildQuery`, `renderCard` |
+| Boolean variables | Must start with `is`, `has`, `can`, `should` | `isLoggedIn`, `hasPermission`, `canEdit` |
+| Event handlers | Must start with `handle` or `on` | `handleSubmit`, `onClose`, `handleKeyDown` |
+| Classes | PascalCase nouns | `UserProfile`, `AuthService`, `CartItem` |
+| Constants | SCREAMING_SNAKE_CASE | `MAX_RETRIES`, `DEFAULT_TIMEOUT`, `API_BASE_URL` |
+| Collections / arrays | Plural nouns | `users`, `filteredResults`, `activeConnections` |
+| Callbacks / iterators | Singular of collection | `users.map(user => …)`, `items.forEach(item => …)` |
+
+_AI: If the project uses a different language, apply the same semantic rules with language-appropriate casing._
+
+### Forbidden patterns
+> AI: never produce code containing these. If found in existing code, flag as tech debt.
+
+- `any` type (TypeScript / gradual typing)
+- `eval()` or `Function()` constructor
+- `console.log` left in committed code (use a proper logger)
+- Direct DOM manipulation mixed with framework code
+- Synchronous file I/O in a server request path
+- Secrets or credentials in source code
+- SQL strings built by concatenation (use parameterized queries)
+- Catching errors and doing nothing (`catch (e) {}`)
+- Mutating function arguments
+- Boolean parameters that change function behavior (`doSomething(true)`) — use named options object
+
+### Consistency rules
+- If a pattern exists in the codebase, match it exactly. Do not introduce a different style.
+- If two valid patterns exist, flag the inconsistency and ask which to standardize.
+- When adding a new module, check the existing modules of the same type and mirror their structure.
+- Do not mix paradigms (e.g., classes and plain functions for the same concern in the same layer).
+
+---
+
+## 🔌 API & DATA CONTRACTS
+
+> **Goal: understand data flow without reading schema or route files.**
+
+### Exposed endpoints
+| Method | Path | Auth | Input shape | Output shape | Notes |
+|--------|------|------|------------|-------------|-------|
+| — | — | — | — | — | — |
+
+### External APIs consumed
+| Service | Auth method | Rate limits | Wrapper location | Notes |
+|---------|------------|------------|-----------------|-------|
+| — | — | — | —:— | — |
+
+### Core data models
+_AI: Key entities with fields. Enough to understand relationships without reading schema files._
+
+```
+Entity: —
+  field      type       constraints    notes
+```
+
+### Environment variables
+| Variable | Required | Purpose | Default |
+|----------|----------|---------|---------|
+| — | yes/no | — | — |
+
+---
+
+## 🔐 SECURITY
+
+> **AI: Read this before touching auth, input handling, data access, or any user-facing boundary.**
+> **Never implement a security-relevant feature without checking this section first.**
+
+### Authentication model
+_AI: How are users identified? Token type, session strategy, storage location._
+
+- Auth method: — _(JWT / session cookie / OAuth / API key / other)_
+- Token storage: — _(httpOnly cookie / localStorage / memory)_
+- Token lifetime: — · Refresh strategy: —
+- Auth middleware location: —:—
+
+### Authorization model
+_AI: Who can access what? Role system, permission model._
+
+- Model: — _(RBAC / ABAC / flat permissions / none)_
+- Roles defined: —
+- Permission check location: —:—
+
+### Sensitive data inventory
+_AI: Data that requires extra care — never log, never expose in responses, encrypt at rest._
+
+| Data | Location in code | Storage | Encryption |
+|------|-----------------|---------|-----------|
+| — | — | — | — |
+
+### Input validation rules
+- All user input validated at: — _(route layer / middleware / controller)_
+- Validation library: —
+- Required on: all POST/PUT/PATCH bodies, query params used in DB queries, file uploads
+- Never trust: client-provided IDs for ownership checks, user-supplied file paths, raw HTML input
+
+### Attack surface
+_AI: Known entry points that need active hardening. Fill as the project grows._
+
+| Surface | Risk | Mitigation in place |
+|---------|------|-------------------|
+| — | — | — |
+
+### Security forbidden patterns
+> These are in addition to the CODE QUALITY forbidden list. Hard blocks — never produce this code.
+
+- No raw SQL with user input. Parameterized queries always.
+- No `innerHTML` with unsanitized data. Use `textContent` or a sanitizer.
+- No auth checks in the client only. Server must validate every protected request.
+- No secrets in environment-committed files. Only in `.env` (gitignored).
+- No predictable IDs for sensitive resources. Use UUIDs or tokens.
+- No verbose error messages exposed to the client. Log server-side, return generic message.
+- No passwords stored in plaintext or with reversible encryption. Use bcrypt / argon2.
+
+---
+
+## ⚡ PERFORMANCE
+
+> **AI: Check this before implementing any feature that touches data fetching, rendering, or loops.**
+
+### SLAs / thresholds
+_AI: Fill with agreed or assumed performance targets._
+
+| Operation | Target | Current baseline |
+|-----------|--------|----------------|
+| — | — | — |
+
+### Known bottlenecks
+_AI: Areas already identified as slow or resource-heavy. Do not make them worse._
+
+| Area | Description | Ticket / note |
+|------|-------------|--------------|
+| — | — | — |
+
+### Caching strategy
+_AI: What is cached, where, and for how long._
+
+| Layer | What | TTL | Invalidation trigger |
+|-------|------|-----|---------------------|
+| — | — | — | — |
+
+### Database performance rules
+- Never do N+1 queries. Use joins or eager loading. If in doubt, check the query count.
+- Index columns used in `WHERE`, `ORDER BY`, and `JOIN`. Record them in data models.
+- Never `SELECT *` in production queries. Select only the columns needed.
+- Paginate all list endpoints. No unbounded queries.
+- Long-running DB operations go to a background job, not a request handler.
+
+### Frontend performance rules
+- No blocking scripts in `<head>`. Use `defer` or `async`.
+- Images must have explicit `width` and `height` to prevent layout shift.
+- No synchronous XHR. No fetches in render loops.
+- Bundle size budget: — _(fill once known)_
+
+---
+
+## 🧪 TESTING STRATEGY
+
+> **AI: Before writing a test, read this. Before modifying tested code, check what breaks.**
+
+### Coverage map
+_AI: What is tested and what deliberately is not._
+
+| Layer | Tested? | Test type | Location |
+|-------|---------|----------|----------|
+| Controllers | — | unit | `tests/unit/controllers/` |
+| Models | — | unit | `tests/unit/models/` |
+| Routes | — | integration | `tests/integration/` |
+| Services | — | unit | `tests/unit/services/` |
+| UI components | — | — | — |
+
+### Mock rules
+_AI: What gets mocked and what must not._
+
+- **Must mock:** external HTTP calls, email/SMS sending, payment processors, clocks/dates
+- **Must NOT mock:** database (use test DB or in-memory), core business logic, internal modules under test
+- **Test DB:** — _(connection string / in-memory config location)_
+
+### Test data / fixtures
+_AI: Where to find seed data and how to reset state between tests._
+
+- Fixtures location: —
+- Reset command: —
+- Factory location: —:—
+
+### Test naming convention
+- Unit: `[function name] — [scenario] — [expected outcome]`
+- Integration: `[HTTP method] [path] — [scenario] — [expected status + shape]`
+
+### CI requirements
+_AI: Tests that must pass before any merge. Do not bypass._
+
+- — _(e.g. unit suite, lint, type check)_
+
+---
+
+## 🚨 ERROR HANDLING
+
+> **AI: Every error path must follow this model. No ad-hoc error handling.**
+
+### Error propagation model
+_AI: How errors travel from origin to response._
+
+- Strategy: — _(throw and catch at boundary / Result type / error callbacks)_
+- Errors bubble to: — _(global middleware / per-route handler / both)_
+- Global error handler location: —:—
+
+### Error response format
+_AI: The exact shape of error responses this project returns. Never deviate._
+
+```json
+{
+  "error": {
+    "code": "MACHINE_READABLE_CODE",
+    "message": "Human-readable description.",
+    "details": {}
+  }
+}
+```
+_AI: Replace with the actual format once defined._
+
+### Error code registry
+_AI: Fill as error codes are defined. Prevents duplicates and inconsistencies._
+
+| Code | HTTP status | Meaning |
+|------|------------|---------|
+| — | — | — |
+
+### Logging rules
+- Log levels in use: `error` · `warn` · `info` · `debug`
+- Logger location: —:—
+- **Log at `error`:** unhandled exceptions, failed DB operations, security events
+- **Log at `warn`:** recoverable errors, deprecated usage, rate limit hits
+- **Log at `info`:** request lifecycle, auth events, background job start/end
+- **Log at `debug`:** internal state, query details — never in production
+- **Never log:** passwords, tokens, PII, full request bodies with sensitive fields
+
+---
+
+## 📦 DEPENDENCIES
+
+> **AI: Check this before adding, removing, or upgrading any package.**
+
+### Critical dependencies
+_AI: Packages where a version change requires careful review._
+
+| Package | Version | Why pinned / why critical | Owner / docs |
+|---------|---------|--------------------------|-------------|
+| — | — | — | — |
+
+### Known conflicts
+_AI: Package combinations that break. Do not touch without reading the note._
+
+| Packages | Issue | Workaround |
+|----------|-------|-----------|
+| — | — | — |
+
+### Update policy
+- Security patches: apply immediately.
+- Minor updates: review changelog, apply within — _(e.g. 2 weeks)_.
+- Major updates: test in branch, requires decision log entry.
+- Never auto-merge dependency updates without running the full test suite.
+
+### Banned packages
+_AI: Packages explicitly decided against. Do not re-add without a decision log entry._
+
+| Package | Reason banned | Preferred alternative |
+|---------|-------------|----------------------|
+| — | — | — |
+
+---
+
+## 🎯 CURRENT SESSION STATE
+
+> **Overwrite each session. Not a log — a live snapshot.**
+
+### Active objective
+_One sentence: what are we building/fixing right now?_
+
+### Context
+_What must a cold-start AI know to continue without re-reading the conversation?_
+
+### Last action taken
+_Specific enough to resume from exactly here._
+
+### Next immediate step
+_Exact action. No ambiguity. If blocked, state what is needed to unblock._
+
+### Blockers
+- —
+
+### Open questions
+_If answerable from the codebase, answer now and remove the entry._
+- —
+
+---
+
+## 📚 DECISIONS LOG
+
+> **Append per meaningful decision. Never delete. Newest first.**
+
+| Date | Decision | Alternatives considered | Rationale |
+|------|---------|------------------------|-----------|
+| — | — | — | — |
+
+---
+
+## 🐛 KNOWN ISSUES
+
+| ID | Status | Description | Workaround | Root cause |
+|----|--------|-------------|-----------|------------|
+| — | `open` · `in-progress` · `resolved` | — | — | — |
+
+### Tech debt
+_AI: Record intentional shortcuts with the correct solution for when time allows._
+- —
 
 ---
 
 ## ✅ PROGRESS
 
 ### Completed
-_AI: append entries here as tasks are finished. Format: `- [x] YYYY-MM-DD — description`_
+_Format: `- [x] YYYY-MM-DD — description`_
 
 ### In Progress
-_AI: move here when a task is actively being worked on._
+- —
 
 ### Backlog
-_AI: add future tasks here when the user mentions them._
+- —
 
 ---
 
 ## 🔗 CROSS-PROJECT REFERENCES
 
-> **AI:** When a project declares siblings or dependencies here, read their `.readmeIA` files before answering questions that span projects.
+> **Read sibling `.readmeIA` files before answering cross-project questions.**
 
-| Alias | Location | Relationship | Last Sync |
+| Alias | Location | Relationship | Last sync |
 |-------|----------|-------------|-----------|
 | — | — | — | — |
 
 ---
 
-## 🔧 ENVIRONMENT & TOOLS
+## 🔧 ENVIRONMENT
 
-| Tool | Purpose | Version |
-|------|---------|---------|
-| — | — | — |
+| Tool | Version | Purpose | Config location |
+|------|---------|---------|----------------|
+| — | — | — | — |
 
-> **AI:** Fill as tools are introduced. Include runtime version, package manager, build tool, linter, formatter, test runner.
+### Setup sequence
+_From zero to running dev environment. Enough for a fresh machine._
+```
+1. —
+```
+
+### Common commands
+| Command | What it does |
+|---------|-------------|
+| — | — |
+
+---
+
+## 🗒 AI NOTES
+
+> **Free-form scratchpad. Only for the AI.**
+> **Write here anything non-obvious that does not fit in other sections:**
+> observations about the codebase, patterns noticed, gotchas, implicit contracts,
+> surprising behavior, things that almost caused a bug, context that would take
+> minutes to re-derive but seconds to recall.
+> **Format freely. No schema. Keep entries dated.**
+> **Review this section at session start — it may save you from repeating a mistake.**
+
+_AI: Start writing below. Newest entries first._
+
+---
+
+<!-- EXAMPLE ENTRIES — delete when first real note is added:
+
+2024-01-15 — The `userId` field in the sessions table refers to the `users.uid` column,
+not `users.id`. They're different fields. Three hours lost to this once.
+
+2024-01-20 — The payment webhook fires twice on sandbox. Production fires once. The
+deduplication logic in paymentWebhook.controller.js:88 handles this but only if the
+idempotency key is passed. Never test payment flows without it.
+
+2024-02-03 — The `config/app.config.js` export is lazy-evaluated. Importing it at module
+top level in tests causes env vars to be read before the test setup runs. Always import
+inside the test function body or use jest's setupFiles.
+
+-->
 
 ---
 
 ## 📜 CHANGE LOG
 
-> Auto-appended by AI. Newest entry first. Format: `YYYY-MM-DD | actor | summary`
+> **Append each session. Newest first.**
 
 | Date | Actor | Summary |
 |------|-------|---------|
@@ -196,11 +708,41 @@ _AI: add future tasks here when the user mentions them._
 ---
 
 <!--
-  HOW TO USE THIS FILE
-  ─────────────────────
-  1. Copy this file to the root of your project.
-  2. Tell your AI: "Read the .readmeIA and let's start."
-  3. The AI fills in the blanks as you work.
-  4. End each session with: "Update the .readmeIA with what we did."
-  5. Next session: "Read the .readmeIA and continue where we left off."
+  ════════════════════════════════════════════════════════════
+  READMEIA v2.3 — FIRST-TIME SETUP GUIDE FOR AI AGENTS
+  ════════════════════════════════════════════════════════════
+
+  You are reading this on a new project. Do this ONCE, never again.
+
+  STEP 1 — Scan the project (one-time only)
+    Read config files (package.json, pyproject.toml, go.mod, etc.)
+    List root-level files and directories.
+    Identify stack, architecture pattern, and entry points.
+    Infer everything you can. Do not ask the user yet.
+
+  STEP 2 — Fill all inferable sections
+    PROJECT IDENTITY, TECH STACK, STRUCTURE MAP (replace reference tree
+    with actual tree), SYMBOL INDEX, CONVENTIONS (adapt to stack),
+    SECURITY (auth method, sensitive fields), DEPENDENCIES (from lock file),
+    ENVIRONMENT. Mark unknowns with "—".
+
+  STEP 3 — Ask only what cannot be inferred (one message, numbered list)
+    PROJECT CONTEXT — purpose, goals, domain rules, constraints.
+    Never ask one question at a time.
+
+  STEP 4 — Confirm and lock
+    Show filled file. Ask: "Does this match the project?"
+    Once confirmed, this is the source of truth. Stop scanning.
+
+  FROM NOW ON — per session loop:
+    1. Read this file (and AI NOTES first if something felt tricky last time).
+    2. Navigate via STRUCTURE MAP + SYMBOL INDEX.
+    3. Read only the exact file:lines needed.
+    4. Before touching auth/input/data: re-read SECURITY.
+    5. Before adding packages: re-read DEPENDENCIES.
+    6. Write code that passes the CODE QUALITY checklist.
+    7. Update this file silently at session end.
+    Never scan the project again unless a file is missing from the index.
+
+  ════════════════════════════════════════════════════════════
 -->
