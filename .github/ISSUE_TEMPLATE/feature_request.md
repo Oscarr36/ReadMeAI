@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest a new section, rule, or capability for the .readmeIA template
+about: Suggest a new section, rule, or capability for the .readmeAI template
 title: "[FEATURE] "
 labels: enhancement
 assignees: ""
@@ -30,7 +30,7 @@ If it's project-specific, consider it a personal extension rather than a core ad
 
 ## Have you tested this?
 
-- [ ] Yes — I added this section to my own `.readmeIA` and the AI used it correctly
+- [ ] Yes — I added this section to my own `.readmeAI` and the AI used it correctly
 - [ ] No — this is a proposal I haven't tested yet
 
 If yes, describe what happened when the AI read the new section.

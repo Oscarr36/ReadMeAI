@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: The AI ignored the .readmeIA, broke the structure, or behaved unexpectedly
+about: The AI ignored the .readmeAI, broke the structure, or behaved unexpectedly
 title: "[BUG] "
 labels: bug
 assignees: ""
@@ -12,11 +12,11 @@ Describe what the AI did that it shouldn't have.
 
 ## What you expected
 
-Describe what it should have done according to the `.readmeIA` protocol.
+Describe what it should have done according to the `.readmeAI` protocol.
 
 ## Steps to reproduce
 
-1. My `.readmeIA` contained: (paste relevant section)
+1. My `.readmeAI` contained: (paste relevant section)
 2. I told the AI: (paste your exact prompt)
 3. The AI responded: (paste or summarize the response)
 4. The problem: (what rule was broken)
@@ -28,7 +28,7 @@ Describe what it should have done according to the `.readmeIA` protocol.
 - [ ] Gemini
 - [ ] Other: ___
 
-## Version of `.readmeIA`
+## Version of `.readmeAI`
 
 Check the `version` field in your file's PROJECT IDENTITY section.
 

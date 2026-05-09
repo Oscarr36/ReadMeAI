@@ -1,13 +1,13 @@
-# Contributing to ReadMeIA
+# Contributing to ReadMeAI
 
-ReadMeIA is an open specification. The core artifact is the `.readmeIA` template — contributions that improve how it guides AI assistants are the most valuable kind.
+ReadMeAI is an open specification. The core artifact is the `.readmeAI` template — contributions that improve how it guides AI assistants are the most valuable kind.
 
 ---
 
 ## What you can contribute
 
 ### 1. Improve the template
-The `.readmeIA` file is the heart of the project. Good contributions:
+The `.readmeAI` file is the heart of the project. Good contributions:
 - Add a missing section that improves AI context (explain *why* it helps)
 - Clarify ambiguous AI protocol rules
 - Fix a convention that causes real problems in practice
@@ -23,11 +23,11 @@ READMEs live in `docs/README.[lang].md`. To add a new language:
 - Keep code blocks, file paths, and technical terms in English
 
 ### 3. Report a real-world problem
-If you used ReadMeIA and the AI did something unexpected or broke the structure, open an issue. Include:
+If you used ReadMeAI and the AI did something unexpected or broke the structure, open an issue. Include:
 - Which AI assistant you used
 - What you told it
 - What it did wrong
-- What the `.readmeIA` looked like at the time
+- What the `.readmeAI` looked like at the time
 
 This is how the protocol gets better.
 
@@ -44,7 +44,7 @@ The base template targets a generic web app. Variants for specific stacks (Next.
 - Cosmetic changes to the README without functional improvement
 - Translations that are machine-translated without human review
 - New sections without a clear explanation of why they help the AI
-- Changes that break backward compatibility with existing `.readmeIA` files
+- Changes that break backward compatibility with existing `.readmeAI` files
 
 ---
 

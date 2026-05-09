@@ -4,7 +4,7 @@
 
 ## Type of change
 
-- [ ] Template improvement (changes to `.readmeIA`)
+- [ ] Template improvement (changes to `.readmeAI`)
 - [ ] New translation
 - [ ] Bug fix (protocol rule wasn't working as intended)
 - [ ] New feature (new section or capability)
@@ -21,7 +21,7 @@ Closes #
 
 <!-- List the files changed and what changed in each -->
 
-- `.readmeIA` — 
+- `.readmeAI` — 
 - `docs/README.*.md` — 
 
 ## If you changed the template: did you test it with an AI?
@@ -37,7 +37,7 @@ Closes #
 
 ## Checklist
 
-- [ ] The `AI PROTOCOL` section is intact and still at the top of `.readmeIA`
+- [ ] The `AI PROTOCOL` section is intact and still at the top of `.readmeAI`
 - [ ] No existing sections were removed (only improved or added to)
 - [ ] If I added a section, I explained why it exists in the PR description
 - [ ] If I added a translation, all language links in all READMEs are updated

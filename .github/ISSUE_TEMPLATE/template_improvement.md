@@ -1,6 +1,6 @@
 ---
 name: Template improvement
-about: The .readmeIA works but something could be clearer, more concise, or better structured
+about: The .readmeAI works but something could be clearer, more concise, or better structured
 title: "[TEMPLATE] "
 labels: template
 assignees: ""

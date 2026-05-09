@@ -1,6 +1,6 @@
 <!--
   ╔══════════════════════════════════════════════════════════════════════╗
-  ║  READMEIA v2.3 — AI-TO-AI PROJECT CONTEXT FILE                     ║
+  ║  READMEAI v2.3 — AI-TO-AI PROJECT CONTEXT FILE                     ║
   ║  Written by AI. Read by AI. Zero human dependency.                 ║
   ║  Purpose: eliminate project re-scanning, enforce structure,        ║
   ║  maintain code quality, security, and semantic consistency.        ║
@@ -8,7 +8,7 @@
   ╚══════════════════════════════════════════════════════════════════════╝
 -->
 
-# .readmeIA
+# .readmeAI
 
 ---
 
@@ -134,7 +134,7 @@ _Collapse noise: `node_modules/ [collapsed]`, `.git/ [collapsed]`, `dist/ [colla
 ```
 project-root/
 │
-├── .readmeIA                   ← AI context index. Never move. Never delete.
+├── .readmeAI                   ← AI context index. Never move. Never delete.
 │
 ```
 
@@ -168,7 +168,7 @@ _If the project uses a different pattern (React, Django, Go, etc.), restructure 
 ```
 project-root/
 │
-├── .readmeIA
+├── .readmeAI
 ├── README.md                   ← human-facing docs
 │
 ├── config/
@@ -639,7 +639,7 @@ _Format: `- [x] YYYY-MM-DD — description`_
 
 ## 🔗 CROSS-PROJECT REFERENCES
 
-> **Read sibling `.readmeIA` files before answering cross-project questions.**
+> **Read sibling `.readmeAI` files before answering cross-project questions.**
 
 | Alias | Location | Relationship | Last sync |
 |-------|----------|-------------|-----------|
@@ -709,7 +709,7 @@ inside the test function body or use jest's setupFiles.
 
 <!--
   ════════════════════════════════════════════════════════════
-  READMEIA v2.3 — FIRST-TIME SETUP GUIDE FOR AI AGENTS
+  READMEAI v2.3 — FIRST-TIME SETUP GUIDE FOR AI AGENTS
   ════════════════════════════════════════════════════════════
 
   You are reading this on a new project. Do this ONCE, never again.

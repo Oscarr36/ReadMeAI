@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="Icon.png" alt="ReadMeIA" width="200" />
+<img src="Icon.png" alt="ReadMeAI" width="200" />
 
-<h1>ReadMeIA</h1>
+<h1>ReadMeAI</h1>
 
 <p><strong>A self-updating AI context file that keeps every session fully oriented — no re-explaining, no context drift, no messy structure.</strong></p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](.readmeIA)
+[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](.readmeAI)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
-[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](.readmeIA)
+[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](.readmeAI)
 
 **Languages:** [English](README.md) · [Español](docs/README.es.md) · [Português](docs/README.pt.md) · [Français](docs/README.fr.md)
 
@@ -21,12 +21,12 @@
 
 ```bash
 # bash / mac / linux
-curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
+curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
 ```
 
 ```powershell
 # PowerShell / Windows
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA" -OutFile ".readmeIA"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
 ```
 
 </div>
@@ -45,9 +45,9 @@ The AI is powerful. **The problem is context — it resets.**
 
 ## The solution
 
-Drop a `.readmeIA` file at the root of any project. One file the AI reads completely before doing anything, and updates silently after every session.
+Drop a `.readmeAI` file at the root of any project. One file the AI reads completely before doing anything, and updates silently after every session.
 
-| Without ReadMeIA | With ReadMeIA |
+| Without ReadMeAI | With ReadMeAI |
 |-----------------|--------------|
 | Re-explain architecture every session | AI loads full context in seconds |
 | AI invents its own structure | Enforced folder rules, every time |
@@ -60,7 +60,7 @@ Drop a `.readmeIA` file at the root of any project. One file the AI reads comple
 
 ## What's inside the template
 
-The `.readmeIA` file is organized into **23 sections**, each maintained automatically by the AI:
+The `.readmeAI` file is organized into **23 sections**, each maintained automatically by the AI:
 
 ```
 ⚙️  AI PROTOCOL          — session rules, token efficiency, quality gate
@@ -93,13 +93,13 @@ The `.readmeIA` file is organized into **23 sections**, each maintained automati
 
 ```
 Session 1:
-  You → "Read the .readmeIA and let's build a user auth system"
+  You → "Read the .readmeAI and let's build a user auth system"
   AI  → reads file, loads context, structure, conventions, security rules
   AI  → builds auth following the exact architecture defined
   AI  → updates change log, progress, session state — silently
 
 Session 2 (days later):
-  You → "Read the .readmeIA and continue"
+  You → "Read the .readmeAI and continue"
   AI  → full context restored instantly
   AI  → opens auth file directly at the right line (symbol index)
   AI  → continues without a single re-explanation
@@ -115,7 +115,7 @@ The AI enforces strict separation of concerns. Every directory has explicit rule
 
 ```
 project/
-├── .readmeIA               ← AI context. Never move. Never delete.
+├── .readmeAI               ← AI context. Never move. Never delete.
 ├── config/                 ← All config. Never in src/.
 ├── src/
 │   ├── controllers/        ← Business logic only. No DB queries.
@@ -169,17 +169,17 @@ After the first setup, the AI never re-reads the whole project.
 
 **1. Copy the template to your project root**
 ```bash
-curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
+curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
 ```
 
 **2. Tell your AI to set it up** *(do this once)*
-> "Read the `.readmeIA` file. Scan the project, fill in everything you can infer, then ask me only for what you can't."
+> "Read the `.readmeAI` file. Scan the project, fill in everything you can infer, then ask me only for what you can't."
 
 **3. Start building**
-> "Read the `.readmeIA` and let's [task]."
+> "Read the `.readmeAI` and let's [task]."
 
 **4. Resume any time**
-> "Read the `.readmeIA` and continue where we left off."
+> "Read the `.readmeAI` and continue where we left off."
 
 The AI updates the file silently at the end of every session. You never need to ask.
 
@@ -189,15 +189,15 @@ The AI updates the file silently at the end of every session. You never need to 
 
 ```
 First setup:
-"Read the .readmeIA file at the project root. Scan the project,
+"Read the .readmeAI file at the project root. Scan the project,
 fill in every section you can infer, then ask me only for what
 you can't determine from the code."
 
 Every other session:
-"Read the .readmeIA and continue where we left off."
+"Read the .readmeAI and continue where we left off."
 
 Specific task:
-"Read the .readmeIA, then [task]. Follow the architecture,
+"Read the .readmeAI, then [task]. Follow the architecture,
 conventions, and quality rules defined in the file."
 ```
 
@@ -205,7 +205,7 @@ conventions, and quality rules defined in the file."
 
 ## Multi-project workspaces
 
-Each project gets its own `.readmeIA`. Cross-reference related projects and the AI reads all of them before answering cross-project questions:
+Each project gets its own `.readmeAI`. Cross-reference related projects and the AI reads all of them before answering cross-project questions:
 
 ```markdown
 ## 🔗 CROSS-PROJECT REFERENCES
@@ -233,9 +233,9 @@ Each project gets its own `.readmeIA`. Cross-reference related projects and the 
 ## Roadmap
 
 - [ ] `readmeia init` CLI — scaffold a project with the full structure in one command
-- [ ] VS Code extension — syntax highlighting and snippets for `.readmeIA`
+- [ ] VS Code extension — syntax highlighting and snippets for `.readmeAI`
 - [ ] Template variants — SPA, REST API, fullstack monorepo, CLI tool
-- [ ] Workspace mode — read multiple `.readmeIA` files in one AI session
+- [ ] Workspace mode — read multiple `.readmeAI` files in one AI session
 - [ ] Validation script — checks that the project structure matches the spec
 
 ---

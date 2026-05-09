@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="../Icon.png" alt="ReadMeIA" width="200" />
+<img src="../Icon.png" alt="ReadMeAI" width="200" />
 
-<h1>ReadMeIA</h1>
+<h1>ReadMeAI</h1>
 
 <p><strong>Um arquivo de contexto IA auto-atualizável que mantém cada sessão completamente orientada — sem reexplicações, sem deriva de contexto, sem estruturas bagunçadas.</strong></p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
-[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](../.readmeIA)
+[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](../.readmeAI)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](../CONTRIBUTING.md)
-[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](../.readmeIA)
+[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](../.readmeAI)
 
 **Idiomas:** [English](../README.md) · [Español](README.es.md) · [Português](README.pt.md) · [Français](README.fr.md)
 
@@ -21,12 +21,12 @@
 
 ```bash
 # bash / mac / linux
-curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
+curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
 ```
 
 ```powershell
 # PowerShell / Windows
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA" -OutFile ".readmeIA"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
 ```
 
 </div>
@@ -45,9 +45,9 @@ A IA é poderosa. **O problema é o contexto — ele se reseta.**
 
 ## A solução
 
-Coloque um arquivo `.readmeIA` na raiz de qualquer projeto. Um único arquivo que a IA lê completamente antes de fazer qualquer coisa, e atualiza silenciosamente ao final de cada sessão.
+Coloque um arquivo `.readmeAI` na raiz de qualquer projeto. Um único arquivo que a IA lê completamente antes de fazer qualquer coisa, e atualiza silenciosamente ao final de cada sessão.
 
-| Sem ReadMeIA | Com ReadMeIA |
+| Sem ReadMeAI | Com ReadMeAI |
 |-------------|-------------|
 | Reexplicar a arquitetura toda sessão | IA carrega contexto completo em segundos |
 | IA inventa sua própria estrutura | Regras de pastas impostas, sempre |
@@ -60,7 +60,7 @@ Coloque um arquivo `.readmeIA` na raiz de qualquer projeto. Um único arquivo qu
 
 ## O que há dentro do template
 
-O arquivo `.readmeIA` é organizado em **23 seções**, cada uma mantida automaticamente pela IA:
+O arquivo `.readmeAI` é organizado em **23 seções**, cada uma mantida automaticamente pela IA:
 
 ```
 ⚙️  AI PROTOCOL          — regras de sessão, eficiência de tokens, quality gate
@@ -93,13 +93,13 @@ O arquivo `.readmeIA` é organizado em **23 seções**, cada uma mantida automat
 
 ```
 Sessão 1:
-  Você → "Leia o .readmeIA e vamos construir um sistema de auth"
+  Você → "Leia o .readmeAI e vamos construir um sistema de auth"
   IA   → lê o arquivo, carrega contexto, estrutura, convenções, regras de segurança
   IA   → constrói a auth seguindo exatamente a arquitetura definida
   IA   → atualiza change log, progresso, estado da sessão — silenciosamente
 
 Sessão 2 (dias depois):
-  Você → "Leia o .readmeIA e continue"
+  Você → "Leia o .readmeAI e continue"
   IA   → contexto completo restaurado instantaneamente
   IA   → abre o arquivo de auth diretamente na linha certa (índice de símbolos)
   IA   → continua sem nenhuma reexplicação
@@ -115,7 +115,7 @@ A IA impõe estrita separação de responsabilidades. Cada diretório tem regras
 
 ```
 project/
-├── .readmeIA               ← Contexto IA. Nunca mover. Nunca deletar.
+├── .readmeAI               ← Contexto IA. Nunca mover. Nunca deletar.
 ├── config/                 ← Toda config. Nunca em src/.
 ├── src/
 │   ├── controllers/        ← Apenas lógica de negócio. Sem queries no BD.
@@ -169,17 +169,17 @@ Após o primeiro setup, a IA nunca relê o projeto inteiro.
 
 **1. Copie o template para a raiz do seu projeto**
 ```bash
-curl -o .readmeIA https://raw.githubusercontent.com/Oscarr36/ReadMeIA/main/.readmeIA
+curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
 ```
 
 **2. Peça à sua IA para configurar** *(apenas uma vez)*
-> "Leia o arquivo `.readmeIA`. Escaneie o projeto, preencha tudo que conseguir inferir, e então me pergunte apenas o que não conseguir determinar."
+> "Leia o arquivo `.readmeAI`. Escaneie o projeto, preencha tudo que conseguir inferir, e então me pergunte apenas o que não conseguir determinar."
 
 **3. Comece a construir**
-> "Leia o `.readmeIA` e vamos [tarefa]."
+> "Leia o `.readmeAI` e vamos [tarefa]."
 
 **4. Retome a qualquer momento**
-> "Leia o `.readmeIA` e continue de onde paramos."
+> "Leia o `.readmeAI` e continue de onde paramos."
 
 A IA atualiza o arquivo silenciosamente ao final de cada sessão. Você nunca precisa pedir.
 
@@ -189,15 +189,15 @@ A IA atualiza o arquivo silenciosamente ao final de cada sessão. Você nunca pr
 
 ```
 Primeiro setup:
-"Leia o arquivo .readmeIA na raiz do projeto. Escaneie o projeto,
+"Leia o arquivo .readmeAI na raiz do projeto. Escaneie o projeto,
 preencha todas as seções que conseguir inferir, e então me pergunte
 apenas o que não conseguir determinar pelo código."
 
 Cada sessão posterior:
-"Leia o .readmeIA e continue de onde paramos."
+"Leia o .readmeAI e continue de onde paramos."
 
 Tarefa específica:
-"Leia o .readmeIA e então [tarefa]. Siga a arquitetura,
+"Leia o .readmeAI e então [tarefa]. Siga a arquitetura,
 convenções e regras de qualidade definidas no arquivo."
 ```
 
@@ -205,7 +205,7 @@ convenções e regras de qualidade definidas no arquivo."
 
 ## Espaços de trabalho multi-projeto
 
-Cada projeto tem seu próprio `.readmeIA`. Referencie-os cruzadamente e a IA os lerá todos antes de responder perguntas que abrangem múltiplos projetos:
+Cada projeto tem seu próprio `.readmeAI`. Referencie-os cruzadamente e a IA os lerá todos antes de responder perguntas que abrangem múltiplos projetos:
 
 ```markdown
 ## 🔗 REFERÊNCIAS CRUZADAS
@@ -233,9 +233,9 @@ Cada projeto tem seu próprio `.readmeIA`. Referencie-os cruzadamente e a IA os 
 ## Roadmap
 
 - [ ] CLI `readmeia init` — scaffold de um projeto com a estrutura completa em um comando
-- [ ] Extensão VS Code — highlight de sintaxe e snippets para `.readmeIA`
+- [ ] Extensão VS Code — highlight de sintaxe e snippets para `.readmeAI`
 - [ ] Variantes de template — SPA, REST API, monorepo fullstack, CLI tool
-- [ ] Modo workspace — ler múltiplos arquivos `.readmeIA` em uma sessão IA
+- [ ] Modo workspace — ler múltiplos arquivos `.readmeAI` em uma sessão IA
 - [ ] Script de validação — verifica se a estrutura do projeto corresponde à spec
 
 ---
