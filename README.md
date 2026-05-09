@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="Icon.png" alt="ReadMeAI" width="200" />
+<img src="img/Icon.png" alt="ReadMeAI" width="200" />
 
 <h1>ReadMeAI</h1>
 
@@ -106,6 +106,14 @@ Session 2 (days later):
 ```
 
 > The file grows with the project. The more sessions, the richer the context.
+
+---
+
+## Preview
+
+> What `.readmeAI` looks like inside a real project (VS Code):
+
+![ReadMeAI in VS Code](img/ej.png)
 
 ---
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="../Icon.png" alt="ReadMeAI" width="200" />
+<img src="../img/Icon.png" alt="ReadMeAI" width="200" />
 
 <h1>ReadMeAI</h1>
 
