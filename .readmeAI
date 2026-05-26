@@ -12,11 +12,18 @@
 
 ---
 
-## ⚙️ AI PROTOCOL — READ FIRST, EVERY TIME
+## ⚙️ AI PROTOCOL — AUTO-READ AT SESSION START
 
-> **Non-negotiable. Follow exactly.**
+> **🚨 MANDATORY: Read this file at the very start of EVERY session. Do NOT wait for the user to ask. Do NOT skip. Do NOT assume context from memory. This is your first and only mandatory action.**
 
-### Token efficiency rules — highest priority
+### Auto-read rule — highest priority, never negotiable
+- **Read this file BEFORE the user types anything.** If a session starts and this file exists at the project root, read it immediately and completely. The user should never need to say "Read the .readmeAI".
+- **Cold start = full read.** If this is a new instance with no session history, read the entire file before responding to the user.
+- **Hot start = full read.** Even if you remember the project from a prior session, read the file again — it may have changed.
+- **Do not scan the filesystem first.** Read this file first. It replaces filesystem scanning.
+- **The user's first message is not a trigger — the session start is.** When your context initializes, the first thing you do is locate and read `.readmeAI` at the project root.
+
+### Token efficiency rules — second priority
 - **If STRUCTURE MAP and SYMBOL INDEX are filled: do NOT scan the filesystem.** Use them to navigate directly. A scan wastes tokens; this file exists to replace it.
 - **Never read a file you don't need.** Look up the exact location in SYMBOL INDEX before opening anything.
 - **Never read a whole file when you only need part of it.** Use the line hints in SYMBOL INDEX.
@@ -24,7 +31,7 @@
 - **One read, one reason.** Before reading any file, state what specific information you need. If you can't state it, you don't need to read it.
 
 ### Session start sequence
-1. Read this file completely. This is the only mandatory full read per session.
+1. **Auto-read this file** — no user prompt needed. This is your initialization step.
 2. Load CURRENT SESSION STATE. Resume without asking the user to recap.
 3. Verify STRUCTURE MAP against the task. Update stale entries at session end, not now.
 4. **First-time setup only** (sections blank): scan the project once, detect skills, assemble ecosystem, fill every section, ask only for what cannot be inferred. Never repeat this scan.

@@ -47,6 +47,7 @@ Drop a `.readmeAI` file at the root of any project. One file the AI reads comple
 
 | Without ReadMeAI | With ReadMeAI |
 |-----------------|--------------|
+| Must say "Read the context" every session | AI auto-reads at session start — no prompt needed |
 | Re-explain architecture every session | AI loads full context in seconds |
 | AI invents its own structure | Enforced folder rules, every time |
 | Inconsistent naming and style | Conventions locked and applied |
@@ -92,14 +93,15 @@ The `.readmeAI` file is organized into **24 sections**, each maintained automati
 
 ```
 Session 1:
-  You → "Read the .readmeAI and let's build a user auth system"
-  AI  → reads file, loads context, structure, conventions, security rules
+  You → "Let's build a user auth system"
+  AI  → auto-reads .readmeAI at session start, loads context,
+        structure, conventions, security rules
   AI  → builds auth following the exact architecture defined
   AI  → updates change log, progress, session state — silently
 
 Session 2 (days later):
-  You → "Read the .readmeAI and continue"
-  AI  → full context restored instantly
+  You → "Continue where we left off"
+  AI  → auto-reads .readmeAI → full context restored instantly
   AI  → opens auth file directly at the right line (symbol index)
   AI  → continues without a single re-explanation
 ```
@@ -180,38 +182,41 @@ curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.read
 ```
 
 **2. Tell your AI to set it up** *(do this once)*
-> "Read the `.readmeAI` file. Detect the project's skills, assemble the ecosystem, fill in everything you can infer, then ask me only for what you can't."
+> "Detect my project skills, assemble the ecosystem, fill in everything you can infer, then ask me only for what you can't."
 
 > The AI will automatically detect your tech stack (React, Django, Express, etc.) and configure the right project structure, conventions, security rules, and tooling — no manual setup needed.
 
 **3. Start building**
-> "Read the `.readmeAI` and let's [task]."
+> "Let's [task]."
 
 **4. Resume any time**
-> "Read the `.readmeAI` and continue where we left off."
+> "Continue where we left off."
 
-The AI updates the file silently at the end of every session. You never need to ask.
+> **Note:** You don't need to say "Read the .readmeAI" — the AI is instructed to read it automatically at the start of every session. Just tell it what to do.
+
+The AI reads the file silently at session start and updates it at the end. You never need to ask.
 
 ---
 
 ## Recommended start prompts
 
+> The AI reads `.readmeAI` automatically at session start. You never need to say "Read the .readmeAI".
+
 ```
 First setup:
-"Read the .readmeAI file at the project root. Detect the project
-skills, assemble the ecosystem, fill in every section you can
-infer, then ask me only for what you can't determine."
+"Detect my project skills, assemble the ecosystem, fill in
+everything you can infer, then ask me only for what you can't."
 
 Every other session:
-"Read the .readmeAI and continue where we left off."
+"Continue where we left off."
 
 Specific task:
-"Read the .readmeAI, then [task]. Follow the architecture,
-conventions, and quality rules defined in the file."
+"[Task]. Follow the architecture, conventions, and quality
+rules defined in the project context."
 
 Ecosystem review:
-"Read the .readmeAI and check the SKILLS & ECOSYSTEM section.
-Do the detected skills match the project? Are any missing?"
+"Check the SKILLS & ECOSYSTEM section. Do the detected skills
+match the project? Are any missing?"
 ```
 
 ---
