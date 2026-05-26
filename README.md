@@ -5,7 +5,7 @@
 <p><strong>A self-updating AI context file that keeps every session fully oriented — no re-explaining, no context drift, no messy structure.</strong></p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-2.4-brightgreen.svg)](.readmeAI)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 [![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](.readmeAI)
 
@@ -58,11 +58,12 @@ Drop a `.readmeAI` file at the root of any project. One file the AI reads comple
 
 ## What's inside the template
 
-The `.readmeAI` file is organized into **23 sections**, each maintained automatically by the AI:
+The `.readmeAI` file is organized into **24 sections**, each maintained automatically by the AI:
 
 ```
 ⚙️  AI PROTOCOL          — session rules, token efficiency, quality gate
 🧭  PROJECT CONTEXT       — purpose, goals, constraints, domain rules
+🧠  SKILLS & ECOSYSTEM    — auto-detect tech stack, assemble structure & rules
 📋  PROJECT IDENTITY      — name, version, phase, type, repo
 🛠  TECH STACK            — every layer with versions
 🏗  STRUCTURE MAP         — full annotated file tree (replaces filesystem scanning)
@@ -179,7 +180,9 @@ curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.read
 ```
 
 **2. Tell your AI to set it up** *(do this once)*
-> "Read the `.readmeAI` file. Scan the project, fill in everything you can infer, then ask me only for what you can't."
+> "Read the `.readmeAI` file. Detect the project's skills, assemble the ecosystem, fill in everything you can infer, then ask me only for what you can't."
+
+> The AI will automatically detect your tech stack (React, Django, Express, etc.) and configure the right project structure, conventions, security rules, and tooling — no manual setup needed.
 
 **3. Start building**
 > "Read the `.readmeAI` and let's [task]."
@@ -195,9 +198,9 @@ The AI updates the file silently at the end of every session. You never need to 
 
 ```
 First setup:
-"Read the .readmeAI file at the project root. Scan the project,
-fill in every section you can infer, then ask me only for what
-you can't determine from the code."
+"Read the .readmeAI file at the project root. Detect the project
+skills, assemble the ecosystem, fill in every section you can
+infer, then ask me only for what you can't determine."
 
 Every other session:
 "Read the .readmeAI and continue where we left off."
@@ -205,6 +208,10 @@ Every other session:
 Specific task:
 "Read the .readmeAI, then [task]. Follow the architecture,
 conventions, and quality rules defined in the file."
+
+Ecosystem review:
+"Read the .readmeAI and check the SKILLS & ECOSYSTEM section.
+Do the detected skills match the project? Are any missing?"
 ```
 
 ---
@@ -238,6 +245,7 @@ Each project gets its own `.readmeAI`. Cross-reference related projects and the 
 
 ## Roadmap
 
+- [x] Skills & Ecosystem detection — auto-detect tech stack, assemble structure & rules
 - [ ] `readmeia init` CLI — scaffold a project with the full structure in one command
 - [ ] VS Code extension — syntax highlighting and snippets for `.readmeAI`
 - [ ] Template variants — SPA, REST API, fullstack monorepo, CLI tool

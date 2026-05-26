@@ -1,6 +1,6 @@
 <!--
   ╔══════════════════════════════════════════════════════════════════════╗
-  ║  READMEAI v2.3 — AI-TO-AI PROJECT CONTEXT FILE                     ║
+  ║  READMEAI v2.4 — AI-TO-AI PROJECT CONTEXT FILE                     ║
   ║  Written by AI. Read by AI. Zero human dependency.                 ║
   ║  Purpose: eliminate project re-scanning, enforce structure,        ║
   ║  maintain code quality, security, and semantic consistency.        ║
@@ -27,7 +27,7 @@
 1. Read this file completely. This is the only mandatory full read per session.
 2. Load CURRENT SESSION STATE. Resume without asking the user to recap.
 3. Verify STRUCTURE MAP against the task. Update stale entries at session end, not now.
-4. **First-time setup only** (sections blank): scan the project once, fill every section, ask only for what cannot be inferred. Never repeat this scan.
+4. **First-time setup only** (sections blank): scan the project once, detect skills, assemble ecosystem, fill every section, ask only for what cannot be inferred. Never repeat this scan.
 
 ### Session end sequence — mandatory, silent, no user prompt needed
 1. Overwrite CURRENT SESSION STATE with live work state.
@@ -82,6 +82,109 @@ _AI: Non-obvious rules that govern behavior. The kind that causes bugs when unkn
 ### Assumptions
 _AI: Things assumed true that, if wrong, would require rethinking the approach._
 - —
+
+---
+
+## 🧠 SKILLS & ECOSYSTEM
+
+> **First-time setup: scan the project, detect every skill in use, then assemble the ecosystem.
+> Each skill contributes structure, conventions, security rules, dependencies, and tooling.
+> The sum of all active skills defines the complete project configuration.**
+
+### How skill detection works
+
+1. **Read config files** — package.json, pyproject.toml, go.mod, Cargo.toml, Gemfile, composer.json, requirements.txt, CMakeLists.txt, etc.
+2. **Identify every skill present** using the detection heuristics below.
+3. **Load each skill's contribution** to STRUCTURE MAP, CONVENTIONS, TECH STACK, and all other sections.
+4. **Merge overlapping rules** — if two skills define a `controllers/` folder, merge their rules.
+5. **Present the assembled ecosystem** to the user and confirm before proceeding.
+
+### Skills manifest
+
+> _Each skill defines: what it detects, what structure it adds, conventions, security rules, and ecosystem defaults.
+> Skills are designed to compose — multiple skills can be active in one project._
+
+| Skill | Detected by | Adds structure | Adds conventions | Adds security |
+|-------|------------|---------------|-----------------|--------------|
+| **node-express** | `package.json` has `express` dependency | `src/controllers/`, `src/models/`, `src/routes/`, `src/middleware/`, `src/services/` | camelCase files, MVC pattern, async/await, error middleware | JWT middleware, helmet, CORS, rate limiting |
+| **node-nest** | `package.json` has `@nestjs/core` | `src/modules/`, `src/modules/*/controller.ts`, `src/modules/*/service.ts`, `src/modules/*/module.ts` | PascalCase files, decorator pattern, DTOs, modules | Guards, pipes, interceptors, JWT auth module |
+| **react** | `package.json` has `react` | `src/components/`, `src/hooks/`, `src/pages/`, `src/context/`, `src/utils/` | PascalCase components, co-located CSS modules, custom hooks | Input sanitization, XSS prevention, CSP headers |
+| **react-native** | `package.json` has `react-native` | `src/screens/`, `src/navigation/`, `src/components/`, `src/hooks/`, `android/`, `ios/` | PascalCase screens, platform-specific files (`.ios.tsx`, `.android.tsx`) | Secure storage, certificate pinning, deep link validation |
+| **next** | `package.json` has `next` | `app/` or `pages/`, `app/api/`, `components/`, `lib/`, `public/` | File-based routing, server/client components, RSC conventions | Server actions validation, middleware auth, API route protection |
+| **vue** | `package.json` has `vue` | `src/components/`, `src/views/`, `src/store/`, `src/router/`, `src/composables/` | PascalCase SFCs, composables, pinia stores, vue-router | Route guards, input sanitization, CSP |
+| **angular** | `package.json` has `@angular/core` | `src/app/modules/`, `src/app/components/`, `src/app/services/`, `src/app/guards/` | PascalCase classes, service DI pattern, NgModules, standalone | Auth guards, HTTP interceptors, XSS sanitization |
+| **django** | `requirements.txt` or `Pipfile` has `django` | `project/`, `apps/*/models.py`, `apps/*/views.py`, `apps/*/urls.py`, `apps/*/serializers.py` | snake_case files, Django REST pattern, model inheritance | CSRF, XSS, SQL injection (ORM), permission classes |
+| **fastapi** | `requirements.txt` or `pyproject.toml` has `fastapi` | `app/`, `app/api/`, `app/models/`, `app/schemas/`, `app/core/`, `app/db/` | snake_case files, Pydantic schemas, dependency injection | OAuth2 middleware, CORS, input validation via Pydantic |
+| **flask** | `requirements.txt` or `Pipfile` has `flask` | `app/`, `app/routes/`, `app/models/`, `app/templates/`, `app/static/` | snake_case files, Flask blueprints, app factory pattern | Flask-Login, CSRFProtect, SQL injection prevention |
+| **spring-boot** | `pom.xml` or `build.gradle` has `spring-boot` | `src/main/java/../controller/`, `service/`, `repository/`, `model/`, `config/`, `security/` | PascalCase classes, annotation-driven config, layered architecture | Spring Security, method-level security, OAuth2 resource server |
+| **go** | `go.mod` present | `cmd/`, `internal/`, `pkg/`, `api/`, `migrations/` | snake_case files, Go package conventions, interface-based DI | JWT middleware, TLS config, SQL injection prevention |
+| **rust** | `Cargo.toml` present | `src/main.rs`, `src/lib.rs`, `src/bin/`, `src/modules/`, `tests/`, `benches/` | snake_case files, module per concern, Result/Option pattern | Memory safety via ownership, secure crypto via `ring` |
+| **php-laravel** | `composer.json` has `laravel/framework` | `app/Http/Controllers/`, `app/Models/`, `app/Http/Middleware/`, `routes/`, `database/migrations/` | PascalCase controllers, Eloquent models, artisan commands | CSRF, XSS, Eloquent SQL injection protection, auth gates |
+| **ruby-rails** | `Gemfile` has `rails` | `app/controllers/`, `app/models/`, `app/views/`, `config/routes.rb`, `db/migrate/` | snake_case files, Rails conventions, RESTful resources | CSRF token, SQL injection via ActiveRecord, strong params |
+| **flutter** | `pubspec.yaml` has `flutter` | `lib/`, `lib/screens/`, `lib/widgets/`, `lib/models/`, `lib/services/`, `lib/providers/` | PascalCase widgets, Dart conventions, BLoC/Provider pattern | Secure storage, certificate pinning, input validation |
+| **svelte** | `package.json` has `svelte` | `src/lib/`, `src/routes/`, `src/components/`, `src/stores/` | PascalCase components, SvelteKit file-based routing, stores | Input sanitization, CSP, server-side validation |
+| **graphql** | `package.json` or `requirements.txt` has `graphql` | `src/graphql/schemas/`, `src/graphql/resolvers/`, `src/graphql/mutations/` | GraphQL SDL, resolver pattern, dataloader batching | Query depth limiting, auth directives, field-level permissions |
+| **docker** | `Dockerfile` or `docker-compose.yml` present | `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `docker/` | Multi-stage builds, compose services, health checks | No secrets in images, non-root user, image scanning |
+| **kubernetes** | `k8s/` or `deploy/` has YAML manifests | `k8s/`, `k8s/base/`, `k8s/overlays/`, `helm/` | Kustomize or Helm chart structure, namespaced resources | Network policies, pod security contexts, secrets via External Secrets |
+| **database-postgres** | Config, `package.json` or `requirements.txt` has `pg`/`psycopg2`/`postgres` | `migrations/`, `seeds/`, `db/` | SQL migration files, seed scripts, connection pooling | Parameterized queries only, connection encryption, row-level security |
+| **database-mongo** | Config, `package.json` or `requirements.txt` has `mongoose`/`mongodb`/`pymongo` | `src/models/`, `migrations/`, `seeds/` | Mongoose/MongoEngine schemas, aggregation pipelines | Input sanitization, NoSQL injection prevention, field-level encryption |
+| **database-prisma** | `package.json` or `schema.prisma` has `prisma` | `prisma/schema.prisma`, `prisma/migrations/`, `src/repositories/` | Prisma schema, repository pattern, migration workflow | Parameterized queries, row-level access, field encryption |
+| **database-redis** | Config or dependency file has `redis` | `src/cache/`, `src/queues/` | Redis connection pooling, cache key conventions | TLS for Redis, auth token, key prefixing |
+| **testing-cypress** | `package.json` has `cypress` | `cypress/e2e/`, `cypress/fixtures/`, `cypress/support/` | Page object model, custom commands, fixture-driven tests | Test isolation, no real auth tokens in fixtures |
+| **testing-playwright** | `package.json` has `@playwright/test` | `e2e/`, `e2e/fixtures/`, `e2e/pages/` | Page object model, test fixtures, parallel execution | Test isolation, no real auth tokens |
+| **testing-vitest** | `package.json` has `vitest` | `src/__tests__/`, `src/__mocks__/` | In-source testing, mock factory pattern, coverage thresholds | No secrets in tests, isolated test DB |
+| **testing-jest** | `package.json` has `jest` | `tests/unit/`, `tests/__mocks__/` | `[name].test.js` mirroring src structure, mock factories | No secrets in tests, isolated test DB |
+| **testing-pytest** | `requirements.txt` or `pyproject.toml` has `pytest` | `tests/`, `tests/conftest.py`, `tests/fixtures/` | Function-based tests, conftest fixtures, parametrize | No secrets in tests, isolated test DB |
+| **ci-github** | `.github/workflows/` has YAML files | `.github/workflows/`, `.github/actions/` | CI/CD pipeline conventions, reusable workflows | No secrets in logs, OIDC for cloud auth |
+| **ci-gitlab** | `.gitlab-ci.yml` present | `.gitlab-ci.yml`, `.gitlab/` | CI/CD stages, caching, artifact conventions | No secrets in logs, protected variables |
+| **mobile-ios** | `*.xcodeproj` or `Package.swift` has iOS config | `Sources/`, `Sources/Models/`, `Sources/Views/`, `Sources/Controllers/`, `Sources/Services/` | Swift conventions, MVVM pattern, SwiftUI/UIKit separation | Keychain storage, certificate pinning, app transport security |
+| **mobile-android** | `build.gradle` or `build.gradle.kts` present | `app/src/main/java/`, `res/`, `app/src/main/res/` | Kotlin conventions, MVVM with ViewModel, Jetpack Compose or XML | Encrypted shared prefs, certificate pinning, runtime permissions |
+| **terraform** | `*.tf` files present | `terraform/`, `terraform/environments/`, `terraform/modules/` | HCL conventions, module structure, remote state | No secrets in state, IAM least privilege, remote state encryption |
+| **python** | `requirements.txt`, `setup.py`, `pyproject.toml`, or `Pipfile` present | `src/`, `src/models/`, `src/services/`, `src/utils/`, `notebooks/` | snake_case, type hints, virtual env, entry point | Input validation, dependency auditing, env var isolation |
+| **cli** | `package.json` has `bin` or `argparse`/`click`/`commander` in deps | `bin/`, `src/commands/`, `src/utils/` | CLI-specific conventions, subcommand pattern, help text | Input validation, no secrets in output, safe subprocess calls |
+
+### Ecosystem assembly logic
+
+_AI: Use this process to assemble the project ecosystem from detected skills:_
+
+```text
+for each skill in detected_skills:
+    apply skill.structure_map   → merge into STRUCTURE MAP
+    apply skill.conventions     → merge into CONVENTIONS
+    apply skill.tech_stack      → merge into TECH STACK
+    apply skill.dependencies    → merge into DEPENDENCIES
+    apply skill.security        → merge into SECURITY
+    apply skill.testing         → merge into TESTING STRATEGY
+    apply skill.environment     → merge into ENVIRONMENT
+
+after assembly:
+    resolve conflicts (two skills defining the same directory)
+    remove overwritten defaults
+    present assembled ecosystem to user for confirmation
+```
+
+### Skill conflict resolution
+
+_AI: When two active skills define overlapping rules:_
+
+| Conflict type | Resolution |
+|-------------|-----------|
+| Same directory, different rules | Merge rules, flag to user if incompatible |
+| Same convention, different format | Use the more specific skill's convention |
+| Same dependency, different version | Pin to the higher version, flag for user review |
+| Security rules overlap | Combine all — security is additive, never reductive |
+| Testing strategy differs | Combine frameworks, separate test directories |
+
+### Manual skill overrides
+
+_AI: If the user mentions a technology not auto-detected, add it here._
+_Format: `+skill-name` to add, `-skill-name` to explicitly exclude._
+
+```text
+# Example:
+# +react
+# -database-mongo
+```
 
 ---
 
@@ -714,23 +817,30 @@ inside the test function body or use jest's setupFiles.
 
   You are reading this on a new project. Do this ONCE, never again.
 
-  STEP 1 — Scan the project (one-time only)
-    Read config files (package.json, pyproject.toml, go.mod, etc.)
+  STEP 1 — Detect skills (one-time only)
+    Read all config files (package.json, pyproject.toml, go.mod, Cargo.toml,
+    Gemfile, composer.json, requirements.txt, Dockerfile, etc.)
     List root-level files and directories.
-    Identify stack, architecture pattern, and entry points.
-    Infer everything you can. Do not ask the user yet.
+    For each skill detected in the SKILLS & ECOSYSTEM manifest, activate it.
+    Load each active skill's structure, conventions, security, and defaults.
 
-  STEP 2 — Fill all inferable sections
-    PROJECT IDENTITY, TECH STACK, STRUCTURE MAP (replace reference tree
-    with actual tree), SYMBOL INDEX, CONVENTIONS (adapt to stack),
-    SECURITY (auth method, sensitive fields), DEPENDENCIES (from lock file),
-    ENVIRONMENT. Mark unknowns with "—".
+  STEP 2 — Assemble ecosystem
+    Merge all active skill contributions into a unified project config.
+    Resolve any conflicts between skills (see conflict resolution table).
+    Generate the initial STRUCTURE MAP, CONVENTIONS, TECH STACK, SECURITY,
+    DEPENDENCIES, TESTING STRATEGY, and ENVIRONMENT from the assembled skills.
+    Infer everything you can from the codebase. Do not ask the user yet.
 
-  STEP 3 — Ask only what cannot be inferred (one message, numbered list)
+  STEP 3 — Fill remaining inferable sections
+    PROJECT IDENTITY, SYMBOL INDEX (scan entry points and key symbols),
+    API & DATA CONTRACTS (from route/schema files). Mark unknowns with "—".
+
+  STEP 4 — Ask only what cannot be inferred (one message, numbered list)
     PROJECT CONTEXT — purpose, goals, domain rules, constraints.
+    Confirm SKILLS manifest — show detected skills, ask if any are missing.
     Never ask one question at a time.
 
-  STEP 4 — Confirm and lock
+  STEP 5 — Confirm and lock
     Show filled file. Ask: "Does this match the project?"
     Once confirmed, this is the source of truth. Stop scanning.
 
