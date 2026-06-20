@@ -211,7 +211,7 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## . QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
+            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## .* QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
           }
         ]
       }

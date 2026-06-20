@@ -10,7 +10,7 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
-[![Version](https://img.shields.io/badge/version-3.2-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-3.3-brightgreen.svg)](.readmeAI)
 [![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](AGENTS.md)
 [![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)

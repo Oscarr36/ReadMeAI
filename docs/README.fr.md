@@ -1,254 +1,160 @@
 <div align="center">
 
-<img src="../img/Icon.png" alt="ReadMeAI" width="300" />
+<img src="../img/Icon.png" alt="ReadMeAI" width="260" />
 
+# ReadMeAI
 
-<p><strong>Un fichier de contexte IA auto-mis à jour qui maintient chaque session parfaitement orientée — sans réexplications, sans dérive de contexte, sans structure chaotique.</strong></p>
+**Les outils de codage IA sont aveugles au contexte. Ceci corrige ça.**
 
+Un fichier. Se lit lui-même au démarrage de session. Se met à jour à la fin. Fonctionne avec tous les outils IA.
+
+[![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
+[![Version](https://img.shields.io/badge/version-3.3-brightgreen.svg)](../.readmeAI)
+[![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](../AGENTS.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../LICENSE)
-[![Version](https://img.shields.io/badge/version-2.3-brightgreen.svg)](../.readmeAI)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](../CONTRIBUTING.md)
-[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](../.readmeAI)
 
-**Langues :** [English](../README.md) · [Español](README.es.md) · [Português](README.pt.md) · [Français](README.fr.md)
+**Langues :** [English](../README.md) · [Español](README.es.md) · [Português](README.pt.md) · Français
 
-**Compatible avec :** Claude · ChatGPT · GitHub Copilot · Gemini · Cursor · tout assistant IA
-
----
-
-### ↓ Téléchargez-le en une seule commande
-
-```bash
-# bash / mac / linux
-curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
-```
-
-```powershell
-# PowerShell / Windows
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
-```
+**Compatible avec :** Claude Code · Cursor · Windsurf · GitHub Copilot · Gemini CLI · Aider · Continue · tout outil qui lit AGENTS.md
 
 </div>
 
 ---
 
+```bash
+# macOS / Linux
+curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
+
+# Windows PowerShell
+irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
+```
+
+C'est tout. Le script télécharge `.readmeAI`, analyse votre projet et connecte le bon fichier pour chaque outil IA détecté.
+
+---
+
 ## Le problème
 
-Vous démarrez un projet avec un assistant IA. Ça se passe bien. Vous fermez la session.
+Vous ouvrez votre outil de codage IA. La session démarre. L'IA a tout oublié.
 
-**Le lendemain :** l'IA n'a aucune idée de ce que vous avez construit, des décisions que vous avez prises, des conventions établies ou de l'endroit où vous vous étiez arrêté. Vous passez 10 minutes à tout réexpliquer. Le CSS se retrouve dans les templates HTML. La logique métier fuit dans les gestionnaires de routes. Les valeurs de config sont hardcodées. Le projet devient un chaos.
+**Elle ne sait pas :**
+- Ce que vous avez construit la semaine dernière
+- La règle métier qui cause un bug subtil quand elle est ignorée
+- La décision architecturale prise trois sessions plus tôt et pourquoi
+- Où va le code et où il en est maintenant
 
-L'IA est puissante. **Le problème, c'est le contexte — il se réinitialise.**
+Vous expliquez à nouveau. 8 messages. 10 minutes. La même conversation qu'avant.
+
+**Ça arrive à chaque session.**
 
 ---
 
 ## La solution
 
-Déposez un fichier `.readmeAI` à la racine de n'importe quel projet. Un seul fichier que l'IA lit entièrement avant de faire quoi que ce soit, et qu'elle met à jour silencieusement à la fin de chaque session.
+`.readmeAI` est un fichier de contexte de projet structuré qui :
 
-| Sans ReadMeAI | Avec ReadMeAI |
-|--------------|--------------|
-| Réexpliquer l'architecture à chaque session | L'IA charge le contexte complet en secondes |
-| L'IA invente sa propre structure | Règles de dossiers imposées, à chaque fois |
-| Nommage et style incohérents | Conventions verrouillées et appliquées |
-| Décisions et historique perdus | Journal des décisions croît automatiquement |
-| « Où en étions-nous ? » | L'IA reprend depuis l'exact dernier pas |
-| L'IA lit chaque fichier pour trouver des choses | Index de symboles → saut direct vers fichier:ligne |
+1. **Se lit automatiquement au démarrage** — sans prompt, sans rappel, avant que l'IA écrive quoi que ce soit
+2. **Capture ce que le code ne dit pas** — règles métier, pièges, décisions architecturales, travail en cours
+3. **Se met à jour silencieusement à la fin** — état de session, décisions, index des symboles
+4. **Fonctionne avec tous les outils IA** — génère AGENTS.md, CLAUDE.md, .cursorrules, .windsurfrules, GEMINI.md et plus
+
+**Le résultat :** "Continuez où nous en étions" fonctionne vraiment. À chaque fois.
 
 ---
 
-## Ce que contient le template
+## Ce qui est connecté automatiquement
 
-Le fichier `.readmeAI` est organisé en **23 sections**, chacune maintenue automatiquement par l'IA :
+| Fichier créé | Lu par | Coût en tokens |
+|--------------|--------|----------------|
+| `AGENTS.md` | Cursor, Windsurf, Copilot agent, 30+ outils | une fois par session |
+| `GEMINI.md` | Gemini CLI | une fois par session |
+| `.claude/CLAUDE.md` | Claude Code | une fois par session |
+| `.cursor/rules/*.mdc` | Cursor (moderne, avec scope) | JIT — seulement si pertinent |
+| `.cursorrules` | Cursor (legacy) | une fois par session |
+| `.windsurfrules` | Windsurf | une fois par session |
+| `.github/copilot-instructions.md` | GitHub Copilot | une fois par session |
+| `.aider.conf.yml` | Aider | à chaque exécution |
+| `.continue/rules/readmeai.md` | Continue | une fois par session |
+
+---
+
+## Ce qu'il y a dans `.readmeAI`
 
 ```
-⚙️  AI PROTOCOL          — règles de session, efficacité des tokens, quality gate
-🧭  PROJECT CONTEXT       — but, objectifs, contraintes, règles métier
-📋  PROJECT IDENTITY      — nom, version, phase, type, repo
-🛠  TECH STACK            — chaque couche avec ses versions
-🏗  STRUCTURE MAP         — arborescence annotée (remplace le scan du filesystem)
-🔍  SYMBOL INDEX          — chaque fonction/classe clé à son fichier:ligne exact
-📐  CONVENTIONS           — nommage de fichiers, CSS, JS, git, politique de commentaires
-✅  CODE QUALITY          — checklist pré-livraison, sémantique de noms, patterns interdits
-🔌  API & DATA CONTRACTS  — endpoints, APIs externes, modèles de données, vars d'environnement
-🔐  SECURITY              — modèle d'auth, données sensibles, surface d'attaque
-⚡  PERFORMANCE           — SLAs, goulots d'étranglement, stratégie de cache, règles BD
-🧪  TESTING STRATEGY      — carte de couverture, règles de mocks, fixtures, exigences CI
-🚨  ERROR HANDLING        — modèle de propagation, format de réponse, règles de log
-📦  DEPENDENCIES          — packages critiques, conflits, politique de mise à jour
-🎯  CURRENT SESSION STATE — snapshot en direct : objectif, dernière action, prochain pas
-📚  DECISIONS LOG         — chaque décision architecturale avec son raisonnement
-🐛  KNOWN ISSUES          — bugs, contournements, dette technique
-✅  PROGRESS              — terminé, en cours, backlog
-🔗  CROSS-PROJECT REFS    — liens vers les projets frères
-🔧  ENVIRONMENT           — outils, séquence de setup, commandes courantes
-🗒  AI NOTES              — bloc-notes libre pour observations non évidentes
-📜  CHANGE LOG            — historique session par session
+⚡  QUICK REFERENCE   — 5 lignes. Reprise à chaud en <50 tokens.
+⚙️  AI PROTOCOL       — quand lire quoi, règles de début/fin de session
+📋  PROJECT IDENTITY  — stack, commandes, dépôt
+🧠  DOMAIN RULES      — règles qui causent des bugs quand ignorées (valeur maximale)
+🏗  STRUCTURE MAP     — arborescence annotée — remplace le scan du système de fichiers
+🔍  SYMBOL INDEX      — symboles clés avec leur rôle
+📐  CONVENTIONS       — nommage, git, commentaires
+✅  CODE QUALITY      — checklist pré-output + motifs interdits
+🎯  SESSION STATE     — point de reprise : objectif, dernière action, prochaine étape
+📚  DECISIONS LOG     — décisions architecturales (ajout uniquement, jamais supprimé)
+✅  PROGRESS          — en cours, backlog, terminé
+🐛  KNOWN ISSUES      — bugs et dette technique
+🗒  AI NOTES          — pièges [!] · gotchas [~] · questions ouvertes [?]
 ```
 
 ---
 
-## Comment ça fonctionne
+## Commandes de setup
 
-```
-Session 1 :
-  Vous → « Lis le .readmeAI et construisons un système d'auth »
-  IA   → lit le fichier, charge contexte, structure, conventions, règles de sécurité
-  IA   → construit l'auth en suivant exactement l'architecture définie
-  IA   → met à jour change log, progression, état de session — silencieusement
-
-Session 2 (quelques jours plus tard) :
-  Vous → « Lis le .readmeAI et continue »
-  IA   → contexte complet restauré instantanément
-  IA   → ouvre le fichier auth directement à la bonne ligne (index de symboles)
-  IA   → continue sans aucune réexplication
-```
-
-> Le fichier grandit avec le projet. Plus il y a de sessions, plus le contexte est riche.
-
----
-
-## Structure imposée
-
-L'IA impose une stricte séparation des responsabilités. Chaque répertoire a des règles explicites sur ce qu'il **possède** et ce qu'il **ne doit pas contenir** :
-
-```
-project/
-├── .readmeAI               ← Contexte IA. Ne jamais déplacer. Ne jamais supprimer.
-├── config/                 ← Toute la config. Jamais dans src/.
-├── src/
-│   ├── controllers/        ← Logique métier uniquement. Pas de queries BD.
-│   ├── models/             ← Schémas de données + queries. Pas d'HTTP.
-│   ├── views/              ← Templates. Pas de styles ni logique inline.
-│   ├── routes/             ← Définitions de routes uniquement. Délèguent aux controllers.
-│   ├── middleware/         ← Auth, validation, logging.
-│   └── services/           ← APIs externes, utilitaires partagés.
-├── public/
-│   ├── css/                ← Toutes les feuilles de style. Jamais dans views.
-│   ├── js/                 ← Côté client uniquement. Jamais mélangé avec le serveur.
-│   └── assets/
-└── tests/
-    ├── unit/               ← Miroir de la structure src/.
-    └── integration/
-```
-
-Tout fichier placé en dehors de cette structure est signalé immédiatement.
-
----
-
-## Qualité de code intégrée
-
-Chaque livraison de code est vérifiée contre une checklist intégrée avant d'être présentée :
-
-- Responsabilité unique par fonction
-- Pas d'imbrication plus profonde que 3 niveaux
-- Pas de valeurs hardcodées — toujours des constantes ou de la config
-- Sémantique de nommage imposée (fonctions = verbes, booléens = `is/has/can`, etc.)
-- Patterns interdits bloqués : `eval`, SQL concaténé, catch vides, secrets dans le code
-- Règle de cohérence : si un pattern existe dans le codebase, il est répliqué exactement
-
----
-
-## Efficacité des tokens
-
-Le **Symbol Index** est la fonctionnalité centrale d'économie de tokens. Au lieu de scanner le projet à chaque session, l'IA enregistre chaque symbole clé à son `fichier:ligne` exact :
-
-```
-Besoin de modifier le flux de login ?
-→ Cherchez « login » dans le Symbol Index
-→ Lisez uniquement src/auth/login.js:23-67
-→ Terminé. Pas de glob. Pas de scan.
-```
-
-Après le premier setup, l'IA ne relit jamais le projet en entier.
-
----
-
-## Démarrage rapide
-
-**1. Copiez le template à la racine de votre projet**
 ```bash
-curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
-```
-
-**2. Demandez à votre IA de le configurer** *(une seule fois)*
-> « Lis le fichier `.readmeAI`. Scanne le projet, remplis tout ce que tu peux inférer, puis demande-moi seulement ce que tu ne peux pas déterminer. »
-
-**3. Commencez à construire**
-> « Lis le `.readmeAI` et faisons [tâche]. »
-
-**4. Reprenez à tout moment**
-> « Lis le `.readmeAI` et continue là où on s'est arrêtés. »
-
-L'IA met à jour le fichier silencieusement à la fin de chaque session. Vous n'avez jamais besoin de le demander.
-
----
-
-## Prompts recommandés
-
-```
-Premier setup :
-« Lis le fichier .readmeAI à la racine du projet. Scanne le projet,
-remplis toutes les sections que tu peux inférer, puis demande-moi
-seulement ce que tu ne peux pas déterminer du code. »
-
-Chaque session suivante :
-« Lis le .readmeAI et continue là où on s'est arrêtés. »
-
-Tâche spécifique :
-« Lis le .readmeAI puis [tâche]. Suis l'architecture,
-les conventions et les règles de qualité définies dans le fichier. »
+bash setup.sh                # télécharge .readmeAI + détecte les outils IA
+bash setup.sh --all          # connecte TOUTES les intégrations
+bash setup.sh --detect       # scanne le projet et pré-remplit TECH STACK depuis git
+bash setup.sh --validate     # vérifie que .readmeAI est synchronisé
+bash setup.sh --update       # rafraîchit TECH STACK après ajout de dépendances
+bash setup.sh --all --detect # tout d'un coup
 ```
 
 ---
 
-## Espaces de travail multi-projets
+## Après le setup
 
-Chaque projet a son propre `.readmeAI`. Référencez-les croisés et l'IA les lira tous avant de répondre aux questions couvrant plusieurs projets :
+**Première fois :**
+> *"Détecte mon stack, remplis ce que tu peux, demande-moi seulement ce que tu ne peux pas inférer."*
 
-```markdown
-## 🔗 RÉFÉRENCES CROISÉES
-| Alias  | Emplacement   | Relation                        |
-|--------|---------------|---------------------------------|
-| api    | ../my-api     | Backend de ce frontend          |
-| shared | ../shared-lib | Composants + utilitaires communs|
-```
+**Chaque session après :**
+> *"Continuez où nous en étions."*
 
 ---
 
-## Principes de conception
+## ReadMeAI vs alternatives
 
-| Principe | Ce que ça signifie |
-|----------|-------------------|
-| **Un fichier, contexte complet** | Pas de docs éparpillés, pas de wikis, pas de Notion. Un fichier que l'IA trouve toujours. |
-| **Ajouter, ne pas écraser** | L'historique est permanent. Le fichier ne fait que grandir. |
-| **Structure avant le code** | Les conventions définies dès le départ. C'est l'IA qui les impose, pas vous. |
-| **La réalité prime** | Le code contredit le fichier ? Mettez le fichier à jour. Le codebase est toujours la source de vérité. |
-| **Dépendance humaine zéro** | Une IA froide lisant ce fichier seule doit pouvoir continuer sans poser une seule question. |
-| **Efficacité des tokens** | Symbol Index + Structure Map remplacent entièrement le scan du filesystem. |
-
----
-
-## Feuille de route
-
-- [ ] CLI `readmeia init` — scaffold d'un projet avec la structure complète en une commande
-- [ ] Extension VS Code — coloration syntaxique et snippets pour `.readmeAI`
-- [ ] Variantes de template — SPA, REST API, monorepo fullstack, outil CLI
-- [ ] Mode workspace — lire plusieurs fichiers `.readmeAI` en une session IA
-- [ ] Script de validation — vérifie que la structure du projet correspond à la spec
+| | ReadMeAI | claude-mem | mem0 |
+|--|--|--|--|
+| **Outils IA** | Tous (Cursor, Copilot, Windsurf, Gemini...) | Claude Code seulement | Claude Code seulement |
+| **Setup** | `curl ... \| bash` | npm install + MCP | npm install + clé API |
+| **Stockage** | Texte simple | SQLite + vector DB | API Cloud |
+| **Dépendances** | Aucune | Node.js + Chroma | Node.js + internet |
+| **Règles métier** | Oui — vous écrivez des règles qui remplacent l'IA | Non | Non |
+| **Git-friendly** | Oui — commit, diff, revue en PR | Non (binaire) | Non (cloud) |
+| **Partage en équipe** | Oui — un fichier pour toute l'équipe | Non (par utilisateur) | Non |
+| **Fonctionne hors ligne** | Oui | Oui | Non |
 
 ---
 
-## Contribuer
+## Roadmap
 
-C'est une spécification ouverte. Si vous l'utilisez et l'améliorez, ouvrez une PR.
-
-Lisez [CONTRIBUTING.md](../CONTRIBUTING.md) pour les directives.
+- [x] Support du standard universel AGENTS.md
+- [x] GEMINI.md (Gemini CLI)
+- [x] Règles .mdc avec scope pour Cursor (chargement JIT)
+- [x] `--detect` avec scan de l'historique git
+- [x] Validation avec GitHub Actions
+- [x] QUICK REFERENCE pour reprises à chaud
+- [x] Hooks de cycle de vie Claude Code
+- [ ] CLI `readmeai` (npm/pip install)
+- [ ] Extension VS Code
+- [ ] Variantes de template — SPA · REST API · monorepo · CLI
 
 ---
 
 <div align="center">
 
-[MIT](../LICENSE) — utilisez-le, forkez-le, adaptez-le.
+Si ReadMeAI vous fait gagner du temps, **[laissez une étoile ⭐](https://github.com/Oscarr36/ReadMeAI/stargazers)**
+
+[Licence MIT](../LICENSE) — utilisez-le, forkez-le, adaptez-le.
 
 </div>
