@@ -18,7 +18,7 @@
 ### Session start
 1. Read this file completely.
 2. Load SESSION STATE — resume without asking the user to recap.
-3. On first-time setup: scan project once, fill all sections, ask only what cannot be inferred. Never repeat this scan.
+3. **First-time setup** (SESSION STATE is blank): execute the FIRST-TIME SETUP block at the bottom of this file. Fill every section. Ask only what cannot be inferred. Never repeat this scan after first setup.
 
 ### Session end — silent, no user prompt
 1. Overwrite SESSION STATE with current work snapshot.
@@ -275,28 +275,87 @@ Entity: —
 | — | — |
 
   ══════════════════════════════════════════════════════════════════════
-  FIRST-TIME SETUP GUIDE
+  FIRST-TIME SETUP — run this block once, never again.
+  Triggered when: SESSION STATE is blank.
   ══════════════════════════════════════════════════════════════════════
 
-  STEP 1 — Scan the project
-    Read package.json / pyproject.toml / go.mod / Cargo.toml / etc.
-    List root-level files. Identify stack, entry points, test runner, build tool.
-    For ecosystem and skill-specific rules, run: bash setup.sh --detect
+  STEP 1 — Detect stack
+    Read: package.json, pyproject.toml, go.mod, Cargo.toml, Gemfile,
+    composer.json, requirements.txt, Dockerfile, pubspec.yaml.
+    Identify every technology in use. Then load its defaults from below.
 
-  STEP 2 — Fill this file
-    PROJECT IDENTITY — infer from config files
-    STRUCTURE MAP — scan, annotate every important file
-    SYMBOL INDEX — key functions/classes with purpose (no line numbers)
-    DOMAIN RULES — ask the user: what would cause a bug if I didn't know it?
-    TECH CONVENTIONS — infer from existing code style
+  STEP 2 — Load stack defaults (structure + conventions + security)
 
-  STEP 3 — Ask only what cannot be inferred (one message)
-    Domain rules, business constraints, goals, current objective.
+    node-express   → src/controllers/ src/models/ src/routes/ src/middleware/ src/services/
+                     camelCase files · MVC · async/await · JWT + helmet + CORS + rate-limit
+    node-nest      → src/modules/*/controller.ts .service.ts .module.ts
+                     PascalCase · decorators · DTOs · Guards + Pipes + JWT
+    react          → src/components/ src/hooks/ src/pages/ src/context/ src/utils/
+                     PascalCase components · co-located CSS modules · sanitize inputs
+    next           → app/ or pages/ · app/api/ · components/ · lib/ · public/
+                     file-based routing · RSC · server actions validation · middleware auth
+    vue            → src/components/ src/views/ src/store/ src/router/ src/composables/
+                     PascalCase SFCs · pinia · vue-router · route guards
+    angular        → src/app/modules/ components/ services/ guards/
+                     PascalCase · DI · NgModules · HTTP interceptors · XSS sanitization
+    svelte         → src/lib/ src/routes/ src/components/ src/stores/
+                     PascalCase · SvelteKit routing · input sanitization
+    django         → apps/*/models.py views.py urls.py serializers.py
+                     snake_case · DRF · CSRF + XSS + ORM (no raw SQL) + permission classes
+    fastapi        → app/api/ app/models/ app/schemas/ app/core/ app/db/
+                     snake_case · Pydantic schemas · OAuth2 + CORS + input validation
+    flask          → app/routes/ app/models/ app/templates/ app/static/
+                     snake_case · blueprints · app factory · Flask-Login + CSRFProtect
+    go             → cmd/ internal/ pkg/ api/ migrations/
+                     snake_case files · interface-based DI · JWT middleware · TLS · no raw SQL
+    rust           → src/main.rs src/lib.rs src/bin/ src/modules/ tests/ benches/
+                     snake_case · Result/Option · ownership safety · ring for crypto
+    spring-boot    → src/main/java/../controller/ service/ repository/ model/ config/ security/
+                     PascalCase · annotation-driven · Spring Security · OAuth2
+    php-laravel    → app/Http/Controllers/ app/Models/ routes/ database/migrations/
+                     PascalCase controllers · Eloquent · CSRF + XSS + auth gates
+    ruby-rails     → app/controllers/ app/models/ app/views/ config/routes.rb db/migrate/
+                     snake_case · RESTful · CSRF token · strong params · ActiveRecord
+    flutter        → lib/screens/ lib/widgets/ lib/models/ lib/services/ lib/providers/
+                     PascalCase widgets · BLoC/Provider · secure storage · cert pinning
+    react-native   → src/screens/ src/navigation/ src/components/ src/hooks/
+                     PascalCase · platform files (.ios.tsx .android.tsx) · secure storage
+    svelte         → src/lib/ src/routes/ src/components/ src/stores/
+    graphql        → src/graphql/schemas/ resolvers/ mutations/
+                     SDL · dataloader · query depth limit · auth directives
+    docker         → Dockerfile .dockerignore docker-compose.yml docker/
+                     multi-stage builds · non-root user · no secrets in images
+    database-pg    → migrations/ seeds/ db/ · parameterized queries only · row-level security
+    database-mongo → src/models/ migrations/ seeds/ · sanitize input · no NoSQL injection
+    database-prisma→ prisma/schema.prisma prisma/migrations/ src/repositories/
+    database-redis → src/cache/ src/queues/ · TLS · auth token · key prefixing
+    testing-jest   → tests/unit/ tests/__mocks__/ · mirror src/ · no secrets in tests
+    testing-vitest → src/__tests__/ src/__mocks__/ · in-source testing · coverage thresholds
+    testing-pytest → tests/ tests/conftest.py tests/fixtures/ · parametrize · isolated DB
+    testing-playwright → e2e/ e2e/fixtures/ e2e/pages/ · page object model · no real tokens
+    testing-cypress→ cypress/e2e/ cypress/fixtures/ cypress/support/ · no real auth tokens
+    ci-github      → .github/workflows/ .github/actions/ · no secrets in logs · OIDC for cloud
+    terraform      → terraform/ terraform/environments/ terraform/modules/
+                     HCL · remote state · IAM least privilege · no secrets in state
+
+  STEP 3 — Fill this file
+    PROJECT IDENTITY   — infer from config files and package name
+    STRUCTURE MAP      — scan, annotate every important file with its role
+    SYMBOL INDEX       — key functions/classes + what they do (no line numbers)
+    CONVENTIONS        — adapt to actual language; keep semantic naming rules
+    DOMAIN RULES       — ask user: "What rule would cause a bug if I didn't know it?"
+    SESSION STATE      — leave blank until end of first session
+
+  STEP 4 — Ask only what cannot be inferred (one message, numbered list)
+    - Project purpose, goals, and non-goals
+    - Domain rules and business constraints
+    - Current objective / where to start
     Never ask one question at a time.
 
-  STEP 4 — Confirm and lock
-    Show filled file. Ask: "Does this match the project?"
-    Once confirmed, stop scanning. Navigate via SYMBOL INDEX.
+  STEP 5 — Confirm and lock
+    Show the filled file. Ask: "Does this match the project?"
+    Once confirmed: stop scanning. Navigate via SYMBOL INDEX.
+    Mark first setup as complete by writing SESSION STATE.
 
   ══════════════════════════════════════════════════════════════════════
   Context powered by ReadMeAI v3.0 — https://github.com/Oscarr36/ReadMeAI
