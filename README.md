@@ -4,6 +4,8 @@
 
 <p><strong>A self-updating AI context file that keeps every session fully oriented — no re-explaining, no context drift, no messy structure.</strong></p>
 
+[![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-2.4-brightgreen.svg)](.readmeAI)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
@@ -259,6 +261,18 @@ Each project gets its own `.readmeAI`. Cross-reference related projects and the 
 
 ---
 
+## Using ReadMeAI in your project?
+
+Add this badge to your README so others discover it:
+
+```markdown
+[![ReadMeAI](https://img.shields.io/badge/context-ReadMeAI-blueviolet)](https://github.com/Oscarr36/ReadMeAI)
+```
+
+It renders as: [![ReadMeAI](https://img.shields.io/badge/context-ReadMeAI-blueviolet)](https://github.com/Oscarr36/ReadMeAI)
+
+---
+
 ## Contributing
 
 This is an open specification. If you use it and improve it, open a PR.
@@ -268,6 +282,8 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ---
 
 <div align="center">
+
+If ReadMeAI saves you time, **[leave a star](https://github.com/Oscarr36/ReadMeAI/stargazers)** — it helps others find it.
 
 [MIT](LICENSE) — use it, fork it, adapt it.
 
