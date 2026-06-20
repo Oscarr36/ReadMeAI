@@ -1,1103 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReadMeAI — AI-ready context for every project</title>
-<meta name="description" content="ReadMeAI generates perfect CLAUDE.md, .cursorrules, and Copilot context files so every AI assistant understands your codebase instantly.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ReadMeAI — AI never forgets your project</title>
+<meta name="description" content="Drop .readmeAI in any project. AI reads it first, every session. No re-explaining, no context drift. Works with Claude, ChatGPT, Copilot, Cursor, Windsurf."/>
+<meta property="og:title" content="ReadMeAI — AI never forgets your project"/>
+<meta property="og:description" content="One file. Persistent AI context. No re-explaining ever again."/>
+<meta property="og:image" content="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/Icon.png"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
+/* ─── RESET ──────────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:#000;color:#fff;font-family:'Inter',system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1}
 
+/* ─── TOKENS ─────────────────────────────────────────────────────────────── */
 :root{
-  --bg:#050508;
-  --green:#00ff88;
-  --blue:#60a5fa;
-  --purple:#a78bfa;
-  --white:#f8fafc;
-  --gray:#6b7280;
-  --border:rgba(255,255,255,.07);
-  --font:'Inter',sans-serif;
+  --green:#00e87a;
+  --green-muted:rgba(0,232,122,.12);
+  --green-glow:rgba(0,232,122,.25);
+  --blue:#3b82f6;
+  --purple:#8b5cf6;
+  --gray:#71717a;
+  --gray2:#3f3f46;
+  --border:rgba(255,255,255,.08);
+  --border-strong:rgba(255,255,255,.14);
+  --surface:rgba(255,255,255,.03);
+  --font:'Inter',system-ui,sans-serif;
   --mono:'JetBrains Mono',monospace;
-  --ease:cubic-bezier(.19,1,.22,1);
-}
-
-html{scroll-behavior:smooth}
-
-body{
-  background:var(--bg);
-  color:var(--white);
-  font-family:var(--font);
-  line-height:1.6;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-}
-
-canvas#c{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-}
-
-/* ── NAV ── */
-nav{
-  position:fixed;
-  top:0;left:0;right:0;
-  height:56px;
-  z-index:100;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 clamp(20px,5vw,72px);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid var(--border);
-  background:rgba(5,5,8,.7);
-}
-
-.nav-logo{
-  font-weight:800;
-  font-size:1rem;
-  color:var(--white);
-  text-decoration:none;
-  letter-spacing:-.02em;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.nav-logo-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--green);
-  display:inline-block;
-  box-shadow:0 0 8px var(--green);
-}
-
-.nav-links{
-  display:flex;
-  align-items:center;
-  gap:28px;
-  list-style:none;
-}
-
-.nav-links a{
-  font-size:.875rem;
-  color:var(--gray);
-  text-decoration:none;
-  transition:color .2s;
-  font-weight:500;
-}
-
-.nav-links a:hover{color:var(--white)}
-
-.nav-cta{
-  background:var(--green);
-  color:#000;
-  font-weight:700;
-  font-size:.82rem;
-  padding:7px 16px;
-  border-radius:8px;
-  text-decoration:none;
-  border:none;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  transition:box-shadow .3s var(--ease), transform .2s var(--ease);
-  letter-spacing:-.01em;
-}
-
-.nav-cta:hover{
-  box-shadow:0 0 20px rgba(0,255,136,.4), 0 0 40px rgba(0,255,136,.15);
-  transform:translateY(-1px);
-}
-
-/* ── WRAP / SECTION ── */
-.wrap{
-  max-width:1080px;
-  margin:0 auto;
-  padding:0 clamp(20px,5vw,72px);
-}
-
-section{
-  position:relative;
-  z-index:1;
-  padding:100px 0;
-}
-
-/* ── DIVIDER ── */
-.divider{
-  height:1px;
-  background:linear-gradient(90deg,transparent,var(--border),transparent);
-  position:relative;
-  z-index:1;
-}
-
-/* ── SECTION LABEL ── */
-.section-label{
-  font-size:.7rem;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  color:var(--green);
-  margin-bottom:12px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:600;
-}
-
-.section-label::before{
-  content:'';
-  display:block;
-  width:24px;
-  height:1px;
-  background:var(--green);
-  opacity:.6;
-}
-
-/* ── SECTION HEADING ── */
-.section-heading{
-  font-size:clamp(2rem,4vw,3rem);
-  font-weight:800;
-  letter-spacing:-.03em;
-  line-height:1.1;
-  color:var(--white);
-}
-
-/* ── GRADIENT TEXT ── */
-.grad{
-  background:linear-gradient(90deg,var(--green),var(--blue),var(--purple),var(--green));
-  background-size:300% 100%;
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  animation:gradShift 6s ease infinite;
-}
-
-@keyframes gradShift{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-
-/* ── WORD REVEAL ── */
-.word-wrap{
-  overflow:hidden;
-  display:inline-block;
-}
-
-.word{
-  display:inline-block;
-  animation:wordUp .9s var(--ease) both;
-}
-
-@keyframes wordUp{
-  from{transform:translateY(110%);opacity:0}
-  to{transform:translateY(0);opacity:1}
-}
-
-/* ── HERO ── */
-.hero{
-  min-height:100svh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  z-index:1;
-  padding-top:56px;
-}
-
-.hero-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  border:1px solid rgba(0,255,136,.2);
-  background:rgba(0,255,136,.05);
-  border-radius:100px;
-  padding:5px 14px;
-  font-size:.75rem;
-  color:var(--green);
-  font-weight:600;
-  margin-bottom:32px;
-  letter-spacing:.04em;
-  animation:fadeUp .8s var(--ease) .2s both;
-}
-
-.hero-badge-dot{
-  width:5px;
-  height:5px;
-  border-radius:50%;
-  background:var(--green);
-  animation:pulse 2s ease infinite;
-}
-
-@keyframes pulse{
-  0%,100%{opacity:1;transform:scale(1)}
-  50%{opacity:.4;transform:scale(.8)}
-}
-
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.hero h1{
-  font-size:clamp(3.5rem,8vw,6.5rem);
-  font-weight:900;
-  letter-spacing:-.04em;
-  line-height:1.0;
-  margin-bottom:24px;
-  color:var(--white);
-}
-
-.hero-sub{
-  font-size:1.15rem;
-  color:var(--gray);
-  max-width:500px;
-  margin:0 auto 40px;
-  line-height:1.65;
-  animation:fadeUp .8s var(--ease) 1.2s both;
-}
-
-/* ── INSTALL BOX ── */
-.install-box{
-  display:flex;
-  align-items:center;
-  background:#0a0a0a;
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:10px;
-  padding:0 4px 0 18px;
-  gap:12px;
-  margin:0 auto 20px;
-  width:fit-content;
-  max-width:100%;
-  animation:fadeUp .8s var(--ease) 1.4s both;
-}
-
-.install-prompt{
-  color:var(--green);
-  font-family:var(--mono);
-  font-size:.9rem;
-  font-weight:700;
-  user-select:none;
-}
-
-.install-cmd{
-  font-family:var(--mono);
-  font-size:.9rem;
-  color:var(--white);
-  padding:14px 0;
-  white-space:nowrap;
-}
-
-.install-copy{
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:7px;
-  color:var(--gray);
-  font-size:.75rem;
-  font-weight:600;
-  padding:6px 12px;
-  cursor:pointer;
-  transition:all .2s;
-  white-space:nowrap;
-  font-family:var(--font);
-  margin:6px 0;
-}
-
-.install-copy:hover{
-  background:rgba(255,255,255,.1);
-  color:var(--white);
-}
-
-.install-copy.copied{
-  color:var(--green);
-  border-color:rgba(0,255,136,.3);
-}
-
-/* ── COMPAT ROW ── */
-.compat{
-  font-size:.82rem;
-  color:#4b5563;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:0;
-  flex-wrap:wrap;
-  animation:fadeUp .8s var(--ease) 1.6s both;
-  margin-bottom:48px;
-}
-
-.compat span{
-  padding:0 10px;
-}
-
-.compat-sep{
-  color:#1f2937;
-  padding:0 !important;
-}
-
-/* ── HERO BUTTONS ── */
-.hero-buttons{
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  flex-wrap:wrap;
-  animation:fadeUp .8s var(--ease) 1.8s both;
-}
-
-.btn-main{
-  background:var(--green);
-  color:#000;
-  font-weight:700;
-  font-size:.9rem;
-  padding:12px 24px;
-  border-radius:9px;
-  text-decoration:none;
-  border:none;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  transition:box-shadow .3s var(--ease), transform .2s var(--ease);
-  letter-spacing:-.01em;
-}
-
-.btn-main:hover{
-  box-shadow:0 0 24px rgba(0,255,136,.4), 0 0 48px rgba(0,255,136,.12);
-  transform:translateY(-2px);
-}
-
-.btn-ghost{
-  background:transparent;
-  color:var(--white);
-  font-weight:600;
-  font-size:.9rem;
-  padding:12px 24px;
-  border-radius:9px;
-  text-decoration:none;
-  border:1px solid rgba(255,255,255,.12);
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  transition:border-color .2s, background .2s, transform .2s var(--ease);
-  letter-spacing:-.01em;
-}
-
-.btn-ghost:hover{
-  border-color:rgba(255,255,255,.25);
-  background:rgba(255,255,255,.04);
-  transform:translateY(-2px);
-}
-
-/* ── STATS BAR ── */
-.stats-bar{
-  position:relative;
-  z-index:1;
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  background:rgba(5,5,8,.5);
-}
-
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-}
-
-.stat{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:20px 16px;
-  text-align:center;
-  border-right:1px solid var(--border);
-  opacity:0;
-  transform:translateY(12px);
-  transition:opacity .5s var(--ease), transform .5s var(--ease);
-}
-
-.stat:last-child{border-right:none}
-.stat.revealed{opacity:1;transform:translateY(0)}
-
-.stat-val{
-  font-weight:700;
-  font-size:1.1rem;
-  color:var(--white);
-  letter-spacing:-.02em;
-  margin-bottom:3px;
-}
-
-.stat-lbl{
-  font-size:.75rem;
-  color:var(--gray);
-  font-weight:500;
-}
-
-/* ── TERMINAL SECTION ── */
-.terminal-section{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:80px;
-  align-items:center;
-}
-
-.terminal-text .section-heading{
-  margin-bottom:20px;
-}
-
-.terminal-text p{
-  color:var(--gray);
-  font-size:.95rem;
-  line-height:1.75;
-  margin-bottom:16px;
-}
-
-.terminal-text .highlight{
-  color:var(--white);
-  font-weight:600;
-}
-
-.t-window{
-  background:#0a0a0a;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:14px;
-  overflow:hidden;
-  box-shadow:0 40px 80px rgba(0,0,0,.7);
-}
-
-.t-titlebar{
-  height:38px;
-  background:#111;
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  padding:0 14px;
-  gap:7px;
-}
-
-.t-dot{
-  width:11px;
-  height:11px;
-  border-radius:50%;
-}
-
-.t-dot-r{background:#ff5f57}
-.t-dot-y{background:#ffbd2e}
-.t-dot-g{background:#28c840}
-
-.t-title{
-  flex:1;
-  text-align:center;
-  font-family:var(--mono);
-  font-size:.68rem;
-  color:#3a3a45;
-  font-weight:600;
-}
-
-.t-panels{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  min-height:360px;
-}
-
-.t-panel{
-  padding:16px;
-  border-right:1px solid var(--border);
-}
-
-.t-panel:last-child{border-right:none}
-
-.p-head{
-  font-size:.7rem;
-  font-weight:700;
-  font-family:var(--mono);
-  border-bottom:1px solid var(--border);
-  padding-bottom:10px;
-  margin-bottom:10px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.p-head-bad{color:#f87171}
-.p-head-good{color:var(--green)}
-
-.msg{
-  margin-bottom:8px;
-}
-
-.msg-from{
-  font-size:.62rem;
-  font-weight:700;
-  font-family:var(--mono);
-  margin-bottom:3px;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-}
-
-.msg-bub{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:7px;
-  font-family:var(--mono);
-  font-size:.73rem;
-  line-height:1.5;
-  max-width:100%;
-  word-break:break-word;
-}
-
-.from-user .msg-from{color:#93c5fd}
-.from-user .msg-bub{background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.15);color:#bfdbfe}
-
-.from-ai-bad .msg-from{color:#f87171}
-.from-ai-bad .msg-bub{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.12);color:#fca5a5}
-
-.from-ai-good .msg-from{color:var(--green)}
-.from-ai-good .msg-bub{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.12);color:#86efac}
-
-.from-sys .msg-from{color:#c084fc}
-.from-sys .msg-bub{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12);color:#d8b4fe;font-style:italic;font-size:.68rem}
-
-.panel-status{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:.65rem;
-  font-family:var(--mono);
-  font-weight:700;
-  padding:10px 16px;
-  border-top:1px solid var(--border);
-  margin:-16px;
-  margin-top:12px;
-}
-
-.status-bad{color:#f87171;background:rgba(248,113,113,.05)}
-.status-good{color:var(--green);background:rgba(0,255,136,.04)}
-
-.status-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  flex-shrink:0;
-}
-
-.status-bad .status-dot{background:#f87171}
-.status-good .status-dot{background:var(--green);box-shadow:0 0 6px var(--green)}
-
-/* ── FEATURES ── */
-.feat-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:1px;
-  background:var(--border);
-  border-radius:18px;
-  overflow:hidden;
-  border:1px solid var(--border);
-}
-
-.feat{
-  background:#08080c;
-  padding:32px;
-  position:relative;
-  overflow:hidden;
-  transition:background .3s;
-  opacity:0;
-  transform:translateY(16px);
-  transition:opacity .5s var(--ease), transform .5s var(--ease), background .3s;
-}
-
-.feat.revealed{opacity:1;transform:translateY(0)}
-
-.feat:hover{background:#0d0d12}
-
-.feat::before{
-  content:'';
-  position:absolute;
-  top:-60px;left:50%;
-  transform:translateX(-50%);
-  width:180px;height:180px;
-  background:radial-gradient(circle,rgba(0,255,136,.12) 0%,transparent 70%);
-  opacity:0;
-  transition:opacity .4s;
-  pointer-events:none;
-}
-
-.feat:hover::before{opacity:1}
-
-.feat-num{
-  position:absolute;
-  top:20px;right:20px;
-  font-size:.7rem;
-  color:#2d2d35;
-  font-weight:700;
-  font-family:var(--mono);
-}
-
-.feat-icon{
-  width:40px;
-  height:40px;
-  border-radius:9px;
-  background:rgba(0,255,136,.06);
-  border:1px solid rgba(0,255,136,.1);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1rem;
-  margin-bottom:18px;
-}
-
-.feat h3{
-  font-weight:700;
-  font-size:.95rem;
-  margin-bottom:8px;
-  color:var(--white);
-  letter-spacing:-.01em;
-}
-
-.feat p{
-  font-size:.855rem;
-  color:var(--gray);
-  line-height:1.7;
-}
-
-/* ── QUICKSTART ── */
-.quickstart-inner{
-  text-align:center;
-}
-
-.quickstart-inner .section-label,
-.quickstart-inner .section-heading{
-  justify-content:center;
-}
-
-.steps{
-  display:flex;
-  flex-direction:column;
-  gap:0;
-  margin:48px 0 0;
-  text-align:left;
-}
-
-.step{
-  display:grid;
-  grid-template-columns:72px 1fr;
-  gap:24px;
-  padding:28px 0;
-  border-bottom:1px solid var(--border);
-  opacity:0;
-  transform:translateY(14px);
-  transition:opacity .5s var(--ease), transform .5s var(--ease);
-}
-
-.step:first-child{border-top:1px solid var(--border)}
-.step.revealed{opacity:1;transform:translateY(0)}
-
-.step-num{
-  font-size:2.5rem;
-  font-weight:900;
-  color:#1a1a22;
-  font-family:var(--mono);
-  line-height:1;
-  padding-top:4px;
-  text-align:right;
-}
-
-.step-content h4{
-  font-weight:700;
-  font-size:1rem;
-  color:var(--white);
-  margin-bottom:6px;
-  letter-spacing:-.01em;
-}
-
-.step-content p{
-  font-size:.875rem;
-  color:var(--gray);
-  line-height:1.7;
-  margin-bottom:10px;
-}
-
-.step-content code{
-  font-family:var(--mono);
-  font-size:.82rem;
-  color:var(--green);
-  background:rgba(0,255,136,.07);
-  border:1px solid rgba(0,255,136,.12);
-  padding:2px 7px;
-  border-radius:5px;
-}
-
-/* ── CODE BLOCK ── */
-.code-box{
-  background:#0a0a0a;
-  border:1px solid rgba(255,255,255,.09);
-  border-radius:12px;
-  overflow:hidden;
-  margin-top:32px;
-  text-align:left;
-}
-
-.code-tabs{
-  display:flex;
-  gap:0;
-  border-bottom:1px solid var(--border);
-  background:#0d0d11;
-}
-
-.code-tab{
-  padding:10px 18px;
-  font-size:.75rem;
-  font-family:var(--mono);
-  font-weight:600;
-  color:var(--gray);
-  cursor:pointer;
-  border:none;
-  background:transparent;
-  border-bottom:2px solid transparent;
-  transition:color .2s, border-color .2s;
-  letter-spacing:.02em;
-}
-
-.code-tab.active{
-  color:var(--green);
-  border-bottom-color:var(--green);
-}
-
-.code-tab:hover:not(.active){color:var(--white)}
-
-.code-output{
-  padding:20px;
-  font-family:var(--mono);
-  font-size:.82rem;
-  color:#a3e6c5;
-  line-height:1.75;
-  min-height:80px;
-}
-
-.code-line-dim{color:#3a3a45}
-.code-line-green{color:var(--green)}
-.code-line-blue{color:var(--blue)}
-.code-line-purple{color:var(--purple)}
-
-/* ── CTA BLOCK ── */
-.cta-block{
-  text-align:center;
-  padding:100px 0;
-  position:relative;
-  z-index:1;
-}
-
-.cta-block h2{
-  font-size:clamp(2.2rem,5vw,3.8rem);
-  font-weight:900;
-  letter-spacing:-.04em;
-  line-height:1.05;
-  margin-bottom:18px;
-}
-
-.cta-block p{
-  font-size:1.05rem;
-  color:var(--gray);
-  max-width:420px;
-  margin:0 auto 36px;
-  line-height:1.65;
-}
-
-/* ── FOOTER ── */
-footer{
-  border-top:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:24px clamp(20px,5vw,72px);
-  font-size:.82rem;
-  color:var(--gray);
-  position:relative;
-  z-index:1;
-  flex-wrap:wrap;
-  gap:12px;
-}
-
-.footer-logo{
-  font-weight:800;
-  font-size:.9rem;
-  color:var(--white);
-  text-decoration:none;
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-.footer-links{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.footer-links a{
-  color:var(--gray);
-  text-decoration:none;
-  transition:color .2s;
-}
-
-.footer-links a:hover{color:var(--white)}
-
-.footer-sep{color:#1f2937}
-
-/* ── SCROLL REVEAL BASE ── */
-.reveal{
-  opacity:0;
-  transform:translateY(20px);
-  transition:opacity .6s var(--ease), transform .6s var(--ease);
-}
-
-.reveal.revealed{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* ── RESPONSIVE ── */
-@media(max-width:900px){
-  .terminal-section{
-    grid-template-columns:1fr;
-    gap:40px;
-  }
-
-  .feat-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .stats-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .stat:nth-child(2){border-right:none}
-  .stat:nth-child(3){border-right:1px solid var(--border)}
-  .stat:nth-child(1),.stat:nth-child(2){border-bottom:1px solid var(--border)}
-
-  .t-panels{
-    grid-template-columns:1fr;
-  }
-
-  .t-panel{border-right:none;border-bottom:1px solid var(--border)}
-  .t-panel:last-child{border-bottom:none}
-}
-
-@media(max-width:600px){
-  nav .nav-links{display:none}
-
-  .feat-grid{
-    grid-template-columns:1fr;
-  }
-
-  .stats-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .step{
-    grid-template-columns:40px 1fr;
-    gap:16px;
-  }
-
-  .step-num{font-size:1.6rem}
-
-  .install-box{
-    padding:0 4px 0 14px;
-  }
-
-  .install-cmd{font-size:.8rem}
-}
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ─── BACKGROUND BLOBS ───────────────────────────────────────────────────── */
+.blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(120px);will-change:transform}
+.b1{width:70vw;height:70vw;background:radial-gradient(circle,rgba(0,232,122,.18) 0%,transparent 65%);top:-20%;left:-20%;animation:drift1 22s ease-in-out infinite}
+.b2{width:60vw;height:60vw;background:radial-gradient(circle,rgba(59,130,246,.13) 0%,transparent 65%);top:10%;right:-15%;animation:drift2 26s ease-in-out infinite}
+.b3{width:50vw;height:50vw;background:radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 65%);bottom:-15%;left:30%;animation:drift3 30s ease-in-out infinite}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(6%,8%) scale(1.05)}66%{transform:translate(-4%,4%) scale(.97)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-8%,4%) scale(.95)}66%{transform:translate(4%,-6%) scale(1.04)}}
+@keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-6%,-8%) scale(1.06)}}
+
+/* ─── CANVAS ─────────────────────────────────────────────────────────────── */
+canvas{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+/* ─── NAV ────────────────────────────────────────────────────────────────── */
+nav{position:fixed;inset:0 0 auto;z-index:100;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,64px);background:rgba(0,0,0,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:background .3s}
+.nav-logo{display:flex;align-items:center;gap:9px;font-size:.95rem;font-weight:800;letter-spacing:-.025em;color:#fff}
+.nav-logo-dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 12px var(--green),0 0 24px rgba(0,232,122,.4);animation:logoPulse 2.5s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.7);opacity:.6}}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{padding:6px 12px;border-radius:6px;font-size:.85rem;font-weight:500;color:var(--gray);text-decoration:none;transition:color .2s,background .2s}
+.nav-links a:hover{color:#fff;background:var(--surface)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-star{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;background:var(--green);color:#000;border-radius:7px;font-size:.83rem;font-weight:700;text-decoration:none;letter-spacing:-.01em;transition:all .25s;box-shadow:0 0 0 0 var(--green-glow)}
+.nav-star:hover{transform:translateY(-1px);box-shadow:0 0 0 5px var(--green-glow),0 8px 20px rgba(0,232,122,.3)}
+@media(max-width:680px){.nav-links{display:none}}
+
+/* ─── HERO ───────────────────────────────────────────────────────────────── */
+.hero{position:relative;z-index:2;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px clamp(20px,5vw,64px) 64px;gap:0}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 5px;border-radius:100px;border:1px solid rgba(0,232,122,.25);background:rgba(0,232,122,.06);margin-bottom:36px;opacity:0;animation:fadeUp .7s var(--ease) .1s forwards}
+.hero-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.hero-badge span{font-size:.72rem;font-weight:600;color:var(--green);letter-spacing:.06em;text-transform:uppercase}
+.hero-title{font-size:clamp(3.2rem,8.5vw,7rem);font-weight:900;letter-spacing:-.05em;line-height:.97;margin-bottom:28px}
+.hero-line{display:block;overflow:hidden}
+.hero-word{display:inline-block;animation:wordReveal .9s var(--ease) both}
+@keyframes wordReveal{from{transform:translateY(105%);opacity:0}to{transform:translateY(0);opacity:1}}
+.hero-grad{background:linear-gradient(90deg,var(--green) 0%,#00c4f4 45%,var(--purple) 90%);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradMove 5s ease infinite}
+@keyframes gradMove{0%,100%{background-position:0%}50%{background-position:100%}}
+.hero-sub{font-size:clamp(.95rem,2vw,1.15rem);color:var(--gray);max-width:480px;line-height:1.75;margin-bottom:44px;opacity:0;animation:fadeUp .7s var(--ease) .65s forwards;font-weight:400}
+.hero-sub code{font-family:var(--mono);font-size:.88em;color:var(--green);background:var(--green-muted);border:1px solid rgba(0,232,122,.2);padding:1px 7px;border-radius:4px;-webkit-text-fill-color:var(--green)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* Install box */
+.hero-install{display:flex;align-items:center;gap:0;background:rgba(255,255,255,.03);border:1px solid var(--border-strong);border-radius:10px;padding:0;margin-bottom:28px;overflow:hidden;max-width:560px;width:100%;opacity:0;animation:fadeUp .7s var(--ease) .75s forwards;transition:border-color .2s,box-shadow .2s}
+.hero-install:hover{border-color:rgba(0,232,122,.3);box-shadow:0 0 0 3px rgba(0,232,122,.06)}
+.hi-prompt{padding:14px 4px 14px 18px;font-family:var(--mono);font-size:.82rem;color:var(--green);flex-shrink:0;font-weight:600}
+.hi-cmd{flex:1;padding:14px 8px;font-family:var(--mono);font-size:.82rem;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi-copy{flex-shrink:0;padding:12px 16px;border-left:1px solid var(--border);background:none;color:var(--gray);font-size:.75rem;font-family:var(--font);font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.hi-copy:hover{color:#fff;background:var(--surface)}
+
+/* Compat */
+.hero-compat{font-size:.8rem;color:#3f3f46;font-weight:500;letter-spacing:.01em;opacity:0;animation:fadeUp .7s var(--ease) .85s forwards}
+.hero-compat strong{color:#52525b;font-weight:600}
+
+/* Scroll indicator */
+.hero-scroll{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp .6s var(--ease) 1.2s forwards}
+.hero-scroll-track{width:18px;height:28px;border:1.5px solid var(--gray2);border-radius:100px;display:flex;align-items:flex-start;justify-content:center;padding-top:4px}
+.hero-scroll-dot{width:2.5px;height:6px;background:var(--green);border-radius:2px;animation:scrollBounce 1.6s ease-in-out infinite}
+@keyframes scrollBounce{0%{transform:translateY(0);opacity:1}100%{transform:translateY(10px);opacity:0}}
+.hero-scroll p{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gray2)}
+
+/* ─── MARQUEE ────────────────────────────────────────────────────────────── */
+.marquee{position:relative;z-index:2;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 0;overflow:hidden;mask-image:linear-gradient(to right,transparent,#000 18%,#000 82%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 18%,#000 82%,transparent)}
+.marquee-inner{display:flex;width:max-content;animation:marquee 25s linear infinite}
+.marquee-inner:hover{animation-play-state:paused}
+.m-item{display:flex;align-items:center;gap:10px;padding:0 28px;font-size:.8rem;font-weight:600;color:#3f3f46;white-space:nowrap;border-right:1px solid var(--border)}
+.m-dot{width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────────────── */
+.wrap{max-width:1080px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.section{position:relative;z-index:2;padding:96px 0}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+.section-label::before{content:'';display:block;width:16px;height:1.5px;background:var(--green);border-radius:1px}
+.section-h{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;letter-spacing:-.035em;line-height:1.12;margin-bottom:10px}
+.section-p{font-size:.975rem;color:var(--gray);line-height:1.75;max-width:440px;font-weight:400}
+.divider{position:relative;z-index:2;height:1px;background:linear-gradient(to right,transparent,var(--border-strong) 30%,var(--border-strong) 70%,transparent);margin:0 clamp(20px,5vw,64px)}
+
+/* ─── TERMINAL ───────────────────────────────────────────────────────────── */
+.term-section .wrap{display:grid;grid-template-columns:1fr 1.8fr;gap:80px;align-items:center}
+@media(max-width:900px){.term-section .wrap{grid-template-columns:1fr}}
+.term-window{border-radius:14px;overflow:hidden;border:1px solid var(--border-strong);background:#080808;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 50px 100px rgba(0,0,0,.8),0 0 80px rgba(0,232,122,.04)}
+.term-bar{height:38px;background:#0f0f0f;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:7px}
+.t-dot{width:11px;height:11px;border-radius:50%}
+.td-r{background:#3f3f46}.td-y{background:#52525b}.td-g{background:#3f3f46}
+.t-bar-title{flex:1;text-align:center;font-size:.72rem;color:#3f3f46;font-family:var(--mono)}
+.term-cols{display:grid;grid-template-columns:1fr 1fr;min-height:380px}
+.tcol{padding:16px 14px;overflow:hidden;position:relative}
+.tcol-l{border-right:1px solid var(--border)}
+.tcol-head{font-size:.65rem;font-family:var(--mono);font-weight:700;letter-spacing:.06em;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--border)}
+.th-bad{color:#f87171}.th-good{color:var(--green)}
+.t-msg{margin-bottom:7px;animation:tMsgIn .2s var(--ease) both}
+@keyframes tMsgIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:translateX(0)}}
+.t-from{font-size:.6rem;font-family:var(--mono);font-weight:700;margin-bottom:3px;letter-spacing:.04em}
+.tf-u{color:#60a5fa}.tf-ai{color:var(--green)}.tf-sys{color:#a78bfa}
+.t-bub{display:inline-block;padding:6px 10px;border-radius:7px;font-size:.72rem;font-family:var(--mono);line-height:1.55;max-width:97%}
+.tb-u{background:rgba(96,165,250,.07);color:#93c5fd;border:1px solid rgba(96,165,250,.12)}
+.tb-ai{background:rgba(0,232,122,.07);color:#6ee7b7;border:1px solid rgba(0,232,122,.12)}
+.tb-sys{background:rgba(167,139,250,.07);color:#c4b5fd;border:1px solid rgba(167,139,250,.12)}
+.tb-bad{background:rgba(248,113,113,.06);color:#fca5a5;border:1px solid rgba(248,113,113,.1)}
+.t-verdict{margin-top:10px;padding:7px 10px;border-radius:7px;font-size:.68rem;font-family:var(--mono);display:flex;align-items:center;gap:6px}
+.tv-bad{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.14);color:#f87171}
+.tv-good{background:rgba(0,232,122,.06);border:1px solid rgba(0,232,122,.14);color:var(--green)}
+
+/* ─── FEATURES ───────────────────────────────────────────────────────────── */
+.feat-grid{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border-radius:18px;overflow:hidden;outline:1px solid var(--border)}
+@media(max-width:780px){.feat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.feat-grid{grid-template-columns:1fr}}
+.feat{background:#080808;padding:32px 28px;position:relative;overflow:hidden;cursor:default;transition:background .3s}
+.feat::after{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:140px;height:140px;background:radial-gradient(circle,rgba(0,232,122,.15),transparent 70%);opacity:0;transition:opacity .4s}
+.feat:hover{background:#0c0c0c}.feat:hover::after{opacity:1}
+.feat-n{position:absolute;top:20px;right:20px;font-size:.65rem;font-weight:700;font-family:var(--mono);color:#1f1f27;letter-spacing:.05em}
+.feat-ico{width:38px;height:38px;border-radius:9px;background:var(--green-muted);border:1px solid rgba(0,232,122,.15);display:flex;align-items:center;justify-content:center;font-size:.95rem;margin-bottom:16px;position:relative;z-index:1}
+.feat h3{font-size:.9rem;font-weight:700;margin-bottom:8px;letter-spacing:-.015em;position:relative;z-index:1;line-height:1.3}
+.feat p{font-size:.83rem;color:var(--gray);line-height:1.7;position:relative;z-index:1}
+
+/* ─── INSTALL ────────────────────────────────────────────────────────────── */
+.install-section{text-align:center}
+.install-section .section-label,.install-section .section-h,.install-section .section-p{margin-left:auto;margin-right:auto}
+.install-section .section-p{text-align:center}
+.install-steps{display:flex;justify-content:center;gap:0;margin:52px auto 0;max-width:800px;position:relative}
+.install-steps::before{content:'';position:absolute;top:18px;left:calc(16.6% + 18px);right:calc(16.6% + 18px);height:1px;background:linear-gradient(to right,var(--border-strong),var(--border-strong));z-index:0}
+.istep{flex:1;display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;z-index:1;padding:0 12px}
+.istep-num{width:36px;height:36px;border-radius:50%;background:#0f0f0f;border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;font-family:var(--mono);color:var(--green);flex-shrink:0}
+.istep h4{font-size:.88rem;font-weight:700;letter-spacing:-.01em;text-align:center}
+.istep p{font-size:.8rem;color:var(--gray);text-align:center;line-height:1.6}
+.istep code{font-family:var(--mono);font-size:.78em;color:var(--green);background:var(--green-muted);padding:1px 5px;border-radius:3px}
+.install-code{margin:52px auto 0;max-width:640px}
+.icode-box{background:#080808;border:1px solid var(--border-strong);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.icode-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0f0f0f;border-bottom:1px solid var(--border)}
+.icode-dots{display:flex;gap:6px}
+.icode-dot{width:10px;height:10px;border-radius:50%;background:var(--gray2)}
+.icode-tabs{display:flex;gap:2px}
+.ictab{padding:4px 11px;border-radius:5px;font-size:.72rem;font-family:var(--mono);color:var(--gray);background:none;border:1px solid transparent;cursor:pointer;transition:all .2s;font-weight:500}
+.ictab.on{background:var(--surface);color:#fff;border-color:var(--border)}
+.icode-body{padding:18px 20px;font-family:var(--mono);font-size:.83rem;line-height:1.9}
+.ic-comment{color:#3f3f46}.ic-prompt{color:var(--green);font-weight:600}.ic-cmd{color:rgba(255,255,255,.85)}
+.icode-foot{display:flex;justify-content:flex-end;padding:0 14px 12px}
+.icopy{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:6px;font-size:.73rem;font-weight:600;background:var(--green-muted);border:1px solid rgba(0,232,122,.2);color:var(--green);cursor:pointer;transition:all .2s;font-family:var(--font)}
+.icopy:hover{background:rgba(0,232,122,.18)}
+
+/* ─── CTA ────────────────────────────────────────────────────────────────── */
+.cta{position:relative;z-index:2;padding:60px clamp(20px,5vw,64px) 100px}
+.cta-inner{border-radius:20px;padding:88px 48px;text-align:center;background:#080808;border:1px solid var(--border-strong);overflow:hidden;position:relative;box-shadow:0 0 0 1px rgba(0,232,122,.04)}
+.cta-inner::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(0,232,122,.08),transparent 60%);pointer-events:none}
+.cta-inner::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 50% at 50% 0%,rgba(0,232,122,.05),transparent);pointer-events:none}
+.cta-inner h2{font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;letter-spacing:-.045em;line-height:1.07;position:relative;z-index:1;margin-bottom:16px}
+.cta-inner p{font-size:1rem;color:var(--gray);position:relative;z-index:1;margin-bottom:36px;line-height:1.7}
+.cta-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;position:relative;z-index:1}
+.cta-meta{margin-top:28px;font-size:.75rem;color:#3f3f46;position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;gap:20px}
+.cta-meta span{display:flex;align-items:center;gap:6px}
+.cta-meta span::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--green);opacity:.5}
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────────── */
+footer{position:relative;z-index:2;padding:24px clamp(20px,5vw,64px);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.f-logo{font-size:.88rem;font-weight:800;letter-spacing:-.02em;color:var(--green)}
+footer p{font-size:.8rem;color:var(--gray2)}
+footer a{color:#52525b;text-decoration:none;transition:color .2s}
+footer a:hover{color:#fff}
 </style>
+</head>
 <body>
+<div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 <canvas id="c"></canvas>
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo">
-    <span class="nav-logo-dot"></span>
-    ReadMeAI
-  </a>
-  <ul class="nav-links">
-    <li><a href="#demo">Demo</a></li>
-    <li><a href="#install">Install</a></li>
-    <li><a href="https://github.com/Oscarr36/readmeai" target="_blank">GitHub</a></li>
-  </ul>
-  <a href="#install" class="nav-cta">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-    Star on GitHub
-  </a>
+  <div class="nav-logo"><div class="nav-logo-dot"></div>ReadMeAI</div>
+  <div class="nav-links">
+    <a href="#demo">Demo</a>
+    <a href="#features">Features</a>
+    <a href="#install">Install</a>
+    <a href="https://github.com/Oscarr36/ReadMeAI">GitHub</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-star" href="https://github.com/Oscarr36/ReadMeAI/stargazers">⭐ Star</a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="wrap">
-    <div class="hero-badge">
-      <span class="hero-badge-dot"></span>
-      Now supporting Claude · Cursor · Windsurf · Copilot
-    </div>
+  <div class="hero-badge"><div class="hero-badge-dot"></div><span>v2.4 · Skills &amp; Ecosystem Detection</span></div>
 
-    <h1>
-      <span class="word-wrap"><span class="word" style="animation-delay:.3s">AI</span></span><span style="display:inline"> </span><span class="word-wrap"><span class="word" style="animation-delay:.42s">never</span></span><span style="display:inline"> </span><span class="word-wrap"><span class="word" style="animation-delay:.54s">forgets</span></span>
-      <br>
-      <span class="grad"><span class="word-wrap"><span class="word" style="animation-delay:.66s">your</span></span><span style="display:inline"> </span><span class="word-wrap"><span class="word" style="animation-delay:.78s">project.</span></span></span>
-    </h1>
+  <h1 class="hero-title">
+    <span class="hero-line">
+      <span class="hero-word" style="animation-delay:.2s">AI</span>&#32;<span class="hero-word" style="animation-delay:.3s">never</span>
+    </span>
+    <span class="hero-line">
+      <span class="hero-word hero-grad" style="animation-delay:.42s">forgets</span>
+    </span>
+    <span class="hero-line">
+      <span class="hero-word" style="animation-delay:.54s">your</span>&#32;<span class="hero-word" style="animation-delay:.63s">project.</span>
+    </span>
+  </h1>
 
-    <p class="hero-sub">
-      ReadMeAI generates perfect context files so every AI assistant understands your codebase — architecture, conventions, and decisions — instantly.
-    </p>
+  <p class="hero-sub">Drop <code>.readmeAI</code> in any project. The AI reads it first, every session — no re-explaining, no context drift, no wasted tokens.</p>
 
-    <div class="install-box">
-      <span class="install-prompt">$</span>
-      <span class="install-cmd" id="install-cmd-display">npx readmeai init</span>
-      <button class="install-copy" id="copy-btn" onclick="doCopy()">Copy</button>
-    </div>
+  <div class="hero-install">
+    <span class="hi-prompt">$</span>
+    <span class="hi-cmd" id="hero-cmd">curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI</span>
+    <button class="hi-copy" onclick="heroCopy()">Copy</button>
+  </div>
 
-    <div class="compat">
-      <span>Claude</span><span class="compat-sep">·</span>
-      <span>ChatGPT</span><span class="compat-sep">·</span>
-      <span>GitHub Copilot</span><span class="compat-sep">·</span>
-      <span>Cursor</span><span class="compat-sep">·</span>
-      <span>Windsurf</span><span class="compat-sep">·</span>
-      <span>Gemini</span>
-    </div>
+  <div class="hero-compat"><strong>Works with</strong> &nbsp;Claude · ChatGPT · GitHub Copilot · Cursor · Windsurf · Gemini</div>
 
-    <div class="hero-buttons">
-      <a href="#demo" class="btn-main">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-        See it live
-      </a>
-      <a href="#install" class="btn-ghost">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Get started free
-      </a>
-    </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-track"><div class="hero-scroll-dot"></div></div>
+    <p>Scroll</p>
   </div>
 </section>
 
-<!-- STATS BAR -->
-<div class="stats-bar">
+<!-- MARQUEE -->
+<div class="marquee"><div class="marquee-inner" id="mq"></div></div>
+
+<!-- TERMINAL DEMO -->
+<section id="demo" class="section term-section">
   <div class="wrap">
-    <div class="stats-grid">
-      <div class="stat">
-        <span class="stat-val">MIT License</span>
-        <span class="stat-lbl">Free forever, open source</span>
-      </div>
-      <div class="stat">
-        <span class="stat-val">Zero deps</span>
-        <span class="stat-lbl">No bloat, just Node.js</span>
-      </div>
-      <div class="stat">
-        <span class="stat-val">Works offline</span>
-        <span class="stat-lbl">No API key required</span>
-      </div>
-      <div class="stat">
-        <span class="stat-val">Any AI</span>
-        <span class="stat-lbl">Claude, Copilot, Cursor…</span>
-      </div>
+    <div>
+      <div class="section-label">Live demo</div>
+      <h2 class="section-h">Day 2. Exactly where<br/>you left off.</h2>
+      <p class="section-p" style="margin-top:14px">Without ReadMeAI: 8 messages to re-explain context. With it: one message and the AI resumes instantly.</p>
     </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<!-- DEMO / TERMINAL SECTION -->
-<section id="demo">
-  <div class="wrap">
-    <div class="terminal-section">
-      <div class="terminal-text">
-        <div class="section-label">The problem</div>
-        <h2 class="section-heading">Your AI loses context. Every. Single. Time.</h2>
-        <p>
-          Every new chat, every session — your AI assistant starts <span class="highlight">completely blank.</span> You re-explain your stack, your conventions, your decisions. Over and over.
-        </p>
-        <p>
-          ReadMeAI generates structured context files that persist your project knowledge across every tool, every session, every team member.
-        </p>
-        <p>
-          One command. <span class="highlight">Permanent AI memory</span> for your project.
-        </p>
+    <div class="term-window">
+      <div class="term-bar">
+        <div class="t-dot td-r"></div><div class="t-dot td-y"></div><div class="t-dot td-g"></div>
+        <div class="t-bar-title">session restart — day 2</div>
       </div>
-
-      <div class="t-window">
-        <div class="t-titlebar">
-          <div class="t-dot t-dot-r"></div>
-          <div class="t-dot t-dot-y"></div>
-          <div class="t-dot t-dot-g"></div>
-          <div class="t-title">ai-chat-comparison.log</div>
-        </div>
-        <div class="t-panels">
-          <!-- BAD PANEL -->
-          <div class="t-panel" id="panel-bad">
-            <div class="p-head p-head-bad">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              Without ReadMeAI
-            </div>
-            <div class="msg from-user">
-              <div class="msg-from">You</div>
-              <div class="msg-bub">add auth to the dashboard</div>
-            </div>
-            <div class="msg from-ai-bad">
-              <div class="msg-from">AI</div>
-              <div class="msg-bub">Sure! What framework are you using?</div>
-            </div>
-            <div class="msg from-user">
-              <div class="msg-from">You</div>
-              <div class="msg-bub">Next.js 14 with the App Router</div>
-            </div>
-            <div class="msg from-ai-bad">
-              <div class="msg-from">AI</div>
-              <div class="msg-bub">And what auth library? NextAuth, Clerk, Auth0…?</div>
-            </div>
-            <div class="msg from-user">
-              <div class="msg-from">You</div>
-              <div class="msg-bub">We use Clerk. Also Prisma + PostgreSQL. Tailwind. TypeScript strict mode.</div>
-            </div>
-            <div class="msg from-ai-bad">
-              <div class="msg-from">AI</div>
-              <div class="msg-bub">Got it! Where should I put the middleware file?</div>
-            </div>
-            <div class="msg from-sys">
-              <div class="msg-from">System</div>
-              <div class="msg-bub" id="anim-bad">● 6 back-and-forth messages before a single line of code…</div>
-            </div>
-            <div class="panel-status status-bad">
-              <div class="status-dot"></div>
-              Context lost — re-explaining every session
-            </div>
-          </div>
-          <!-- GOOD PANEL -->
-          <div class="t-panel" id="panel-good">
-            <div class="p-head p-head-good">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11.5 14.5 16 9.5"/></svg>
-              With ReadMeAI
-            </div>
-            <div class="msg from-sys">
-              <div class="msg-from">CLAUDE.md loaded</div>
-              <div class="msg-bub">Next.js 14 · Clerk auth · Prisma/PG · Tailwind · TS strict · /app router · feature-branch workflow</div>
-            </div>
-            <div class="msg from-user">
-              <div class="msg-from">You</div>
-              <div class="msg-bub">add auth to the dashboard</div>
-            </div>
-            <div class="msg from-ai-good">
-              <div class="msg-from">AI</div>
-              <div class="msg-bub" id="anim-good">I'll wrap /app/dashboard in a Clerk &lt;SignedIn&gt; gate and add middleware.ts to protect the route. Here's the diff…</div>
-            </div>
-            <div class="panel-status status-good">
-              <div class="status-dot"></div>
-              Context loaded — instant, accurate response
-            </div>
-          </div>
-        </div>
+      <div class="term-cols">
+        <div class="tcol tcol-l"><div class="tcol-head th-bad">✗ Without ReadMeAI</div><div id="bad"></div></div>
+        <div class="tcol"><div class="tcol-head th-good">✓ With ReadMeAI</div><div id="good"></div></div>
       </div>
     </div>
   </div>
@@ -1106,565 +273,325 @@ footer{
 <div class="divider"></div>
 
 <!-- FEATURES -->
-<section id="features">
+<section id="features" class="section">
   <div class="wrap">
-    <div class="section-label reveal">Features</div>
-    <h2 class="section-heading reveal" style="margin-bottom:48px">Everything your AI needs to know</h2>
+    <div class="section-label">Features</div>
+    <h2 class="section-h">Built to eliminate friction.</h2>
     <div class="feat-grid">
-
-      <div class="feat">
-        <span class="feat-num">01</span>
-        <div class="feat-icon">🧠</div>
-        <h3>Smart context generation</h3>
-        <p>Analyzes your codebase structure, detects frameworks, and writes human-readable context files your AI actually understands.</p>
-      </div>
-
-      <div class="feat">
-        <span class="feat-num">02</span>
-        <div class="feat-icon">⚡</div>
-        <h3>Multi-tool output</h3>
-        <p>Generates CLAUDE.md, .cursorrules, .github/copilot-instructions.md and more — in a single command, perfectly formatted.</p>
-      </div>
-
-      <div class="feat">
-        <span class="feat-num">03</span>
-        <div class="feat-icon">🔄</div>
-        <h3>Auto-sync on change</h3>
-        <p>Watch mode keeps your context files fresh as your project evolves. Never manually update your AI instructions again.</p>
-      </div>
-
-      <div class="feat">
-        <span class="feat-num">04</span>
-        <div class="feat-icon">🎯</div>
-        <h3>Convention detection</h3>
-        <p>Reads your ESLint, Prettier, tsconfig, and package.json to extract real coding conventions — not generic boilerplate.</p>
-      </div>
-
-      <div class="feat">
-        <span class="feat-num">05</span>
-        <div class="feat-icon">🔒</div>
-        <h3>Privacy-first, offline</h3>
-        <p>Everything runs locally. No API keys. No data leaves your machine. No subscriptions. Your code stays yours.</p>
-      </div>
-
-      <div class="feat">
-        <span class="feat-num">06</span>
-        <div class="feat-icon">🧩</div>
-        <h3>Template customization</h3>
-        <p>Start from auto-generated output and customize with your own sections, team norms, and architectural decisions.</p>
-      </div>
-
+      <div class="feat"><span class="feat-n">01</span><div class="feat-ico">🧭</div><h3>Auto-read, zero prompts</h3><p>AI reads the file before you type anything. No command, no reminder. Wired into the protocol at session start.</p></div>
+      <div class="feat"><span class="feat-n">02</span><div class="feat-ico">🔍</div><h3>Symbol Index</h3><p>Every function at exact file:line. AI jumps directly — no filesystem scan, no wasted context tokens.</p></div>
+      <div class="feat"><span class="feat-n">03</span><div class="feat-ico">🏗️</div><h3>Structure enforcement</h3><p>Explicit ownership rules per folder. AI flags anything placed outside spec before writing a single line.</p></div>
+      <div class="feat"><span class="feat-n">04</span><div class="feat-ico">✅</div><h3>Code quality gate</h3><p>Built-in checklist before every output: naming, nesting depth, forbidden patterns, no hardcoded values.</p></div>
+      <div class="feat"><span class="feat-n">05</span><div class="feat-ico">📚</div><h3>Decisions log</h3><p>Every architectural choice with rationale, auto-appended at session end. The "why" never gets lost again.</p></div>
+      <div class="feat"><span class="feat-n">06</span><div class="feat-ico">🧠</div><h3>Ecosystem detection</h3><p>Tell it your stack once. It assembles conventions, structure and security rules for your specific setup.</p></div>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- QUICKSTART / INSTALL -->
-<section id="install">
+<!-- INSTALL -->
+<section id="install" class="section install-section">
   <div class="wrap">
-    <div class="quickstart-inner">
-      <div class="section-label">Quickstart</div>
-      <h2 class="section-heading">Up and running in 60 seconds</h2>
+    <div class="section-label">Quickstart</div>
+    <h2 class="section-h">Up and running in 30 seconds.</h2>
+    <p class="section-p" style="margin-top:10px">No accounts, no plugins, no lock-in.</p>
 
-      <div class="steps">
-
-        <div class="step">
-          <div class="step-num">01</div>
-          <div class="step-content">
-            <h4>Install via npm or run with npx</h4>
-            <p>No global install required. Run directly with npx or install once and use everywhere. Zero production dependencies.</p>
-            <code>npx readmeai init</code>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-num">02</div>
-          <div class="step-content">
-            <h4>ReadMeAI scans your project</h4>
-            <p>It reads your package.json, detects your framework, linting config, folder structure, and git history to build deep context.</p>
-            <code>readmeai analyze --depth deep</code>
-          </div>
-        </div>
-
-        <div class="step">
-          <div class="step-num">03</div>
-          <div class="step-content">
-            <h4>Context files are generated instantly</h4>
-            <p>CLAUDE.md, .cursorrules, copilot-instructions.md — all written to your repo. Commit them and every AI tool on your team gains instant project knowledge.</p>
-            <code>git add CLAUDE.md .cursorrules && git commit -m "feat: add AI context"</code>
-          </div>
-        </div>
-
+    <div class="install-steps">
+      <div class="istep">
+        <div class="istep-num">01</div>
+        <h4>Drop the file</h4>
+        <p>Run the install command in your project root.</p>
       </div>
-
-      <div class="code-box">
-        <div class="code-tabs">
-          <button class="code-tab active" onclick="setTab('bash',this)">bash</button>
-          <button class="code-tab" onclick="setTab('powershell',this)">powershell</button>
-        </div>
-        <div class="code-output" id="code-output">
-          <div><span class="code-line-dim"># One command to rule them all</span></div>
-          <div><span class="code-line-green">$</span> <span style="color:#e2e8f0">npx readmeai init</span></div>
-          <div>&nbsp;</div>
-          <div><span class="code-line-purple">✓</span> <span style="color:#94a3b8">Detected: Next.js 14 · TypeScript · Prisma · Tailwind</span></div>
-          <div><span class="code-line-purple">✓</span> <span style="color:#94a3b8">Analyzed 247 source files</span></div>
-          <div><span class="code-line-purple">✓</span> <span style="color:#94a3b8">Extracted 18 coding conventions</span></div>
-          <div><span class="code-line-green">→</span> <span style="color:#e2e8f0">Written: CLAUDE.md</span></div>
-          <div><span class="code-line-green">→</span> <span style="color:#e2e8f0">Written: .cursorrules</span></div>
-          <div><span class="code-line-green">→</span> <span style="color:#e2e8f0">Written: .github/copilot-instructions.md</span></div>
-          <div>&nbsp;</div>
-          <div><span class="code-line-green">Done</span> <span style="color:#6b7280">in 1.4s — commit these files to share context with your team.</span></div>
-        </div>
+      <div class="istep">
+        <div class="istep-num">02</div>
+        <h4>First setup</h4>
+        <p>Tell your AI: <code>"Detect my stack, fill what you can."</code></p>
       </div>
+      <div class="istep">
+        <div class="istep-num">03</div>
+        <h4>Every session</h4>
+        <p>Just say <code>"Continue where we left off."</code></p>
+      </div>
+    </div>
 
+    <div class="install-code">
+      <div class="icode-box">
+        <div class="icode-bar">
+          <div class="icode-dots"><div class="icode-dot"></div><div class="icode-dot"></div><div class="icode-dot"></div></div>
+          <div class="icode-tabs">
+            <button class="ictab on" onclick="setTab('bash',this)">bash</button>
+            <button class="ictab" onclick="setTab('ps',this)">powershell</button>
+          </div>
+        </div>
+        <div class="icode-body" id="icode"></div>
+        <div class="icode-foot"><button class="icopy" onclick="iCopy()">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copy-lbl">Copy</span>
+        </button></div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- CTA BLOCK -->
-<div class="cta-block">
-  <div class="wrap">
-    <h2>Stop re-explaining.<br><span class="grad">Start shipping.</span></h2>
-    <p>One command. Permanent AI memory for every tool your team uses.</p>
-    <div class="hero-buttons">
-      <a href="#install" class="btn-main">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Get started — it's free
-      </a>
-      <a href="https://github.com/Oscarr36/readmeai" target="_blank" class="btn-ghost">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-        View on GitHub
-      </a>
+<!-- CTA -->
+<div class="cta">
+  <div class="cta-inner">
+    <h2>One file.<br/><span class="hero-grad">Permanent context.</span></h2>
+    <p>Works with every AI assistant. No plugins, no accounts, no lock-in. MIT License.</p>
+    <div class="cta-btns">
+      <a class="nav-star" style="font-size:.95rem;padding:13px 28px;border-radius:10px" href="https://github.com/Oscarr36/ReadMeAI">⭐ Get ReadMeAI free</a>
+      <a href="https://github.com/Oscarr36/ReadMeAI/blob/main/.readmeAI" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-size:.95rem;font-weight:600;border:1px solid var(--border-strong);color:var(--gray);transition:all .25s" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.22)'" onmouseout="this.style.color='var(--gray)';this.style.borderColor='var(--border-strong)'">View template →</a>
+    </div>
+    <div class="cta-meta">
+      <span>MIT License</span><span>Zero dependencies</span><span>Works offline</span><span>Any AI assistant</span>
     </div>
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
-  <a href="#" class="footer-logo">
-    <span class="nav-logo-dot"></span>
-    ReadMeAI
-  </a>
-  <div class="footer-links">
-    Built by <a href="https://github.com/Oscarr36" target="_blank" style="margin:0 4px">Oscarr36</a>
-    <span class="footer-sep">&nbsp;·&nbsp;</span>
-    <a href="https://github.com/Oscarr36/readmeai" target="_blank">GitHub</a>
-    <span class="footer-sep">&nbsp;·&nbsp;</span>
-    <span>MIT License</span>
-  </div>
+  <span class="f-logo">ReadMeAI</span>
+  <p>Built by <a href="https://github.com/Oscarr36">Oscarr36</a> · <a href="https://github.com/Oscarr36/ReadMeAI">GitHub</a> · MIT License</p>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-(function(){
-  'use strict';
-
-  /* ═══════════════════════════════════════════════
-     A. AURORA SHADER BACKGROUND
-  ══════════════════════════════════════════════════ */
+/* ── THREE.JS PARTICLE CONSTELLATION ──────────────────────────────────────── */
+(()=>{
   const canvas = document.getElementById('c');
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-  camera.position.z = 1;
+  const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 1000);
+  camera.position.z = 32;
 
-  const vertexShader = `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = vec4(position, 1.0);
-    }
-  `;
+  // Particles
+  const COUNT = 200;
+  const posArr = new Float32Array(COUNT * 3);
+  const vel = [];
+  for(let i = 0; i < COUNT; i++){
+    posArr[i*3]   = (Math.random() - .5) * 80;
+    posArr[i*3+1] = (Math.random() - .5) * 50;
+    posArr[i*3+2] = (Math.random() - .5) * 24;
+    vel.push({ x:(Math.random()-.5)*.018, y:(Math.random()-.5)*.013, z:(Math.random()-.5)*.006 });
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+  const mat = new THREE.PointsMaterial({ color:0x00e87a, size:.18, transparent:true, opacity:.9, sizeAttenuation:true });
+  scene.add(new THREE.Points(geo, mat));
 
-  const fragmentShader = `
-    uniform float uTime;
-    uniform vec2 uMouse;
-    varying vec2 vUv;
+  // Lines between nearby particles
+  const lineMat = new THREE.LineBasicMaterial({ color:0x00e87a, transparent:true, opacity:.07 });
+  let lineSegs = new THREE.LineSegments(new THREE.BufferGeometry(), lineMat);
+  scene.add(lineSegs);
 
-    float hash(vec2 p) {
-      p = fract(p * vec2(234.34, 435.345));
-      p += dot(p, p + 34.23);
-      return fract(p.x * p.y);
-    }
-
-    float noise(vec2 p) {
-      vec2 i = floor(p);
-      vec2 f = fract(p);
-      f = f * f * (3.0 - 2.0 * f);
-      return mix(
-        mix(hash(i), hash(i + vec2(1,0)), f.x),
-        mix(hash(i + vec2(0,1)), hash(i + vec2(1,1)), f.x),
-        f.y
-      );
-    }
-
-    float fbm(vec2 p) {
-      float v = 0.0;
-      float a = 0.5;
-      for(int i = 0; i < 5; i++) {
-        v += a * noise(p);
-        p = p * 2.1 + vec2(1.7, 9.2);
-        a *= 0.5;
+  function updateLines(){
+    const p = geo.attributes.position.array;
+    const verts = [];
+    const MAX_DIST = 11;
+    for(let i = 0; i < COUNT; i++){
+      for(let j = i+1; j < COUNT; j++){
+        const dx = p[i*3]-p[j*3], dy = p[i*3+1]-p[j*3+1], dz = p[i*3+2]-p[j*3+2];
+        if(Math.sqrt(dx*dx+dy*dy+dz*dz) < MAX_DIST){
+          verts.push(p[i*3],p[i*3+1],p[i*3+2], p[j*3],p[j*3+1],p[j*3+2]);
+        }
       }
-      return v;
     }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verts), 3));
+    lineSegs.geometry.dispose();
+    lineSegs.geometry = g;
+  }
 
-    void main() {
-      vec2 uv = vUv;
-      float t = uTime * 0.12;
-
-      /* subtle mouse drift */
-      vec2 mouseOffset = (uMouse - 0.5) * 0.04;
-      uv += mouseOffset;
-
-      /* layer 1 — green aurora ribbon */
-      vec2 p1 = uv * vec2(2.5, 1.2) + vec2(t * 0.4, t * 0.18);
-      float n1 = fbm(p1 + fbm(p1 + fbm(p1)));
-      float wave1 = smoothstep(0.38, 0.68, n1);
-      vec3 green = vec3(0.0, 1.0, 0.53);
-
-      /* layer 2 — blue aurora */
-      vec2 p2 = uv * vec2(1.8, 0.9) + vec2(-t * 0.3, t * 0.22) + 4.7;
-      float n2 = fbm(p2 + fbm(p2));
-      float wave2 = smoothstep(0.42, 0.65, n2);
-      vec3 blue = vec3(0.23, 0.51, 1.0);
-
-      /* layer 3 — purple accent */
-      vec2 p3 = uv * vec2(3.1, 1.4) + vec2(t * 0.2, -t * 0.15) + 9.1;
-      float n3 = fbm(p3 + fbm(p3 * 0.7));
-      float wave3 = smoothstep(0.45, 0.7, n3);
-      vec3 purple = vec3(0.54, 0.36, 1.0);
-
-      /* layer 4 — subtle green shimmer */
-      vec2 p4 = uv * vec2(1.3, 2.2) + vec2(-t * 0.25, t * 0.1) + 13.3;
-      float n4 = fbm(p4);
-      float wave4 = smoothstep(0.48, 0.62, n4) * 0.5;
-
-      /* layer 5 — wide slow base */
-      vec2 p5 = uv * 0.7 + vec2(t * 0.07, t * 0.05) + 17.8;
-      float n5 = fbm(p5);
-      float wave5 = smoothstep(0.44, 0.58, n5) * 0.4;
-
-      /* combine */
-      vec3 col = vec3(0.0);
-      col = mix(col, green,  wave1 * 0.9);
-      col = mix(col, blue,   wave2 * 0.75);
-      col = mix(col, purple, wave3 * 0.6);
-      col += green * wave4 * 0.35;
-      col += mix(blue, purple, 0.5) * wave5 * 0.3;
-
-      /* spatial weighting — concentrate aurora in upper-middle area */
-      float vert  = smoothstep(0.0, 0.55, vUv.y) * smoothstep(1.0, 0.4, vUv.y);
-      float horiz = smoothstep(0.0, 0.3, vUv.x)  * smoothstep(1.0, 0.3, vUv.x);
-      float mask  = vert * horiz;
-      col *= mask;
-
-      /* vignette */
-      vec2 vd = vUv - 0.5;
-      float vign = 1.0 - dot(vd, vd) * 2.2;
-      vign = clamp(vign, 0.0, 1.0);
-      col *= vign;
-
-      /* cap brightness — very subtle on dark bg */
-      col = clamp(col, 0.0, 0.16);
-
-      float alpha = clamp(length(col) * 6.0, 0.0, 0.92);
-      gl_FragColor = vec4(col, alpha);
-    }
-  `;
-
-  const uniforms = {
-    uTime:  { value: 0.0 },
-    uMouse: { value: new THREE.Vector2(0.5, 0.5) }
-  };
-
-  const mesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(2, 2),
-    new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms,
-      transparent: true,
-      depthWrite: false
-    })
-  );
-  scene.add(mesh);
-
-  /* mouse tracking */
-  let targetMouse = new THREE.Vector2(0.5, 0.5);
-  let currentMouse = new THREE.Vector2(0.5, 0.5);
+  const mouse = {x:0, y:0, tx:0, ty:0};
   window.addEventListener('mousemove', e => {
-    targetMouse.x = e.clientX / window.innerWidth;
-    targetMouse.y = 1.0 - (e.clientY / window.innerHeight);
+    mouse.tx = (e.clientX/innerWidth  - .5) * 22;
+    mouse.ty = (e.clientY/innerHeight - .5) * -14;
   });
 
-  /* resize */
-  window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
+  function resize(){
+    renderer.setSize(innerWidth, innerHeight);
+    camera.aspect = innerWidth/innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
 
-  /* animate */
-  let lastTime = 0;
-  function animate(time) {
+  let frame = 0;
+  (function animate(){
     requestAnimationFrame(animate);
-    const dt = Math.min((time - lastTime) / 1000, 0.05);
-    lastTime = time;
-
-    currentMouse.x += (targetMouse.x - currentMouse.x) * 0.04;
-    currentMouse.y += (targetMouse.y - currentMouse.y) * 0.04;
-
-    uniforms.uTime.value  = time * 0.001;
-    uniforms.uMouse.value = currentMouse;
+    frame++;
+    const p = geo.attributes.position.array;
+    for(let i = 0; i < COUNT; i++){
+      p[i*3]   += vel[i].x;
+      p[i*3+1] += vel[i].y;
+      p[i*3+2] += vel[i].z;
+      if(Math.abs(p[i*3])   > 40) vel[i].x *= -1;
+      if(Math.abs(p[i*3+1]) > 25) vel[i].y *= -1;
+      if(Math.abs(p[i*3+2]) > 12) vel[i].z *= -1;
+    }
+    geo.attributes.position.needsUpdate = true;
+    if(frame % 3 === 0) updateLines();
+    mouse.x += (mouse.tx - mouse.x) * .035;
+    mouse.y += (mouse.ty - mouse.y) * .035;
+    camera.position.x = mouse.x * .05;
+    camera.position.y = mouse.y * .05;
     renderer.render(scene, camera);
-  }
-  animate(0);
-
-
-  /* ═══════════════════════════════════════════════
-     B. TERMINAL ANIMATION
-  ══════════════════════════════════════════════════ */
-  const badMessages = [
-    { cls: 'from-user',   from: 'You',    text: 'refactor the auth middleware' },
-    { cls: 'from-ai-bad', from: 'AI',     text: 'What language/framework is this?' },
-    { cls: 'from-user',   from: 'You',    text: 'Next.js 14, TypeScript, Clerk' },
-    { cls: 'from-ai-bad', from: 'AI',     text: 'Where is the middleware file currently?' },
-    { cls: 'from-user',   from: 'You',    text: 'src/middleware.ts — but that\'s not the point…' },
-    { cls: 'from-ai-bad', from: 'AI',     text: 'Should I use Edge Runtime or Node.js runtime?' },
-  ];
-
-  const goodMessages = [
-    { cls: 'from-sys',      from: 'CLAUDE.md',  text: 'Stack: Next.js 14 · TypeScript strict · Clerk · Edge runtime · /src layout' },
-    { cls: 'from-user',     from: 'You',        text: 'refactor the auth middleware' },
-    { cls: 'from-ai-good',  from: 'AI',         text: 'On it. I\'ll consolidate the Clerk matcher in src/middleware.ts and add rate-limit headers inline. Edge-safe. Here\'s the diff…' },
-  ];
-
-  async function type(el, text, speed = 18) {
-    el.textContent = '';
-    for (const ch of text) {
-      el.textContent += ch;
-      await new Promise(r => setTimeout(r, speed + Math.random() * 14));
-    }
-  }
-
-  function buildMsg(data) {
-    const wrap = document.createElement('div');
-    wrap.className = `msg ${data.cls}`;
-    const from = document.createElement('div');
-    from.className = 'msg-from';
-    from.textContent = data.from;
-    const bub = document.createElement('div');
-    bub.className = 'msg-bub';
-    bub.textContent = '';
-    wrap.appendChild(from);
-    wrap.appendChild(bub);
-    return { wrap, bub };
-  }
-
-  async function runTerminalAnim() {
-    const panelBad  = document.getElementById('panel-bad');
-    const panelGood = document.getElementById('panel-good');
-
-    /* clear dynamic messages (keep header + static footer) */
-    const badHeader   = panelBad.querySelector('.p-head');
-    const badStatus   = panelBad.querySelector('.panel-status');
-    const goodHeader  = panelGood.querySelector('.p-head');
-    const goodStatus  = panelGood.querySelector('.panel-status');
-
-    panelBad.innerHTML  = '';
-    panelBad.appendChild(badHeader);
-    panelGood.innerHTML = '';
-    panelGood.appendChild(goodHeader);
-
-    /* run bad panel */
-    for (const data of badMessages) {
-      const { wrap, bub } = buildMsg(data);
-      panelBad.appendChild(wrap);
-      await type(bub, data.text, 16);
-      await new Promise(r => setTimeout(r, 280));
-    }
-
-    /* run good panel with slight overlap */
-    await new Promise(r => setTimeout(r, 400));
-    for (const data of goodMessages) {
-      const { wrap, bub } = buildMsg(data);
-      panelGood.appendChild(wrap);
-      await type(bub, data.text, 14);
-      await new Promise(r => setTimeout(r, 220));
-    }
-
-    panelBad.appendChild(badStatus);
-    panelGood.appendChild(goodStatus);
-
-    await new Promise(r => setTimeout(r, 5800));
-    runTerminalAnim();
-  }
-
-  /* start when demo section is visible */
-  const demoSection = document.getElementById('demo');
-  const terminalObserver = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      terminalObserver.disconnect();
-      runTerminalAnim();
-    }
-  }, { threshold: 0.25 });
-  if (demoSection) terminalObserver.observe(demoSection);
-
-
-  /* ═══════════════════════════════════════════════
-     C. INSTALL TABS
-  ══════════════════════════════════════════════════ */
-  const tabContent = {
-    bash: {
-      cmd: 'npx readmeai init',
-      lines: [
-        { cls: 'code-line-dim',    text: '# One command to rule them all' },
-        { cls: '',                  text: '<span class="code-line-green">$</span> <span style="color:#e2e8f0">npx readmeai init</span>' },
-        { cls: '',                  text: '&nbsp;' },
-        { cls: 'code-line-purple', text: '✓ Detected: Next.js 14 · TypeScript · Prisma · Tailwind' },
-        { cls: 'code-line-purple', text: '✓ Analyzed 247 source files' },
-        { cls: 'code-line-purple', text: '✓ Extracted 18 coding conventions' },
-        { cls: 'code-line-green',  text: '→ Written: CLAUDE.md' },
-        { cls: 'code-line-green',  text: '→ Written: .cursorrules' },
-        { cls: 'code-line-green',  text: '→ Written: .github/copilot-instructions.md' },
-        { cls: '',                  text: '&nbsp;' },
-        { cls: '',                  text: '<span class="code-line-green">Done</span> <span style="color:#6b7280">in 1.4s — commit these files to share context with your team.</span>' },
-      ]
-    },
-    powershell: {
-      cmd: 'npx readmeai init',
-      lines: [
-        { cls: 'code-line-dim',    text: '# PowerShell — works the same way' },
-        { cls: '',                  text: '<span class="code-line-blue">PS&gt;</span> <span style="color:#e2e8f0">npx readmeai init</span>' },
-        { cls: '',                  text: '&nbsp;' },
-        { cls: 'code-line-purple', text: '[OK] Detected: Next.js 14 · TypeScript · Prisma · Tailwind' },
-        { cls: 'code-line-purple', text: '[OK] Analyzed 247 source files' },
-        { cls: 'code-line-purple', text: '[OK] Extracted 18 coding conventions' },
-        { cls: 'code-line-green',  text: '[+] Written: CLAUDE.md' },
-        { cls: 'code-line-green',  text: '[+] Written: .cursorrules' },
-        { cls: 'code-line-green',  text: '[+] Written: .github/copilot-instructions.md' },
-        { cls: '',                  text: '&nbsp;' },
-        { cls: '',                  text: '<span class="code-line-green">Done</span> <span style="color:#6b7280">in 1.6s</span>' },
-      ]
-    }
-  };
-
-  let activeTab = 'bash';
-
-  window.setTab = function(key, el) {
-    activeTab = key;
-    document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-
-    const out = document.getElementById('code-output');
-    const data = tabContent[key];
-
-    /* update hero install box */
-    const cmdDisplay = document.getElementById('install-cmd-display');
-    if (cmdDisplay) cmdDisplay.textContent = data.cmd;
-
-    out.innerHTML = data.lines.map(l =>
-      l.cls
-        ? `<div><span class="${l.cls}">${l.text}</span></div>`
-        : `<div>${l.text}</div>`
-    ).join('');
-  };
-
-  window.doCopy = function() {
-    const cmd = tabContent[activeTab].cmd;
-    navigator.clipboard.writeText(cmd).then(() => {
-      const btn = document.getElementById('copy-btn');
-      if (!btn) return;
-      btn.textContent = 'Copied!';
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.textContent = 'Copy';
-        btn.classList.remove('copied');
-      }, 2000);
-    }).catch(() => {
-      /* fallback for older browsers */
-      const ta = document.createElement('textarea');
-      ta.value = cmd;
-      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
-      document.body.appendChild(ta);
-      ta.focus(); ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      const btn = document.getElementById('copy-btn');
-      if (btn) {
-        btn.textContent = 'Copied!';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
-      }
-    });
-  };
-
-
-  /* ═══════════════════════════════════════════════
-     D. SCROLL REVEAL
-  ══════════════════════════════════════════════════ */
-  const revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-
-        /* stagger siblings in same parent */
-        const siblings = Array.from(
-          el.parentElement.querySelectorAll('.feat, .step, .stat, .reveal')
-        ).filter(s => s.classList.contains(el.classList[0]));
-        const idx = siblings.indexOf(el);
-
-        setTimeout(() => {
-          el.classList.add('revealed');
-        }, idx * 70);
-
-        revealObserver.unobserve(el);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.feat, .step, .stat, .reveal').forEach(el => {
-    revealObserver.observe(el);
-  });
-
-
-  /* ═══════════════════════════════════════════════
-     E. NAV ACTIVE LINK HIGHLIGHT
-  ══════════════════════════════════════════════════ */
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
-
-  const navObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navLinks.forEach(link => {
-          link.style.color = '';
-          if (link.getAttribute('href') === '#' + entry.target.id) {
-            link.style.color = 'var(--white)';
-          }
-        });
-      }
-    });
-  }, { threshold: 0.4 });
-
-  sections.forEach(s => navObserver.observe(s));
-
-
-  /* ═══════════════════════════════════════════════
-     F. HERO SCROLL FADE
-  ══════════════════════════════════════════════════ */
-  const hero = document.querySelector('.hero');
-  if (hero) {
-    window.addEventListener('scroll', () => {
-      const progress = Math.min(window.scrollY / (window.innerHeight * 0.5), 1);
-      hero.style.opacity = 1 - progress * 0.4;
-    }, { passive: true });
-  }
-
+  })();
 })();
+
+/* ── MARQUEE ───────────────────────────────────────────────────────────────── */
+const TOOLS = ['Claude','ChatGPT','GitHub Copilot','Cursor','Windsurf','Gemini','Codeium','Continue','Aider','Tabnine','Copilot Chat','Phind'];
+const mq = document.getElementById('mq');
+[...TOOLS,...TOOLS,...TOOLS,...TOOLS].forEach(t => {
+  const d = document.createElement('div');
+  d.className = 'm-item';
+  d.innerHTML = `<span class="m-dot"></span>${t}`;
+  mq.appendChild(d);
+});
+
+/* ── TERMINAL ANIMATION ────────────────────────────────────────────────────── */
+const BAD = [
+  {w:'u', t:'Hey, continue the auth system.'},
+  {w:'a', t:'Sure! What are we building?',    cls:'tb-ai'},
+  {w:'u', t:'User auth with JWT tokens.'},
+  {w:'a', t:'Got it. Which framework?',       cls:'tb-ai'},
+  {w:'u', t:'Express + MongoDB. We use MVC.'},
+  {w:'a', t:'And where did we leave off?',    cls:'tb-ai'},
+  {w:'u', t:'Login done, need signup next.'},
+  {w:'a', t:'Okay, starting from scratch...', cls:'tb-bad'},
+];
+const GOOD = [
+  {w:'u',   t:'Continue where we left off.'},
+  {w:'sys', t:'Reading .readmeAI...',               cls:'tb-sys'},
+  {w:'a',   t:'Loaded. Express+MongoDB MVC JWT.',   cls:'tb-ai'},
+  {w:'a',   t:'Login done. Writing signup handler.',cls:'tb-ai'},
+  {w:'a',   t:'→ src/controllers/auth.js:47',       cls:'tb-ai'},
+];
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function type(el, text, speed = 14){
+  for(let i = 0; i <= text.length; i++){
+    el.textContent = text.slice(0, i);
+    await sleep(speed + Math.random() * 8);
+  }
+}
+
+function addMsg(container, m){
+  const wrap  = document.createElement('div'); wrap.className = 't-msg';
+  const label = document.createElement('div');
+  label.className = 't-from tf-' + (m.w === 'u' ? 'u' : m.w === 'sys' ? 'sys' : 'ai');
+  label.textContent = m.w === 'u' ? 'you' : m.w === 'sys' ? 'system' : 'ai';
+  const bub = document.createElement('div');
+  bub.className = 't-bub ' + (m.cls || (m.w === 'u' ? 'tb-u' : 'tb-ai'));
+  wrap.appendChild(label);
+  wrap.appendChild(bub);
+  container.appendChild(wrap);
+  return bub;
+}
+
+async function runTerminal(){
+  const bad  = document.getElementById('bad');
+  const good = document.getElementById('good');
+  bad.innerHTML = ''; good.innerHTML = '';
+  await sleep(600);
+
+  for(const m of BAD){
+    const b = addMsg(bad, m);
+    await type(b, m.t, m.w === 'u' ? 20 : 13);
+    await sleep(280);
+  }
+  const vb = document.createElement('div'); vb.className = 't-verdict tv-bad';
+  vb.innerHTML = '✗ &nbsp;8 messages — 3 minutes wasted';
+  bad.appendChild(vb);
+
+  await sleep(380);
+
+  for(const m of GOOD){
+    const b = addMsg(good, m);
+    await type(b, m.t, m.w === 'u' ? 20 : m.w === 'sys' ? 8 : 11);
+    await sleep(m.w === 'sys' ? 650 : 260);
+  }
+  const vg = document.createElement('div'); vg.className = 't-verdict tv-good';
+  vg.innerHTML = '✓ &nbsp;1 message — resumed instantly';
+  good.appendChild(vg);
+
+  await sleep(5800);
+  runTerminal();
+}
+runTerminal();
+
+/* ── INSTALL TABS ──────────────────────────────────────────────────────────── */
+const CMDS = {
+  bash: {
+    comment: '# macOS / Linux',
+    prompt:  '$ ',
+    cmd:     'curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI'
+  },
+  ps: {
+    comment: '# Windows PowerShell',
+    prompt:  '> ',
+    cmd:     'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"'
+  }
+};
+let activeTab = 'bash';
+
+function renderCode(k){
+  const el = document.getElementById('icode');
+  el.innerHTML = '';
+  const c1 = document.createElement('div');
+  const s1 = document.createElement('span'); s1.className = 'ic-comment'; s1.textContent = CMDS[k].comment;
+  c1.appendChild(s1); el.appendChild(c1);
+  const c2 = document.createElement('div');
+  const s2 = document.createElement('span'); s2.className = 'ic-prompt'; s2.textContent = CMDS[k].prompt;
+  const s3 = document.createElement('span'); s3.className = 'ic-cmd';    s3.textContent = CMDS[k].cmd;
+  c2.appendChild(s2); c2.appendChild(s3); el.appendChild(c2);
+}
+
+function setTab(k, el){
+  activeTab = k;
+  document.querySelectorAll('.ictab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  renderCode(k);
+}
+
+function iCopy(){
+  navigator.clipboard.writeText(CMDS[activeTab].cmd);
+  const lbl = document.getElementById('copy-lbl');
+  lbl.textContent = 'Copied!';
+  setTimeout(() => lbl.textContent = 'Copy', 1600);
+}
+
+function heroCopy(){
+  navigator.clipboard.writeText(CMDS.bash.cmd);
+  const btn = document.querySelector('.hi-copy');
+  btn.textContent = 'Copied!'; btn.style.color = '#00e87a';
+  setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; }, 1600);
+}
+
+renderCode('bash');
+
+/* ── SCROLL REVEAL ─────────────────────────────────────────────────────────── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if(entry.isIntersecting){
+      setTimeout(() => {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }, i * 60);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.feat, .istep, .m-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(16px)';
+  el.style.transition = 'opacity .65s cubic-bezier(.16,1,.3,1), transform .65s cubic-bezier(.16,1,.3,1)';
+  observer.observe(el);
+});
 </script>
 </body>
 </html>
