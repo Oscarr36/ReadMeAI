@@ -6,6 +6,8 @@
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
+[![GitHub Release](https://img.shields.io/github/v/release/Oscarr36/ReadMeAI)](https://github.com/Oscarr36/ReadMeAI/releases)
+[![Website](https://img.shields.io/badge/website-oscarr36.github.io%2FReadMeAI-blue)](https://oscarr36.github.io/ReadMeAI/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-2.4-brightgreen.svg)](.readmeAI)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
