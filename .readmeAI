@@ -1,13 +1,25 @@
 <!--
   ╔══════════════════════════════════════════════════════════════════════╗
-  ║  READMEAI v3.0 — AI-TO-AI PROJECT CONTEXT FILE                     ║
-  ║  Lean by default. Every line earns its place.                      ║
-  ║  Setup: bash setup.sh (auto-wires Claude Code, Cursor, Windsurf…)  ║
-  ║  Made by: Oscarr36 · https://github.com/Oscarr36/ReadMeAI         ║
+  ║  READMEAI v3.1 — AI-TO-AI PROJECT CONTEXT FILE                     ║
+  ║  Lean by default · Every line earns its place · Zero drift         ║
+  ║  Setup: bash setup.sh  ·  Docs: github.com/Oscarr36/ReadMeAI      ║
   ╚══════════════════════════════════════════════════════════════════════╝
 -->
 
 # .readmeAI
+
+---
+
+## ⚡ QUICK REFERENCE
+> **Hot restart: read only this table, then go to SESSION STATE. Skip the full file.**
+
+| | |
+|--|--|
+| **Objective** | — |
+| **Last action** | — |
+| **Next step** | — |
+| **Key files** | — |
+| **Blockers** | — |
 
 ---
 
@@ -16,22 +28,33 @@
 > **Read this file at the very start of EVERY session. No prompt needed. First action, always.**
 
 ### Session start
-1. Read this file completely.
-2. Load SESSION STATE — resume without asking the user to recap.
-3. **First-time setup** (SESSION STATE is blank): execute the FIRST-TIME SETUP block at the bottom of this file. Fill every section. Ask only what cannot be inferred. Never repeat this scan after first setup.
+1. Read QUICK REFERENCE → go to SESSION STATE → resume without recap.
+2. **First-time setup** (SESSION STATE blank): execute FIRST-TIME SETUP at bottom. Fill every section. Never repeat after that.
+3. **Domain rules beat everything.** If a rule in DOMAIN RULES conflicts with your general knowledge, the domain rule wins.
 
-### Session end — silent, no user prompt
-1. Overwrite SESSION STATE with current work snapshot.
+### Session end — silent, no user prompt needed
+1. Overwrite QUICK REFERENCE and SESSION STATE with current snapshot.
 2. Append to DECISIONS LOG any architectural choice made this session.
-3. Update SYMBOL INDEX for new or renamed symbols (name + purpose only, no line numbers).
+3. Update SYMBOL INDEX for new or renamed symbols (name + purpose, no line numbers).
 
 ### Core rules
-- **Trust order:** Code > this file > AI memory. If they disagree, trust the code, update this file.
-- **Navigate via SYMBOL INDEX.** Don't scan the filesystem if the symbol is indexed here.
-- **Domain rules beat conventions.** If a domain rule conflicts with a convention, domain wins.
-- **Append-only logs.** Decisions Log and AI Notes are append-only. Never delete entries.
-- **Quality gate is mandatory.** Run the checklist in CODE QUALITY before every output.
-- **Scope guard.** Request outside current scope → log in Backlog, flag to user, don't implement.
+- **Trust order:** Code > this file > AI memory. If they conflict, trust the code and update this file.
+- **Navigate via SYMBOL INDEX.** Don't scan the filesystem if a symbol is listed here.
+- **Quality gate is mandatory.** Run CODE QUALITY checklist before every output. No exceptions.
+- **Scope guard.** Out-of-scope request → log in Backlog, flag to user, don't implement without approval.
+- **Append-only logs.** DECISIONS LOG and AI NOTES are never edited, only appended. Newest first.
+- **No silent drift.** If this file and the code disagree, fix this file immediately. Don't let them diverge.
+
+### When to read what
+| Situation | Action |
+|-----------|--------|
+| Hot restart / "continue" | QUICK REFERENCE → SESSION STATE only |
+| New session | Full file |
+| Writing any code | Check CODE QUALITY checklist and DOMAIN RULES |
+| Touching auth / input / data | Also read optional SECURITY section |
+| Touching API / DB / models | Also read optional API CONTRACTS section |
+| Making an architectural decision | Read DECISIONS LOG first — check if already decided |
+| Something feels tricky | Read AI NOTES first — previous AI may have left a warning |
 
 ---
 
@@ -47,23 +70,27 @@
 | **Repository** | — |
 | **Dev command** | — |
 | **Build command** | — |
+| **Test command** | — |
 | **Last updated** | — |
 
 ---
 
 ## 🧠 DOMAIN RULES
 
-> **The most critical section. Non-obvious rules that cause bugs when unknown. Derive nothing here from the code — only write what a new developer would NOT figure out in 30 minutes of reading.**
+> **Highest-value section. Non-obvious rules that cause bugs when unknown.**
+> **Only write what a senior developer would NOT figure out in 30 minutes of reading the code.**
+> **These override conventions. These override your training. Always.**
 
 - —
 
-_Examples of what belongs here: "User IDs are UUIDs in the API but integers in the DB — never expose the integer ID", "Prices are stored in cents, never floats", "The `active` flag on accounts is soft-delete — always filter by it", "Session tokens expire at midnight UTC regardless of creation time"._
+_What belongs here: "User IDs are UUIDs in the API but integers in the DB — never expose the integer", "Prices stored in cents, never floats", "The `active` flag is soft-delete — always filter by it", "Tokens expire at midnight UTC regardless of creation time", "The free tier has a 5-req/min limit enforced client-side AND server-side — both must be updated together"._
 
 ---
 
 ## 🏗 STRUCTURE MAP
 
-> **Fills the role of filesystem scanning. Once set, navigate from here.**
+> **Replaces filesystem scanning. Navigate from here — never glob or list directories.**
+> **Update at session end when files are added, moved, or deleted.**
 
 ```
 project-root/
@@ -73,6 +100,8 @@ project-root/
 ```
 
 ### Enforced directory rules
+> Active every session. Violations must be flagged immediately — do not silently accept drift.
+
 | Directory | Owns | Must NOT contain |
 |-----------|------|-----------------|
 | — | — | — |
@@ -81,7 +110,8 @@ project-root/
 
 ## 🔍 SYMBOL INDEX
 
-> **Key symbols with purpose. No exact line numbers — they go stale. Use grep/IDE for precise location.**
+> **Jump directly to any symbol without scanning. Name + file + purpose.**
+> **No exact line numbers — they go stale. Use file path + purpose to locate.**
 
 | Symbol | File | Purpose |
 |--------|------|---------|
@@ -91,77 +121,87 @@ project-root/
 
 ## 📐 CONVENTIONS
 
-### Naming
-| Asset | Convention | Example |
-|-------|-----------|---------|
+### Naming — enforced on all output
+| Identifier | Rule | Example |
+|-----------|------|---------|
 | Functions/methods | verb prefix | `getUser`, `validateEmail`, `buildQuery` |
-| Booleans | `is`/`has`/`can`/`should` prefix | `isLoggedIn`, `hasPermission` |
-| Event handlers | `handle`/`on` prefix | `handleSubmit`, `onClose` |
+| Booleans | `is`/`has`/`can`/`should` | `isLoggedIn`, `hasPermission` |
+| Event handlers | `handle`/`on` | `handleSubmit`, `onClose` |
+| Classes | PascalCase noun | `UserProfile`, `AuthService` |
 | Constants | SCREAMING_SNAKE_CASE | `MAX_RETRIES`, `API_BASE_URL` |
 | Collections | plural noun | `users`, `activeConnections` |
 
-_AI: adapt to actual language conventions. For non-JS, apply same semantic rules._
+_AI: adapt to actual language. Apply the same semantic rules with language-appropriate casing._
 
 ### Git
 - Branch: `feature/desc` · `fix/desc` · `chore/desc`
 - Commit: `type(scope): description` — e.g. `feat(auth): add JWT refresh`
+- No direct commits to `main`. PR required for cross-module changes.
 
 ### Comments
-- No comments explaining WHAT. Only WHY: hidden constraint, workaround, non-obvious invariant.
-- No TODO comments in committed code — use Backlog below.
+- Only write comments for WHY — a hidden constraint, a workaround, a non-obvious invariant.
+- Never explain WHAT. Never leave TODOs in committed code (use Backlog below).
 
 ---
 
 ## ✅ CODE QUALITY
 
-> **Run this before every output. Not optional. If any item fails, fix it first.**
+> **Run this before every output. Mandatory. If any item fails, fix it first.**
 
 - [ ] Every function does one thing. If you can say "and", split it.
 - [ ] No function longer than ~30 lines. Extract helpers.
-- [ ] No nesting deeper than 3 levels. Use early returns.
+- [ ] No nesting deeper than 3 levels. Use early returns to flatten.
 - [ ] No duplicated logic. Extract if the same block appears twice.
-- [ ] No hardcoded values. Use constants or config.
+- [ ] No hardcoded values (strings, numbers, URLs). Use constants or config.
 - [ ] No unused variables, imports, or parameters.
-- [ ] Error paths handled. No silent failures.
-- [ ] New files placed in the correct directory per STRUCTURE MAP.
+- [ ] Error paths handled. No silent `catch (e) {}`.
+- [ ] New files placed in the correct directory per STRUCTURE MAP rules.
+- [ ] Pattern match: if this pattern exists elsewhere in the codebase, mirror it exactly.
 
-### Forbidden — never produce this code
+### Forbidden — never produce this
 - `eval()` or `Function()` constructor
-- SQL strings built by concatenation (use parameterized queries)
-- `innerHTML` with unsanitized data
+- SQL strings built by concatenation (parameterized queries always)
+- `innerHTML` with unsanitized data (use `textContent` or a sanitizer)
 - Secrets or credentials in source code
-- Catching errors silently (`catch (e) {}`)
-- `any` type (TypeScript)
+- `any` type in TypeScript
+- Mutable function arguments
+- Boolean flags that change function behavior (`doThing(true)`) — use named options
 
 ---
 
 ## 🎯 SESSION STATE
 
-> **Overwrite each session. This is the hot-restart entry point.**
+> **Overwrite every session. This is the primary hot-restart entry point.**
+> **A cold AI should be able to continue from this section alone.**
 
 ### Active objective
 _One sentence: what are we building/fixing right now?_
 
 ### Context
-_What must a cold-start AI know to continue without reading the conversation?_
+_What must a cold AI know to continue without reading the conversation? Be specific enough to resume._
 
 ### Last action taken
 _Specific enough to resume from exactly here._
 
 ### Next immediate step
-_Exact action. No ambiguity._
+_Exact action. No ambiguity. If blocked, state what is needed to unblock._
 
 ### Blockers
+- —
+
+### Open questions
+_If answerable from the codebase, answer now and delete the entry._
 - —
 
 ---
 
 ## 📚 DECISIONS LOG
 
-> **Append per architectural decision. Newest first. Never delete.**
+> **Append per architectural decision. Newest first. Never delete entries.**
+> **Before making a significant decision, read this log — it may already be decided.**
 
-| Date | Decision | Alternatives | Rationale |
-|------|---------|-------------|-----------|
+| Date | Decision | Alternatives considered | Rationale |
+|------|---------|------------------------|-----------|
 | — | — | — | — |
 
 ---
@@ -172,6 +212,7 @@ _Exact action. No ambiguity._
 - —
 
 ### Backlog
+_Out-of-scope requests land here, not in the code._
 - —
 
 ### Completed
@@ -181,44 +222,60 @@ _Format: `- [x] YYYY-MM-DD — description`_
 
 ## 🐛 KNOWN ISSUES
 
-| ID | Status | Description | Workaround |
-|----|--------|-------------|-----------|
-| — | `open` · `in-progress` · `resolved` | — | — |
+| ID | Status | Description | Workaround | Root cause |
+|----|--------|-------------|-----------|------------|
+| — | `open` · `in-progress` · `resolved` | — | — | — |
 
 ---
 
 ## 🗒 AI NOTES
 
-> **The most valuable section. Non-obvious observations, gotchas, implicit contracts, surprising behavior. Append only. Newest first. Dated.**
+> **Most valuable section. Append only. Newest first. Dated.**
+> **Write anything that would take minutes to re-derive but seconds to recall.**
+> **Severity tags: `[!]` breaks if ignored · `[~]` non-obvious gotcha · `[?]` unresolved question**
 
-_AI: write anything here that would take minutes to re-derive but seconds to recall._
+_Example:_
+_`2024-03-15 [!] — The userId in the sessions table is the users.uid column, NOT users.id. Three hours lost to this.`_
+_`2024-03-20 [~] — Payment webhook fires twice in sandbox, once in production. Deduplication in paymentWebhook.controller.js handles it but only with the idempotency key.`_
+_`2024-03-22 [?] — Does the rate limiter reset on midnight UTC or per rolling 24h window? Not documented.`_
 
 ---
 
 <!--
-  ══════════════════════════════════════════════════════════════════════
-  OPTIONAL SECTIONS — uncomment the blocks you need for this project.
-  These are excluded by default to keep context lean.
-  ══════════════════════════════════════════════════════════════════════
+════════════════════════════════════════════════════════════════════════
+OPTIONAL SECTIONS
+Uncomment the blocks your project needs. Excluded by default to keep
+active context lean. Add them above the AI NOTES section.
+════════════════════════════════════════════════════════════════════════
 
 ## 🔐 SECURITY
 ### Auth model
 - Method: — (JWT / session cookie / OAuth / API key)
-- Token storage: — · Lifetime: — · Refresh: —
-- Auth middleware: —
+- Token storage: — · Lifetime: — · Refresh strategy: —
+- Auth middleware location: —
 
-### Forbidden (add to CODE QUALITY gate)
-- No raw SQL with user input
-- No auth checks client-side only
-- No secrets in committed files
-- No verbose errors exposed to client
+### Authorization
+- Model: — (RBAC / ABAC / flat permissions)
+- Roles: — · Permission check location: —
+
+### Sensitive data
+| Data | Location | Storage | Encryption |
+|------|----------|---------|-----------|
+| — | — | — | — |
+
+### Forbidden (in addition to CODE QUALITY gate)
+- No raw SQL with user input (parameterized always)
+- No auth checks client-side only (server must validate every request)
+- No secrets in committed files (.env only, gitignored)
+- No verbose error messages to the client (log server-side, return generic)
 - No passwords stored without bcrypt/argon2
+- No predictable IDs for sensitive resources (use UUIDs)
 
 ## 🔌 API CONTRACTS
 ### Endpoints
-| Method | Path | Auth | Input | Output |
-|--------|------|------|-------|--------|
-| — | — | — | — | — |
+| Method | Path | Auth | Input | Output | Notes |
+|--------|------|------|-------|--------|-------|
+| — | — | — | — | — | — |
 
 ### Core data models
 ```
@@ -235,26 +292,31 @@ Entity: —
 ### Coverage
 | Layer | Tested? | Type | Location |
 |-------|---------|------|----------|
-| — | — | unit/integration | — |
+| — | — | unit / integration | — |
 
 ### Rules
-- Must mock: external HTTP, email, payment processors, clocks
-- Must NOT mock: database, core business logic
-- Test DB: —
+- Must mock: external HTTP, email/SMS, payment processors, clocks/dates
+- Must NOT mock: database (use test DB), core business logic
+- Test DB config: —
+
+### Naming
+- Unit: `[fn] — [scenario] — [expected outcome]`
+- Integration: `[METHOD] [path] — [scenario] — [expected status]`
 
 ## ⚡ PERFORMANCE
 ### Targets
-| Operation | Target | Baseline |
-|-----------|--------|----------|
+| Operation | Target | Current |
+|-----------|--------|---------|
 | — | — | — |
 
 ### Rules
-- No N+1 queries. Use joins or eager loading.
+- No N+1 queries. Use joins or eager loading. Check query count before shipping.
 - Paginate all list endpoints. No unbounded queries.
-- No blocking scripts in `<head>`.
+- No blocking scripts in `<head>`. Use `defer` or `async`.
+- No synchronous I/O in request handlers.
 
 ## 📦 DEPENDENCIES
-### Critical
+### Critical (version-locked)
 | Package | Version | Why critical |
 |---------|---------|-------------|
 | — | — | — |
@@ -265,99 +327,97 @@ Entity: —
 | — | — | — |
 
 ## 🔧 ENVIRONMENT
-### Setup
+### Setup sequence
 ```
 1. —
 ```
-### Commands
+### Common commands
 | Command | What it does |
 |---------|-------------|
 | — | — |
 
-  ══════════════════════════════════════════════════════════════════════
-  FIRST-TIME SETUP — run this block once, never again.
-  Triggered when: SESSION STATE is blank.
-  ══════════════════════════════════════════════════════════════════════
+════════════════════════════════════════════════════════════════════════
+FIRST-TIME SETUP — execute when SESSION STATE is blank. Once only.
+════════════════════════════════════════════════════════════════════════
 
-  STEP 1 — Detect stack
-    Read: package.json, pyproject.toml, go.mod, Cargo.toml, Gemfile,
-    composer.json, requirements.txt, Dockerfile, pubspec.yaml.
-    Identify every technology in use. Then load its defaults from below.
+STEP 1 — Detect stack
+  Read: package.json, pyproject.toml, go.mod, Cargo.toml, Gemfile,
+  composer.json, requirements.txt, Dockerfile, pubspec.yaml.
+  Identify every technology. Load its defaults from the table below.
 
-  STEP 2 — Load stack defaults (structure + conventions + security)
+STEP 2 — Load stack defaults (structure + conventions + security rules)
 
-    node-express   → src/controllers/ src/models/ src/routes/ src/middleware/ src/services/
-                     camelCase files · MVC · async/await · JWT + helmet + CORS + rate-limit
-    node-nest      → src/modules/*/controller.ts .service.ts .module.ts
-                     PascalCase · decorators · DTOs · Guards + Pipes + JWT
-    react          → src/components/ src/hooks/ src/pages/ src/context/ src/utils/
-                     PascalCase components · co-located CSS modules · sanitize inputs
-    next           → app/ or pages/ · app/api/ · components/ · lib/ · public/
-                     file-based routing · RSC · server actions validation · middleware auth
-    vue            → src/components/ src/views/ src/store/ src/router/ src/composables/
-                     PascalCase SFCs · pinia · vue-router · route guards
-    angular        → src/app/modules/ components/ services/ guards/
-                     PascalCase · DI · NgModules · HTTP interceptors · XSS sanitization
-    svelte         → src/lib/ src/routes/ src/components/ src/stores/
-                     PascalCase · SvelteKit routing · input sanitization
-    django         → apps/*/models.py views.py urls.py serializers.py
-                     snake_case · DRF · CSRF + XSS + ORM (no raw SQL) + permission classes
-    fastapi        → app/api/ app/models/ app/schemas/ app/core/ app/db/
-                     snake_case · Pydantic schemas · OAuth2 + CORS + input validation
-    flask          → app/routes/ app/models/ app/templates/ app/static/
-                     snake_case · blueprints · app factory · Flask-Login + CSRFProtect
-    go             → cmd/ internal/ pkg/ api/ migrations/
-                     snake_case files · interface-based DI · JWT middleware · TLS · no raw SQL
-    rust           → src/main.rs src/lib.rs src/bin/ src/modules/ tests/ benches/
-                     snake_case · Result/Option · ownership safety · ring for crypto
-    spring-boot    → src/main/java/../controller/ service/ repository/ model/ config/ security/
-                     PascalCase · annotation-driven · Spring Security · OAuth2
-    php-laravel    → app/Http/Controllers/ app/Models/ routes/ database/migrations/
-                     PascalCase controllers · Eloquent · CSRF + XSS + auth gates
-    ruby-rails     → app/controllers/ app/models/ app/views/ config/routes.rb db/migrate/
-                     snake_case · RESTful · CSRF token · strong params · ActiveRecord
-    flutter        → lib/screens/ lib/widgets/ lib/models/ lib/services/ lib/providers/
-                     PascalCase widgets · BLoC/Provider · secure storage · cert pinning
-    react-native   → src/screens/ src/navigation/ src/components/ src/hooks/
-                     PascalCase · platform files (.ios.tsx .android.tsx) · secure storage
-    svelte         → src/lib/ src/routes/ src/components/ src/stores/
-    graphql        → src/graphql/schemas/ resolvers/ mutations/
-                     SDL · dataloader · query depth limit · auth directives
-    docker         → Dockerfile .dockerignore docker-compose.yml docker/
-                     multi-stage builds · non-root user · no secrets in images
-    database-pg    → migrations/ seeds/ db/ · parameterized queries only · row-level security
-    database-mongo → src/models/ migrations/ seeds/ · sanitize input · no NoSQL injection
-    database-prisma→ prisma/schema.prisma prisma/migrations/ src/repositories/
-    database-redis → src/cache/ src/queues/ · TLS · auth token · key prefixing
-    testing-jest   → tests/unit/ tests/__mocks__/ · mirror src/ · no secrets in tests
-    testing-vitest → src/__tests__/ src/__mocks__/ · in-source testing · coverage thresholds
-    testing-pytest → tests/ tests/conftest.py tests/fixtures/ · parametrize · isolated DB
-    testing-playwright → e2e/ e2e/fixtures/ e2e/pages/ · page object model · no real tokens
-    testing-cypress→ cypress/e2e/ cypress/fixtures/ cypress/support/ · no real auth tokens
-    ci-github      → .github/workflows/ .github/actions/ · no secrets in logs · OIDC for cloud
-    terraform      → terraform/ terraform/environments/ terraform/modules/
-                     HCL · remote state · IAM least privilege · no secrets in state
+  node-express   → src/controllers/ src/models/ src/routes/ src/middleware/ src/services/
+                   camelCase files · MVC · async/await · JWT + helmet + CORS + rate-limit
+  node-nest      → src/modules/*/controller.ts .service.ts .module.ts
+                   PascalCase · decorators · DTOs · Guards + Pipes + JWT auth module
+  react          → src/components/ src/hooks/ src/pages/ src/context/ src/utils/
+                   PascalCase components · co-located CSS modules · sanitize all inputs
+  next           → app/ or pages/ · app/api/ · components/ · lib/ · public/
+                   file-based routing · RSC · server actions validation · middleware auth
+  vue            → src/components/ src/views/ src/store/ src/router/ src/composables/
+                   PascalCase SFCs · pinia · vue-router · route guards · input sanitization
+  angular        → src/app/modules/ components/ services/ guards/
+                   PascalCase · DI pattern · NgModules · HTTP interceptors · XSS sanitization
+  svelte         → src/lib/ src/routes/ src/components/ src/stores/
+                   PascalCase · SvelteKit file-based routing · input sanitization · CSP
+  django         → apps/*/models.py views.py urls.py serializers.py
+                   snake_case · DRF · CSRF + XSS + ORM (no raw SQL) + permission classes
+  fastapi        → app/api/ app/models/ app/schemas/ app/core/ app/db/
+                   snake_case · Pydantic schemas · OAuth2 middleware + CORS + validation
+  flask          → app/routes/ app/models/ app/templates/ app/static/
+                   snake_case · blueprints · app factory · Flask-Login + CSRFProtect
+  go             → cmd/ internal/ pkg/ api/ migrations/
+                   snake_case · interface-based DI · JWT middleware · TLS · parameterized SQL
+  rust           → src/main.rs src/lib.rs src/bin/ src/modules/ tests/ benches/
+                   snake_case · Result/Option everywhere · ownership safety · ring for crypto
+  spring-boot    → src/main/java/../controller/ service/ repository/ model/ config/ security/
+                   PascalCase · annotation-driven · Spring Security · method-level auth
+  php-laravel    → app/Http/Controllers/ app/Models/ routes/ database/migrations/
+                   PascalCase controllers · Eloquent ORM · CSRF + XSS + auth gates
+  ruby-rails     → app/controllers/ app/models/ app/views/ config/routes.rb db/migrate/
+                   snake_case · RESTful · CSRF token · strong params · ActiveRecord (no raw SQL)
+  flutter        → lib/screens/ lib/widgets/ lib/models/ lib/services/ lib/providers/
+                   PascalCase widgets · BLoC/Provider · secure storage · cert pinning
+  react-native   → src/screens/ src/navigation/ src/components/ src/hooks/
+                   PascalCase · platform files (.ios.tsx .android.tsx) · Keychain storage
+  graphql        → src/graphql/schemas/ resolvers/ mutations/
+                   SDL · dataloader batching · query depth limiting · auth directives
+  docker         → Dockerfile .dockerignore docker-compose.yml docker/
+                   multi-stage builds · non-root user · no secrets in image layers
+  database-pg    → migrations/ seeds/ db/ · parameterized queries · row-level security · TLS
+  database-mongo → src/models/ migrations/ seeds/ · sanitize all input · no NoSQL injection
+  database-prisma→ prisma/schema.prisma prisma/migrations/ src/repositories/
+                   Prisma client · repository pattern · field-level encryption for PII
+  database-redis → src/cache/ src/queues/ · TLS connection · auth token · key prefix namespacing
+  testing-jest   → tests/unit/ tests/__mocks__/ · mirror src/ structure · no real secrets
+  testing-vitest → src/__tests__/ src/__mocks__/ · in-source testing · coverage thresholds
+  testing-pytest → tests/ tests/conftest.py tests/fixtures/ · parametrize · isolated test DB
+  testing-playwright → e2e/ e2e/fixtures/ e2e/pages/ · page objects · no real auth tokens
+  testing-cypress→ cypress/e2e/ cypress/fixtures/ cypress/support/ · fixture-driven · isolated
+  ci-github      → .github/workflows/ .github/actions/ · no secrets in logs · OIDC for cloud
+  terraform      → terraform/ terraform/environments/ terraform/modules/ · remote state · IAM least privilege
 
-  STEP 3 — Fill this file
-    PROJECT IDENTITY   — infer from config files and package name
-    STRUCTURE MAP      — scan, annotate every important file with its role
-    SYMBOL INDEX       — key functions/classes + what they do (no line numbers)
-    CONVENTIONS        — adapt to actual language; keep semantic naming rules
-    DOMAIN RULES       — ask user: "What rule would cause a bug if I didn't know it?"
-    SESSION STATE      — leave blank until end of first session
+STEP 3 — Fill this file
+  PROJECT IDENTITY   → infer from config files and package name
+  STRUCTURE MAP      → scan, annotate every important file with its role
+  SYMBOL INDEX       → key functions/classes with purpose (name + file, no line numbers)
+  DOMAIN RULES       → ask user: "What would cause a bug if I didn't know it?"
+  CONVENTIONS        → adapt naming table to actual language; keep semantic rules
+  OPTIONAL SECTIONS  → uncomment Security/API/Testing/Performance if the project needs them
 
-  STEP 4 — Ask only what cannot be inferred (one message, numbered list)
-    - Project purpose, goals, and non-goals
-    - Domain rules and business constraints
-    - Current objective / where to start
-    Never ask one question at a time.
+STEP 4 — Ask only what cannot be inferred (one message, numbered list)
+  - Project purpose and goals
+  - Domain rules and business constraints the code doesn't reveal
+  - Current objective and where to start
+  Never ask one question at a time. Never ask about things derivable from the code.
 
-  STEP 5 — Confirm and lock
-    Show the filled file. Ask: "Does this match the project?"
-    Once confirmed: stop scanning. Navigate via SYMBOL INDEX.
-    Mark first setup as complete by writing SESSION STATE.
+STEP 5 — Confirm and lock
+  Show the filled file. Ask: "Does this match the project?"
+  Once confirmed: stop scanning. Navigate via SYMBOL INDEX only.
+  Write SESSION STATE to mark first setup complete.
 
-  ══════════════════════════════════════════════════════════════════════
-  Context powered by ReadMeAI v3.0 — https://github.com/Oscarr36/ReadMeAI
-  ══════════════════════════════════════════════════════════════════════
+════════════════════════════════════════════════════════════════════════
+Context powered by ReadMeAI v3.1 — https://github.com/Oscarr36/ReadMeAI
+════════════════════════════════════════════════════════════════════════
 -->

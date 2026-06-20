@@ -1,0 +1,80 @@
+name: ReadMeAI Sync Check
+
+on:
+  push:
+    paths:
+      - '.readmeAI'
+      - 'package.json'
+      - 'pyproject.toml'
+      - 'go.mod'
+      - 'Cargo.toml'
+  pull_request:
+    paths:
+      - '.readmeAI'
+      - 'package.json'
+
+jobs:
+  validate:
+    name: Validate .readmeAI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check .readmeAI exists
+        run: |
+          if [ ! -f ".readmeAI" ]; then
+            echo "::error::.readmeAI not found. Run: curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash"
+            exit 1
+          fi
+          echo "✓ .readmeAI exists"
+
+      - name: Check file is not empty template
+        run: |
+          # Warn if SESSION STATE still blank (first-time setup not done)
+          if grep -q "## 🎯 SESSION STATE" .readmeAI; then
+            NEXT=$(awk '/### Active objective/{found=1; next} found && /^[^_]/{print; exit}' .readmeAI | xargs)
+            if [ "$NEXT" = "—" ] || [ -z "$NEXT" ]; then
+              echo "::warning::SESSION STATE is blank. Tell your AI: 'Detect my stack, fill what you can.'"
+            else
+              echo "✓ SESSION STATE is filled"
+            fi
+          fi
+
+      - name: Check DOMAIN RULES are filled
+        run: |
+          if grep -A3 "## 🧠 DOMAIN RULES" .readmeAI | grep -q "^- —$"; then
+            echo "::warning::DOMAIN RULES are empty. Ask your AI: 'What rule would cause a bug if I didn't know it?'"
+          else
+            echo "✓ DOMAIN RULES present"
+          fi
+
+      - name: Check stack consistency (Node.js)
+        if: hashFiles('package.json') != ''
+        run: |
+          # Warn if package.json changed but TECH STACK section is missing
+          if ! grep -q "TECH STACK" .readmeAI; then
+            echo "::warning::package.json present but no TECH STACK section in .readmeAI. Run: bash setup.sh --detect"
+          else
+            echo "✓ TECH STACK section present"
+          fi
+
+      - name: Check AI integrations
+        run: |
+          MISSING=()
+          [ ! -f ".claude/CLAUDE.md" ]               && MISSING+=("Claude Code (.claude/CLAUDE.md)")
+          [ ! -f ".cursorrules" ]                    && MISSING+=("Cursor (.cursorrules)")
+          [ ! -f ".windsurfrules" ]                  && MISSING+=("Windsurf (.windsurfrules)")
+          [ ! -f ".github/copilot-instructions.md" ] && MISSING+=("GitHub Copilot (.github/copilot-instructions.md)")
+
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            for tool in "${MISSING[@]}"; do
+              echo "::notice::$tool integration not found. Run: bash setup.sh --all"
+            done
+          else
+            echo "✓ All AI integrations present"
+          fi
+
+      - name: Summary
+        run: |
+          echo "ReadMeAI validation complete."
+          echo "To fix warnings: bash setup.sh --all --detect"

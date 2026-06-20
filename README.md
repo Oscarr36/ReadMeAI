@@ -9,7 +9,8 @@
 [![GitHub Release](https://img.shields.io/github/v/release/Oscarr36/ReadMeAI)](https://github.com/Oscarr36/ReadMeAI/releases)
 [![Website](https://img.shields.io/badge/website-oscarr36.github.io%2FReadMeAI-blue)](https://oscarr36.github.io/ReadMeAI/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.5-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-3.1-brightgreen.svg)](.readmeAI)
+[![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 [![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](.readmeAI)
 
@@ -44,6 +45,14 @@ irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
 > | Continue | `.continue/rules/readmeai.md` | Loaded as project rules |
 >
 > To create all integrations regardless of what's installed: `bash setup.sh --all`
+>
+> **Other commands:**
+> ```bash
+> bash setup.sh --detect    # scan project and pre-fill TECH STACK with real versions
+> bash setup.sh --validate  # check that .readmeAI is in sync with your codebase
+> bash setup.sh --update    # refresh TECH STACK after adding dependencies
+> bash setup.sh --all --detect  # wire everything and pre-fill in one go
+> ```
 
 </div>
 
@@ -77,27 +86,33 @@ Drop a `.readmeAI` file at the root of any project. One file the AI reads comple
 
 ## What's inside the template
 
-The `.readmeAI` file is organized into **24 sections**, each maintained automatically by the AI:
+The `.readmeAI` file is **lean by default** (~300 lines). Every section earns its place.
 
 ```
-⚙️  AI PROTOCOL          — session rules, token efficiency, quality gate
-🧭  PROJECT CONTEXT       — purpose, goals, constraints, domain rules
-🧠  SKILLS & ECOSYSTEM    — auto-detect tech stack, assemble structure & rules
-📋  PROJECT IDENTITY      — name, version, phase, type, repo
-🛠  TECH STACK            — every layer with versions
-🏗  STRUCTURE MAP         — full annotated file tree (replaces filesystem scanning)
-🔍  SYMBOL INDEX          — every key function/class at exact file:line
-📐  CONVENTIONS           — file naming, CSS, JS, git, comments policy
-✅  CODE QUALITY          — pre-output checklist, naming semantics, forbidden patterns
-🔌  API & DATA CONTRACTS  — endpoints, external APIs, data models, env vars
-🔐  SECURITY              — auth model, sensitive data, attack surface, hard blocks
-⚡  PERFORMANCE           — SLAs, bottlenecks, caching strategy, DB rules
-🧪  TESTING STRATEGY      — coverage map, mock rules, fixtures, CI requirements
-🚨  ERROR HANDLING        — propagation model, response format, logging rules
-📦  DEPENDENCIES          — critical packages, conflicts, update policy, banned list
-🎯  CURRENT SESSION STATE — live snapshot: objective, last action, next step
-📚  DECISIONS LOG         — every architectural decision with rationale
-🐛  KNOWN ISSUES          — bugs, workarounds, tech debt
+⚡  QUICK REFERENCE       — 5-line hot restart snapshot (resume in <50 tokens)
+⚙️  AI PROTOCOL           — when to read what, session rules, quality gate
+📋  PROJECT IDENTITY      — stack, commands, phase, repo
+🧠  DOMAIN RULES          — non-obvious rules that cause bugs when unknown
+🏗  STRUCTURE MAP         — annotated file tree (replaces filesystem scanning)
+🔍  SYMBOL INDEX          — key symbols with purpose (name + file, no stale line numbers)
+📐  CONVENTIONS           — naming, git, comments — enforced on every output
+✅  CODE QUALITY          — pre-output checklist + forbidden patterns (mandatory)
+🎯  SESSION STATE         — live snapshot: objective, last action, next step, blockers
+📚  DECISIONS LOG         — architectural choices with rationale (append-only)
+✅  PROGRESS              — in-progress, backlog, completed
+🐛  KNOWN ISSUES          — bugs and tech debt
+🗒  AI NOTES              — gotchas, surprises, implicit contracts (most valuable section)
+```
+
+**Optional sections** (uncomment when your project needs them):
+```
+🔐  SECURITY      — auth model, sensitive data, forbidden patterns
+🔌  API CONTRACTS — endpoints, data models, environment variables
+🧪  TESTING       — coverage map, mock rules, CI requirements
+⚡  PERFORMANCE   — SLAs, bottlenecks, caching strategy
+📦  DEPENDENCIES  — critical packages, banned list
+🔧  ENVIRONMENT   — setup sequence, common commands
+```
 ✅  PROGRESS              — completed, in-progress, backlog
 🔗  CROSS-PROJECT REFS    — links to sibling projects
 🔧  ENVIRONMENT           — tools, setup sequence, common commands
