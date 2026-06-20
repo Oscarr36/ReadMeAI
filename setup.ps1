@@ -199,7 +199,7 @@ $claudeHome = Join-Path $env:USERPROFILE ".claude"
 if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHome)) {
   Write-Integration ".claude\CLAUDE.md" "Claude Code" $ClaudeContent
 
-  # Claude Code hooks — auto-inject QUICK REFERENCE at session start + session snapshot on stop
+  # Claude Code hooks — bash commands (Claude Code always runs hooks via bash)
   $hooksFile = ".claude\settings.json"
   if (-not (Test-Path $hooksFile)) {
     New-Item -ItemType Directory -Force ".claude" | Out-Null
@@ -211,7 +211,7 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
         "hooks": [
           {
             "type": "command",
-            "command": "if (Test-Path '.readmeAI') -and -not (Test-Path '.claude/.readmeai.active') { New-Item .claude/.readmeai.active -Force | Out-Null; Get-Content .readmeAI | Select-String -Pattern '## . QUICK REFERENCE' -Context 0,14 }"
+            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## . QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
           }
         ]
       }
@@ -221,7 +221,7 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
         "hooks": [
           {
             "type": "command",
-            "command": "if (Test-Path '.readmeAI') { Remove-Item .claude/.readmeai.active -EA SilentlyContinue; $c = git log -1 --format='%h %s' 2>$null; \"$(Get-Date -f 'yyyy-MM-dd HH:mm') | $c\" | Set-Content .claude/.readmeai.session -Encoding utf8; Write-Host 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.' }"
+            "command": "if [ -f '.readmeAI' ]; then rm -f .claude/.readmeai.active 2>/dev/null; COMMIT=$(git log -1 --format='%h %s' 2>/dev/null || echo 'no git'); echo \"$(date '+%Y-%m-%d %H:%M') | $COMMIT\" > .claude/.readmeai.session 2>/dev/null; echo ''; echo 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.'; fi"
           }
         ]
       }
@@ -232,7 +232,7 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
         "hooks": [
           {
             "type": "command",
-            "command": "if ((Test-Path '.readmeAI') -and $env:TOOL_INPUT_PATH) { if (-not (Select-String -Path '.readmeAI' -Pattern $env:TOOL_INPUT_PATH -Quiet)) { Write-Warning \"ReadMeAI: $($env:TOOL_INPUT_PATH) not in STRUCTURE MAP — add it at session end.\" } }"
+            "command": "FILE=\"$TOOL_INPUT_PATH\"; [ -f '.readmeAI' ] && grep -q \"$FILE\" .readmeAI || echo \"ReadMeAI: '$FILE' not in STRUCTURE MAP — add it at session end.\""
           }
         ]
       }
