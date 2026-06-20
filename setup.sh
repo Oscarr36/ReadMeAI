@@ -330,7 +330,63 @@ if $DETECT; then
   fi
 fi
 
-# ── 6. Add to .gitignore ──────────────────────────────────────────────────────
+# ── 6. Git-powered intelligence (--detect) ───────────────────────────────────
+if $DETECT && git rev-parse --git-dir &>/dev/null; then
+  AI_NOTES_LINES=(); TODAY=$(date '+%Y-%m-%d')
+
+  # 6a. High-churn files → fragile areas → AI NOTES
+  echo -e "${BOLD}Scanning git history...${RESET}"
+  CHURN=$(git log --since="6 months ago" --name-only --format="" 2>/dev/null \
+    | grep -v '^$' | sort | uniq -c | sort -rn | head -5 || true)
+  if [[ -n "$CHURN" ]]; then
+    while IFS= read -r line; do
+      count=$(echo "$line" | awk '{print $1}')
+      file=$(echo "$line" | awk '{print $2}')
+      [[ -n "$file" && $count -gt 3 ]] && \
+        AI_NOTES_LINES+=("$TODAY [~] — High-churn file ($count changes in 6mo): \`$file\` — review before modifying")
+    done <<< "$CHURN"
+  fi
+
+  # 6b. Extract important in-code comments → AI NOTES
+  IMPORTANT_COMMENTS=$(grep -r \
+    -e "IMPORTANT:" -e "WARNING:" -e "HACK:" -e "FIXME:" -e "DO NOT" -e "NEVER" \
+    --include="*.js" --include="*.ts" --include="*.py" --include="*.go" \
+    --include="*.rs" --include="*.rb" --include="*.java" --include="*.php" \
+    -l 2>/dev/null | head -5 || true)
+  if [[ -n "$IMPORTANT_COMMENTS" ]]; then
+    while IFS= read -r file; do
+      MATCHES=$(grep -n "IMPORTANT:\|WARNING:\|HACK:\|FIXME:\|DO NOT\|NEVER" "$file" 2>/dev/null \
+        | head -3 | sed "s|^|  $file:|" || true)
+      [[ -n "$MATCHES" ]] && \
+        AI_NOTES_LINES+=("$TODAY [!] — Critical comment found in \`$file\` — read before modifying:
+$MATCHES")
+    done <<< "$IMPORTANT_COMMENTS"
+  fi
+
+  # 6c. Detect commit convention from git log
+  COMMIT_SAMPLE=$(git log --format="%s" -20 2>/dev/null | head -5 || true)
+  if echo "$COMMIT_SAMPLE" | grep -qE "^(feat|fix|chore|refactor|docs|test)\("; then
+    : # Conventional commits detected — already in CONVENTIONS
+  fi
+
+  # Append to AI NOTES section
+  if [[ ${#AI_NOTES_LINES[@]} -gt 0 ]]; then
+    # Insert before the closing comment block
+    NOTES_BLOCK="\n"
+    for note in "${AI_NOTES_LINES[@]}"; do
+      NOTES_BLOCK+="\n$note\n"
+    done
+    # Append after "## 🗒 AI NOTES" section header placeholder
+    if grep -q "_AI: write anything here" .readmeAI 2>/dev/null; then
+      printf '\n%s\n' "${AI_NOTES_LINES[@]}" >> .readmeAI
+      echo -e "${GREEN}✓${RESET} AI NOTES pre-populated from git history (${#AI_NOTES_LINES[@]} entries)"
+    fi
+  fi
+
+  echo -e "${GREEN}✓${RESET} Git history scanned"
+fi
+
+# ── 7. Add to .gitignore ──────────────────────────────────────────────────────
 # Ensure .readmeAI is NOT ignored (some projects have catch-all rules)
 if [[ -f ".gitignore" ]] && grep -q "^\.readmeAI$" .gitignore 2>/dev/null; then
   sed -i '/^\.readmeAI$/d' .gitignore

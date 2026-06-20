@@ -1,145 +1,210 @@
 <div align="center">
 
-<img src="img/Icon.png" alt="ReadMeAI" width="300" />
+<img src="img/Icon.png" alt="ReadMeAI" width="260" />
 
-<p><strong>A self-updating AI context file that keeps every session fully oriented — no re-explaining, no context drift, no messy structure.</strong></p>
+# ReadMeAI
+
+**AI coding tools are context-blind. This fixes it.**
+
+One file. Reads itself at session start. Updates itself at session end. Works with every AI tool.
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
-[![GitHub Release](https://img.shields.io/github/v/release/Oscarr36/ReadMeAI)](https://github.com/Oscarr36/ReadMeAI/releases)
-[![Website](https://img.shields.io/badge/website-oscarr36.github.io%2FReadMeAI-blue)](https://oscarr36.github.io/ReadMeAI/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.1-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-3.2-brightgreen.svg)](.readmeAI)
+[![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](AGENTS.md)
 [![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
-[![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](.readmeAI)
 
-**Languages:** [English](README.md) · [Español](docs/README.es.md) · [Português](docs/README.pt.md) · [Français](docs/README.fr.md)
-
-**Works with:** Claude · ChatGPT · GitHub Copilot · Gemini · Cursor · any AI assistant
-
----
-
-### ↓ Get it in one command
-
-```bash
-# bash / mac / linux — auto-detects your AI tools and wires them up
-curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
-```
-
-```powershell
-# Windows PowerShell — auto-detects your AI tools and wires them up
-irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
-```
-
-> **What does "auto-detects your AI tools" mean?**
-> The setup script downloads `.readmeAI` and then checks which AI tools you have installed (Claude Code, Cursor, Windsurf, GitHub Copilot, Aider, Continue). For each one found, it creates the right integration file so the AI reads `.readmeAI` automatically at session start — zero manual config.
->
-> | Tool | File created | Effect |
-> |------|-------------|--------|
-> | Claude Code | `.claude/CLAUDE.md` | Auto-read on project open |
-> | Cursor | `.cursorrules` | Loaded as system context |
-> | Windsurf | `.windsurfrules` | Loaded as system context |
-> | GitHub Copilot | `.github/copilot-instructions.md` | Loaded as custom instructions |
-> | Aider | `.aider.conf.yml` | Passed via `--read` at startup |
-> | Continue | `.continue/rules/readmeai.md` | Loaded as project rules |
->
-> To create all integrations regardless of what's installed: `bash setup.sh --all`
->
-> **Other commands:**
-> ```bash
-> bash setup.sh --detect    # scan project and pre-fill TECH STACK with real versions
-> bash setup.sh --validate  # check that .readmeAI is in sync with your codebase
-> bash setup.sh --update    # refresh TECH STACK after adding dependencies
-> bash setup.sh --all --detect  # wire everything and pre-fill in one go
-> ```
+**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Gemini CLI · Aider · Continue · ChatGPT · any tool that reads AGENTS.md
 
 </div>
 
 ---
 
+```bash
+# macOS / Linux
+curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
+
+# Windows PowerShell
+irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
+```
+
+That's it. The script downloads `.readmeAI`, scans your project, and wires the right integration file for every AI tool it detects.
+
+---
+
 ## The problem
 
-You start a project with an AI assistant. It goes well. You close the session.
+You open your AI coding tool. Session starts. The AI has forgotten everything.
 
-**Next day:** the AI has no idea what you built, what decisions you made, what conventions you agreed on, or where you left off. You spend 10 minutes re-explaining everything. CSS ends up inside HTML templates. Business logic leaks into route handlers. Config is hardcoded. The project becomes a mess.
+**It doesn't know:**
+- What you built last week
+- The domain rule that causes a subtle bug when ignored
+- The architectural decision you made three sessions ago and why
+- Where the codebase is going and where it currently sits
 
-The AI is powerful. **The problem is context — it resets.**
+You explain it again. 8 messages. 10 minutes. Same conversation you had before.
+
+**This happens every single session.**
 
 ---
 
 ## The solution
 
-Drop a `.readmeAI` file at the root of any project. One file the AI reads completely before doing anything, and updates silently after every session.
+`.readmeAI` is a structured project context file that:
 
-| Without ReadMeAI | With ReadMeAI |
-|-----------------|--------------|
-| Must say "Read the context" every session | AI auto-reads at session start — no prompt needed |
-| Re-explain architecture every session | AI loads full context in seconds |
-| AI invents its own structure | Enforced folder rules, every time |
-| Inconsistent naming and style | Conventions locked and applied |
-| Lost decisions and history | Decisions log grows automatically |
-| "Where did we leave off?" | AI resumes from the exact last step |
-| AI reads every file to find things | Symbol index → direct file:line jumps |
+1. **Auto-reads at session start** — no prompt, no reminder, before the AI types anything
+2. **Captures what the code doesn't say** — domain rules, gotchas, architectural decisions, work in progress
+3. **Updates silently at session end** — session state, decisions, symbol index
+4. **Works with every AI tool** — generates AGENTS.md (universal), CLAUDE.md, .cursorrules, .windsurfrules, GEMINI.md, and more
+
+**The result:** "Continue where we left off" actually works. Every time.
 
 ---
 
-## What's inside the template
+## What gets wired automatically
 
-The `.readmeAI` file is **lean by default** (~300 lines). Every section earns its place.
+Run the setup script once. It detects every AI tool you have and creates the right file:
+
+| Created file | Read by | Token cost |
+|-------------|---------|-----------|
+| `AGENTS.md` | Cursor, Windsurf, Copilot agent, Codex, Amp, 30+ tools | once per session |
+| `GEMINI.md` | Gemini CLI | once per session |
+| `.claude/CLAUDE.md` | Claude Code | once per session |
+| `.cursor/rules/*.mdc` | Cursor (modern, scoped) | JIT — only when relevant |
+| `.cursorrules` | Cursor (legacy) | once per session |
+| `.windsurfrules` | Windsurf | once per session |
+| `.github/copilot-instructions.md` | GitHub Copilot | once per session |
+| `.aider.conf.yml` | Aider | every run |
+| `.continue/rules/readmeai.md` | Continue | once per session |
+
+**Cursor gets 3 scoped .mdc files** — `readmeai-context.mdc` (always), `readmeai-security.mdc` (auto-loads on auth files), `readmeai-conventions.mdc` (on-demand). JIT loading: context only when needed.
+
+---
+
+## What's inside `.readmeAI`
+
+Lean by default (~300 lines). Every section earns its place:
 
 ```
-⚡  QUICK REFERENCE       — 5-line hot restart snapshot (resume in <50 tokens)
-⚙️  AI PROTOCOL           — when to read what, session rules, quality gate
-📋  PROJECT IDENTITY      — stack, commands, phase, repo
-🧠  DOMAIN RULES          — non-obvious rules that cause bugs when unknown
-🏗  STRUCTURE MAP         — annotated file tree (replaces filesystem scanning)
-🔍  SYMBOL INDEX          — key symbols with purpose (name + file, no stale line numbers)
-📐  CONVENTIONS           — naming, git, comments — enforced on every output
-✅  CODE QUALITY          — pre-output checklist + forbidden patterns (mandatory)
-🎯  SESSION STATE         — live snapshot: objective, last action, next step, blockers
-📚  DECISIONS LOG         — architectural choices with rationale (append-only)
-✅  PROGRESS              — in-progress, backlog, completed
-🐛  KNOWN ISSUES          — bugs and tech debt
-🗒  AI NOTES              — gotchas, surprises, implicit contracts (most valuable section)
+⚡  QUICK REFERENCE   — 5 lines. Hot restart in <50 tokens.
+⚙️  AI PROTOCOL       — when to read what, session start/end rules
+📋  PROJECT IDENTITY  — stack, commands, repo
+🧠  DOMAIN RULES      — rules that cause bugs when unknown (highest value)
+🏗  STRUCTURE MAP     — annotated file tree — replaces filesystem scanning
+🔍  SYMBOL INDEX      — key symbols with purpose — no stale line numbers
+📐  CONVENTIONS       — naming, git, comments — enforced on all output
+✅  CODE QUALITY      — pre-output checklist + forbidden patterns (mandatory)
+🎯  SESSION STATE     — hot-restart point: objective, last action, next step
+📚  DECISIONS LOG     — architecture choices with rationale (append-only)
+✅  PROGRESS          — in-progress, backlog, completed
+🐛  KNOWN ISSUES      — bugs and tech debt
+🗒  AI NOTES          — gotchas, surprises [!] [~] [?] severity tags
 ```
 
-**Optional sections** (uncomment when your project needs them):
+**Optional sections** (uncomment when needed — excluded by default to save tokens):
+`🔐 SECURITY` · `🔌 API CONTRACTS` · `🧪 TESTING` · `⚡ PERFORMANCE` · `📦 DEPENDENCIES` · `🔧 ENVIRONMENT`
+
+---
+
+## What it looks like in practice
+
 ```
-🔐  SECURITY      — auth model, sensitive data, forbidden patterns
-🔌  API CONTRACTS — endpoints, data models, environment variables
-🧪  TESTING       — coverage map, mock rules, CI requirements
-⚡  PERFORMANCE   — SLAs, bottlenecks, caching strategy
-📦  DEPENDENCIES  — critical packages, banned list
-🔧  ENVIRONMENT   — setup sequence, common commands
-```
-✅  PROGRESS              — completed, in-progress, backlog
-🔗  CROSS-PROJECT REFS    — links to sibling projects
-🔧  ENVIRONMENT           — tools, setup sequence, common commands
-🗒  AI NOTES              — free-form scratchpad for non-obvious observations
-📜  CHANGE LOG            — session-by-session history
+Day 1
+  You: "Build user auth with JWT"
+  AI:  reads .readmeAI → knows stack, structure, conventions
+       builds auth following your exact architecture
+       updates SESSION STATE, DECISIONS LOG silently at end
+
+Day 2 (new session — AI has forgotten everything)
+  You: "Continue where we left off"
+  AI:  reads QUICK REFERENCE → reads SESSION STATE
+       "Resuming: login done, writing signup handler"
+       → opens exactly the right file
+       → continues without a single re-explanation
 ```
 
 ---
 
-## How it works
+## Setup commands
 
-```
-Session 1:
-  You → "Let's build a user auth system"
-  AI  → auto-reads .readmeAI at session start, loads context,
-        structure, conventions, security rules
-  AI  → builds auth following the exact architecture defined
-  AI  → updates change log, progress, session state — silently
-
-Session 2 (days later):
-  You → "Continue where we left off"
-  AI  → auto-reads .readmeAI → full context restored instantly
-  AI  → opens auth file directly at the right line (symbol index)
-  AI  → continues without a single re-explanation
+```bash
+bash setup.sh                # download .readmeAI + auto-detect AI tools
+bash setup.sh --all          # wire ALL AI tool integrations
+bash setup.sh --detect       # also scan project and pre-fill TECH STACK + AI NOTES from git
+bash setup.sh --validate     # check .readmeAI is in sync with the codebase
+bash setup.sh --update       # refresh TECH STACK after adding dependencies
+bash setup.sh --all --detect # everything at once
 ```
 
-> The file grows with the project. The more sessions, the richer the context.
+`--detect` does real work:
+- Reads `package.json` / `pyproject.toml` / `go.mod` / `Cargo.toml` / `Gemfile` — fills TECH STACK with real versions
+- Scans git history (6 months) for high-churn files → flags them in AI NOTES as fragile areas
+- Greps source for `IMPORTANT:` / `WARNING:` / `HACK:` / `DO NOT` comments → surfaces them in AI NOTES
+
+---
+
+## After setup
+
+**First-time:** tell your AI:
+> *"Detect my stack, fill what you can, ask me only for what you can't infer."*
+
+**Every session after:**
+> *"Continue where we left off."*
+
+That's it. The AI reads `.readmeAI`, knows where it is, and continues.
+
+---
+
+## GitHub Actions
+
+The setup generates `.github/workflows/readmeai-validate.yml`. On every push it checks:
+- `.readmeAI` exists and is filled (not blank template)
+- `AGENTS.md` is present for cross-tool compatibility
+- DOMAIN RULES are not empty (highest-value section)
+- QUICK REFERENCE is populated (enables hot restart)
+- AI tool integrations are wired
+- File isn't bloated (>800 lines triggers a warning)
+
+---
+
+## Design principles
+
+| | |
+|--|--|
+| **Domain rules beat everything** | A rule in `.readmeAI` overrides AI training data. This is enforced explicitly. |
+| **QUICK REFERENCE for hot restart** | 5-line table at the top. Resume in <50 tokens without reading the full file. |
+| **Lean by default** | Optional sections excluded until you need them. No dead weight burning your context window. |
+| **Append-only logs** | DECISIONS LOG and AI NOTES never get edited. History is permanent. |
+| **No stale line numbers** | SYMBOL INDEX uses name + file + purpose. Refactoring doesn't break it. |
+| **Git-aware** | `--detect` reads git history to find fragile files and surface important comments. |
+
+---
+
+## Roadmap
+
+- [x] AGENTS.md universal standard support
+- [x] GEMINI.md (Gemini CLI)
+- [x] Cursor .mdc scoped rules (JIT loading)
+- [x] `--detect` with git history scanning + comment extraction
+- [x] GitHub Actions sync validation
+- [x] QUICK REFERENCE for hot restarts
+- [ ] `readmeai` CLI (npm/pip install)
+- [ ] VS Code extension — syntax highlighting + snippets
+- [ ] Template variants — SPA · REST API · fullstack monorepo · CLI
+
+---
+
+## Using ReadMeAI in your project?
+
+Add this badge:
+
+```markdown
+[![ReadMeAI](https://img.shields.io/badge/context-ReadMeAI-blueviolet)](https://github.com/Oscarr36/ReadMeAI)
+```
+
+Renders as: [![ReadMeAI](https://img.shields.io/badge/context-ReadMeAI-blueviolet)](https://github.com/Oscarr36/ReadMeAI)
 
 ---
 
@@ -149,179 +214,10 @@ Session 2 (days later):
 
 ---
 
-## Preview
-
-> What `.readmeAI` looks like inside a real project (VS Code):
-
-![ReadMeAI in VS Code](img/ej.png)
-
----
-
-## Structure enforced
-
-The AI enforces strict separation of concerns. Every directory has explicit rules for what it **owns** and what it **must not contain**:
-
-```
-project/
-├── .readmeAI               ← AI context. Never move. Never delete.
-├── config/                 ← All config. Never in src/.
-├── src/
-│   ├── controllers/        ← Business logic only. No DB queries.
-│   ├── models/             ← Data schemas + DB queries. No HTTP.
-│   ├── views/              ← Templates. No inline styles or logic.
-│   ├── routes/             ← Route definitions only. Delegate to controllers.
-│   ├── middleware/         ← Auth, validation, logging.
-│   └── services/           ← External APIs, shared utilities.
-├── public/
-│   ├── css/                ← All stylesheets. Never in views.
-│   ├── js/                 ← Client-side only. Never mixed with server.
-│   └── assets/
-└── tests/
-    ├── unit/               ← Mirrors src/ structure.
-    └── integration/
-```
-
-Any file placed outside this structure is flagged immediately.
-
----
-
-## Code quality built in
-
-Every code output is checked against a built-in checklist before delivery:
-
-- Single responsibility per function
-- No nesting deeper than 3 levels
-- No hardcoded values — constants or config always
-- Semantic naming enforced (functions = verbs, booleans = `is/has/can`, etc.)
-- Forbidden patterns blocked: `eval`, raw SQL, empty catch blocks, secrets in code
-- Consistency rule: if a pattern exists in the codebase, match it exactly
-
----
-
-## Token efficiency
-
-The **Symbol Index** is the core token-saving feature. Instead of scanning the project each session, the AI records every key symbol at its exact `file:line`:
-
-```
-Need to modify the login flow?
-→ Look up "login" in Symbol Index
-→ Read src/auth/login.js:23-67 only
-→ Done. No glob. No scan.
-```
-
-After the first setup, the AI never re-reads the whole project.
-
----
-
-## Quickstart
-
-**1. Copy the template to your project root**
-```bash
-curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
-```
-
-**2. Tell your AI to set it up** *(do this once)*
-> "Detect my project skills, assemble the ecosystem, fill in everything you can infer, then ask me only for what you can't."
-
-> The AI will automatically detect your tech stack (React, Django, Express, etc.) and configure the right project structure, conventions, security rules, and tooling — no manual setup needed.
-
-**3. Start building**
-> "Let's [task]."
-
-**4. Resume any time**
-> "Continue where we left off."
-
-> **Note:** You don't need to say "Read the .readmeAI" — the AI is instructed to read it automatically at the start of every session. Just tell it what to do.
-
-The AI reads the file silently at session start and updates it at the end. You never need to ask.
-
----
-
-## Recommended start prompts
-
-> The AI reads `.readmeAI` automatically at session start. You never need to say "Read the .readmeAI".
-
-```
-First setup:
-"Detect my project skills, assemble the ecosystem, fill in
-everything you can infer, then ask me only for what you can't."
-
-Every other session:
-"Continue where we left off."
-
-Specific task:
-"[Task]. Follow the architecture, conventions, and quality
-rules defined in the project context."
-
-Ecosystem review:
-"Check the SKILLS & ECOSYSTEM section. Do the detected skills
-match the project? Are any missing?"
-```
-
----
-
-## Multi-project workspaces
-
-Each project gets its own `.readmeAI`. Cross-reference related projects and the AI reads all of them before answering cross-project questions:
-
-```markdown
-## 🔗 CROSS-PROJECT REFERENCES
-| Alias  | Location      | Relationship                    |
-|--------|---------------|---------------------------------|
-| api    | ../my-api     | Backend for this frontend       |
-| shared | ../shared-lib | Shared components + utilities   |
-```
-
----
-
-## Design principles
-
-| Principle | What it means |
-|-----------|--------------|
-| **One file, complete context** | No scattered docs, no wikis, no Notion. One file the AI always finds. |
-| **Append, never delete** | History is permanent. The file only grows. |
-| **Structure before code** | Conventions defined upfront. The AI enforces them, not you. |
-| **Reality over documentation** | Code contradicts the file? Update the file. The codebase is always the source of truth. |
-| **Zero human dependency** | A cold AI reading this file alone must be able to continue without asking a single question. |
-| **Token efficiency** | Symbol Index + Structure Map replace filesystem scanning entirely. |
-
----
-
-## Roadmap
-
-- [x] Skills & Ecosystem detection — auto-detect tech stack, assemble structure & rules
-- [ ] `readmeia init` CLI — scaffold a project with the full structure in one command
-- [ ] VS Code extension — syntax highlighting and snippets for `.readmeAI`
-- [ ] Template variants — SPA, REST API, fullstack monorepo, CLI tool
-- [ ] Workspace mode — read multiple `.readmeAI` files in one AI session
-- [ ] Validation script — checks that the project structure matches the spec
-
----
-
-## Using ReadMeAI in your project?
-
-Add this badge to your README so others discover it:
-
-```markdown
-[![ReadMeAI](https://img.shields.io/badge/context-ReadMeAI-blueviolet)](https://github.com/Oscarr36/ReadMeAI)
-```
-
-It renders as: [![ReadMeAI](https://img.shields.io/badge/context-ReadMeAI-blueviolet)](https://github.com/Oscarr36/ReadMeAI)
-
----
-
-## Contributing
-
-This is an open specification. If you use it and improve it, open a PR.
-
-Read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
----
-
 <div align="center">
 
-If ReadMeAI saves you time, **[leave a star](https://github.com/Oscarr36/ReadMeAI/stargazers)** — it helps others find it.
+If ReadMeAI saves you time, **[leave a star ⭐](https://github.com/Oscarr36/ReadMeAI/stargazers)**
 
-[MIT](LICENSE) — use it, fork it, adapt it.
+[MIT License](LICENSE) — use it, fork it, adapt it.
 
 </div>
