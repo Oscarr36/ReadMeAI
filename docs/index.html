@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>ReadMeAI — AI never forgets your project</title>
+  <meta name="description" content="Drop .readmeAI in any project. AI reads it first, every session. No re-explaining, no context drift. Works with Claude, ChatGPT, Copilot, Cursor and Windsurf."/>
+  <meta property="og:title" content="ReadMeAI — AI never forgets your project"/>
+  <meta property="og:description" content="One file. Persistent AI context. No re-explaining ever again."/>
+  <meta property="og:image" content="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/Icon.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0d1117;--panel:#161b22;--border:#30363d;
+      --green:#3fb950;--blue:#58a6ff;--gray:#8b949e;
+      --white:#e6edf3;--red:#f85149;--yellow:#e3b341;
+      --purple:#bc8cff;
+    }
+    body{background:var(--bg);color:var(--white);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.6}
+    a{color:var(--blue);text-decoration:none}
+    a:hover{text-decoration:underline}
+    code,pre{font-family:Consolas,monospace}
+
+    /* NAV */
+    nav{display:flex;justify-content:space-between;align-items:center;padding:16px 40px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(13,17,23,.92);backdrop-filter:blur(8px);z-index:100}
+    .logo{font-size:1.2rem;font-weight:700;color:var(--green)}
+    nav ul{list-style:none;display:flex;gap:28px}
+    nav ul a{color:var(--gray);font-size:.9rem}
+    nav ul a:hover{color:var(--white)}
+    .nav-cta{background:var(--green);color:#000!important;padding:6px 16px;border-radius:6px;font-weight:600}
+    .nav-cta:hover{background:#46c95a;text-decoration:none!important}
+
+    /* HERO */
+    .hero{text-align:center;padding:80px 24px 60px;max-width:860px;margin:0 auto}
+    .badge-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px}
+    .badge-row img{height:20px}
+    .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;margin-bottom:16px;line-height:1.2}
+    .hero h1 span{color:var(--green)}
+    .hero p{font-size:1.15rem;color:var(--gray);max-width:620px;margin:0 auto 32px}
+    .compat{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+    .compat span{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:.85rem;color:var(--gray)}
+    .install-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 20px;text-align:left;max-width:640px;margin:0 auto 20px;position:relative}
+    .install-box .prompt{color:var(--green);margin-right:8px;font-weight:700}
+    .install-box code{color:var(--white);font-size:.9rem;word-break:break-all}
+    .install-box .copy-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:var(--border);border:none;color:var(--white);padding:4px 10px;border-radius:5px;cursor:pointer;font-size:.8rem}
+    .install-box .copy-btn:hover{background:#484f58}
+    .ps-line{font-size:.82rem;color:var(--gray);margin-top:6px}
+    .ps-line code{color:var(--purple)}
+    .hero-btns{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+    .btn-primary{background:var(--green);color:#000;padding:10px 24px;border-radius:8px;font-weight:600;font-size:1rem}
+    .btn-primary:hover{background:#46c95a;text-decoration:none}
+    .btn-secondary{border:1px solid var(--border);color:var(--white);padding:10px 24px;border-radius:8px;font-size:1rem}
+    .btn-secondary:hover{border-color:var(--green);text-decoration:none}
+
+    /* DEMO GIF */
+    .demo{max-width:900px;margin:0 auto 80px;padding:0 20px;text-align:center}
+    .demo img{width:100%;border-radius:12px;border:1px solid var(--border)}
+
+    /* COMPARE */
+    .compare{max-width:900px;margin:0 auto 80px;padding:0 20px}
+    .compare h2{text-align:center;font-size:1.7rem;margin-bottom:32px}
+    .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:600px){.compare-grid{grid-template-columns:1fr}}
+    .comp-panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+    .comp-panel .head{padding:12px 16px;font-weight:700;font-size:.95rem}
+    .comp-panel.bad .head{border-bottom:1px solid #3d1215;background:#2d1215;color:var(--red)}
+    .comp-panel.good .head{border-bottom:1px solid #0d3320;background:#0d2818;color:var(--green)}
+    .comp-panel ul{list-style:none;padding:16px}
+    .comp-panel ul li{padding:6px 0;color:var(--gray);font-size:.9rem;border-bottom:1px solid var(--border)}
+    .comp-panel ul li:last-child{border:none}
+    .comp-panel.bad ul li::before{content:"✗  ";color:var(--red)}
+    .comp-panel.good ul li::before{content:"✓  ";color:var(--green)}
+
+    /* FEATURES */
+    .features{max-width:900px;margin:0 auto 80px;padding:0 20px}
+    .features h2{text-align:center;font-size:1.7rem;margin-bottom:32px}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+    .feat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:20px}
+    .feat .icon{font-size:1.6rem;margin-bottom:10px}
+    .feat h3{font-size:1rem;margin-bottom:8px;color:var(--white)}
+    .feat p{font-size:.87rem;color:var(--gray)}
+
+    /* SECTIONS */
+    .sections{max-width:860px;margin:0 auto 80px;padding:0 20px}
+    .sections h2{text-align:center;font-size:1.7rem;margin-bottom:32px}
+    .section-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+    .sec{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:.85rem}
+    .sec .icon{color:var(--green);margin-right:6px}
+
+    /* CTA */
+    .cta-block{text-align:center;padding:60px 24px;border-top:1px solid var(--border)}
+    .cta-block h2{font-size:1.8rem;margin-bottom:12px}
+    .cta-block p{color:var(--gray);margin-bottom:28px}
+
+    footer{text-align:center;padding:24px;color:var(--gray);font-size:.85rem;border-top:1px solid var(--border)}
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">ReadMeAI</span>
+  <ul>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#install">Install</a></li>
+    <li><a href="https://github.com/Oscarr36/ReadMeAI">GitHub</a></li>
+  </ul>
+  <a class="nav-cta" href="https://github.com/Oscarr36/ReadMeAI">⭐ Star</a>
+</nav>
+
+<section class="hero">
+  <div class="badge-row">
+    <img src="https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social" alt="stars"/>
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT"/>
+    <img src="https://img.shields.io/badge/version-2.4-brightgreen.svg" alt="v2.4"/>
+    <img src="https://img.shields.io/badge/AI-ready-purple.svg" alt="AI ready"/>
+  </div>
+  <h1>AI never forgets<br/><span>your project.</span></h1>
+  <p>Drop <code>.readmeAI</code> in any project. The AI reads it first, every session — no re-explaining, no context drift, no messy structure.</p>
+  <div class="compat">
+    <span>Claude</span><span>ChatGPT</span><span>GitHub Copilot</span><span>Cursor</span><span>Windsurf</span><span>Gemini</span>
+  </div>
+  <div id="install" class="install-box">
+    <span class="prompt">$</span>
+    <code id="cmd-text">curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI</code>
+    <button class="copy-btn" onclick="copyCmd()">copy</button>
+  </div>
+  <p class="ps-line">Windows: <code>Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"</code></p>
+  <div class="hero-btns">
+    <a class="btn-primary" href="https://github.com/Oscarr36/ReadMeAI">⭐ Star on GitHub</a>
+    <a class="btn-secondary" href="https://github.com/Oscarr36/ReadMeAI/blob/main/.readmeAI">View template</a>
+  </div>
+</section>
+
+<section id="demo" class="demo">
+  <img src="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/demo.gif" alt="ReadMeAI demo — before and after comparison"/>
+</section>
+
+<section class="compare">
+  <h2>Before vs After</h2>
+  <div class="compare-grid">
+    <div class="comp-panel bad">
+      <div class="head">❌ Without ReadMeAI</div>
+      <ul>
+        <li>Re-explain architecture every session</li>
+        <li>AI invents its own structure</li>
+        <li>Inconsistent naming and patterns</li>
+        <li>Lost decisions and context</li>
+        <li>"Where did we leave off?"</li>
+        <li>AI scans every file to navigate</li>
+      </ul>
+    </div>
+    <div class="comp-panel good">
+      <div class="head">✅ With ReadMeAI</div>
+      <ul>
+        <li>Full context loaded in seconds</li>
+        <li>Enforced folder rules, every time</li>
+        <li>Conventions locked and applied</li>
+        <li>Decisions log grows automatically</li>
+        <li>AI resumes from exact last step</li>
+        <li>Symbol index → direct file:line jumps</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="features">
+  <h2>What's inside</h2>
+  <div class="feat-grid">
+    <div class="feat"><div class="icon">🧭</div><h3>Auto-read at session start</h3><p>The AI reads the file before the user types anything. No prompt needed, ever.</p></div>
+    <div class="feat"><div class="icon">🔍</div><h3>Symbol Index</h3><p>Every key function at exact file:line. AI navigates without scanning the filesystem.</p></div>
+    <div class="feat"><div class="icon">🏗️</div><h3>Structure enforcement</h3><p>Explicit rules per directory. AI flags anything placed outside the spec immediately.</p></div>
+    <div class="feat"><div class="icon">✅</div><h3>Code quality gate</h3><p>Built-in checklist before every output: naming, nesting, forbidden patterns, constants.</p></div>
+    <div class="feat"><div class="icon">📚</div><h3>Decisions log</h3><p>Every architectural decision with rationale, auto-appended after each session.</p></div>
+    <div class="feat"><div class="icon">⚡</div><h3>Token efficiency</h3><p>After setup, the AI never re-reads the whole project. Context costs drop by 80%+.</p></div>
+  </div>
+</section>
+
+<section class="sections">
+  <h2>24 auto-maintained sections</h2>
+  <div class="section-grid">
+    <div class="sec"><span class="icon">⚙️</span>AI Protocol</div>
+    <div class="sec"><span class="icon">🧭</span>Project Context</div>
+    <div class="sec"><span class="icon">🧠</span>Skills &amp; Ecosystem</div>
+    <div class="sec"><span class="icon">🛠</span>Tech Stack</div>
+    <div class="sec"><span class="icon">🏗</span>Structure Map</div>
+    <div class="sec"><span class="icon">🔍</span>Symbol Index</div>
+    <div class="sec"><span class="icon">📐</span>Conventions</div>
+    <div class="sec"><span class="icon">✅</span>Code Quality</div>
+    <div class="sec"><span class="icon">🔌</span>API Contracts</div>
+    <div class="sec"><span class="icon">🔐</span>Security</div>
+    <div class="sec"><span class="icon">⚡</span>Performance</div>
+    <div class="sec"><span class="icon">🧪</span>Testing Strategy</div>
+    <div class="sec"><span class="icon">🎯</span>Session State</div>
+    <div class="sec"><span class="icon">📚</span>Decisions Log</div>
+    <div class="sec"><span class="icon">🐛</span>Known Issues</div>
+    <div class="sec"><span class="icon">📜</span>Change Log</div>
+  </div>
+</section>
+
+<section class="cta-block">
+  <h2>One command. Permanent context.</h2>
+  <p>Works with every AI assistant. No setup beyond dropping the file.</p>
+  <a class="btn-primary" href="https://github.com/Oscarr36/ReadMeAI">Get ReadMeAI on GitHub →</a>
+</section>
+
+<footer>
+  <p>MIT License · Made by <a href="https://github.com/Oscarr36">Oscarr36</a> · <a href="https://github.com/Oscarr36/ReadMeAI">github.com/Oscarr36/ReadMeAI</a></p>
+</footer>
+
+<script>
+function copyCmd(){
+  navigator.clipboard.writeText(document.getElementById('cmd-text').textContent.trim());
+  const btn=document.querySelector('.copy-btn');
+  btn.textContent='copied!';btn.style.color='#3fb950';
+  setTimeout(()=>{btn.textContent='copy';btn.style.color=''},1500);
+}
+</script>
+</body>
+</html>
