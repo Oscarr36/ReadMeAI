@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.readmeAI'
+      - 'AGENTS.md'
       - 'package.json'
       - 'pyproject.toml'
       - 'go.mod'
@@ -11,6 +12,7 @@ on:
   pull_request:
     paths:
       - '.readmeAI'
+      - 'AGENTS.md'
       - 'package.json'
 
 jobs:
@@ -26,55 +28,82 @@ jobs:
             echo "::error::.readmeAI not found. Run: curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash"
             exit 1
           fi
-          echo "✓ .readmeAI exists"
+          echo "✓ .readmeAI exists ($(wc -l < .readmeAI) lines)"
 
-      - name: Check file is not empty template
+      - name: Check AGENTS.md exists
         run: |
-          # Warn if SESSION STATE still blank (first-time setup not done)
-          if grep -q "## 🎯 SESSION STATE" .readmeAI; then
-            NEXT=$(awk '/### Active objective/{found=1; next} found && /^[^_]/{print; exit}' .readmeAI | xargs)
-            if [ "$NEXT" = "—" ] || [ -z "$NEXT" ]; then
+          if [ ! -f "AGENTS.md" ]; then
+            echo "::warning::AGENTS.md not found — run setup.sh to generate it for cross-tool compatibility"
+          else
+            echo "✓ AGENTS.md exists"
+          fi
+
+      - name: Check SESSION STATE is filled
+        run: |
+          if grep -q "SESSION STATE" .readmeAI; then
+            # Check if active objective is still placeholder
+            OBJECTIVE=$(awk '/### Active objective/{found=1;next} found && NF{print;exit}' .readmeAI | xargs)
+            if [ "$OBJECTIVE" = "_One sentence: what are we building/fixing right now?_" ] || \
+               [ "$OBJECTIVE" = "—" ] || [ -z "$OBJECTIVE" ]; then
               echo "::warning::SESSION STATE is blank. Tell your AI: 'Detect my stack, fill what you can.'"
             else
-              echo "✓ SESSION STATE is filled"
+              echo "✓ SESSION STATE filled: $OBJECTIVE"
             fi
           fi
 
       - name: Check DOMAIN RULES are filled
         run: |
-          if grep -A3 "## 🧠 DOMAIN RULES" .readmeAI | grep -q "^- —$"; then
-            echo "::warning::DOMAIN RULES are empty. Ask your AI: 'What rule would cause a bug if I didn't know it?'"
+          if grep -A5 "## 🧠 DOMAIN RULES" .readmeAI | grep -qE "^- —$"; then
+            echo "::notice::DOMAIN RULES are empty — highest-value section. Ask your AI: 'What rule in this codebase would cause a bug if I didn't know it?'"
           else
             echo "✓ DOMAIN RULES present"
           fi
 
-      - name: Check stack consistency (Node.js)
-        if: hashFiles('package.json') != ''
+      - name: Check QUICK REFERENCE is filled
         run: |
-          # Warn if package.json changed but TECH STACK section is missing
-          if ! grep -q "TECH STACK" .readmeAI; then
-            echo "::warning::package.json present but no TECH STACK section in .readmeAI. Run: bash setup.sh --detect"
+          # QUICK REFERENCE should have values, not just "—"
+          QR_BLANKS=$(awk '/## ⚡ QUICK REFERENCE/,/^---/{print}' .readmeAI | grep -c "| — |" || true)
+          if [ "$QR_BLANKS" -gt 3 ]; then
+            echo "::notice::QUICK REFERENCE is mostly empty — AI won't be able to hot-restart efficiently"
           else
-            echo "✓ TECH STACK section present"
+            echo "✓ QUICK REFERENCE populated"
           fi
 
       - name: Check AI integrations
         run: |
           MISSING=()
-          [ ! -f ".claude/CLAUDE.md" ]               && MISSING+=("Claude Code (.claude/CLAUDE.md)")
-          [ ! -f ".cursorrules" ]                    && MISSING+=("Cursor (.cursorrules)")
-          [ ! -f ".windsurfrules" ]                  && MISSING+=("Windsurf (.windsurfrules)")
-          [ ! -f ".github/copilot-instructions.md" ] && MISSING+=("GitHub Copilot (.github/copilot-instructions.md)")
+          [ ! -f "AGENTS.md" ]                               && MISSING+=("AGENTS.md (universal)")
+          [ ! -f ".claude/CLAUDE.md" ]                       && MISSING+=("Claude Code (.claude/CLAUDE.md)")
+          [ ! -f ".cursor/rules/readmeai-context.mdc" ] && \
+            [ ! -f ".cursorrules" ]                          && MISSING+=("Cursor (no .mdc or .cursorrules)")
+          [ ! -f ".windsurfrules" ]                          && MISSING+=("Windsurf (.windsurfrules)")
+          [ ! -f "GEMINI.md" ]                               && MISSING+=("Gemini CLI (GEMINI.md)")
 
           if [ ${#MISSING[@]} -gt 0 ]; then
             for tool in "${MISSING[@]}"; do
-              echo "::notice::$tool integration not found. Run: bash setup.sh --all"
+              echo "::notice::$tool not wired — run: bash setup.sh --all"
             done
           else
-            echo "✓ All AI integrations present"
+            echo "✓ All key AI integrations present"
+          fi
+
+      - name: Check stack consistency
+        if: hashFiles('package.json') != ''
+        run: |
+          if ! grep -q "TECH STACK" .readmeAI; then
+            echo "::warning::package.json found but no TECH STACK in .readmeAI — run: bash setup.sh --detect"
+          else
+            echo "✓ TECH STACK section present"
+          fi
+
+      - name: File size check
+        run: |
+          LINES=$(wc -l < .readmeAI)
+          if [ "$LINES" -gt 800 ]; then
+            echo "::warning::.readmeAI is $LINES lines — consider removing unfilled optional sections to reduce token cost"
+          else
+            echo "✓ File size OK ($LINES lines)"
           fi
 
       - name: Summary
-        run: |
-          echo "ReadMeAI validation complete."
-          echo "To fix warnings: bash setup.sh --all --detect"
+        run: echo "ReadMeAI v3.2 validation complete. Run 'bash setup.sh --validate' locally for full check."
