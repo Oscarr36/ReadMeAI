@@ -234,7 +234,7 @@ footer a:hover{color:#fff}
 
   <div class="hero-install">
     <span class="hi-prompt">$</span>
-    <span class="hi-cmd" id="hero-cmd">curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI</span>
+    <span class="hi-cmd" id="hero-cmd">curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash</span>
     <button class="hi-copy" onclick="heroCopy()">Copy</button>
   </div>
 
@@ -526,14 +526,14 @@ runTerminal();
 /* ── INSTALL TABS ──────────────────────────────────────────────────────────── */
 const CMDS = {
   bash: {
-    comment: '# macOS / Linux',
+    comment: '# macOS / Linux — auto-detects your AI tools',
     prompt:  '$ ',
-    cmd:     'curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI'
+    cmd:     'curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash'
   },
   ps: {
-    comment: '# Windows PowerShell',
+    comment: '# Windows PowerShell — auto-detects your AI tools',
     prompt:  '> ',
-    cmd:     'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"'
+    cmd:     'irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex'
   }
 };
 let activeTab = 'bash';

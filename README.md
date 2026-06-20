@@ -9,7 +9,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/Oscarr36/ReadMeAI)](https://github.com/Oscarr36/ReadMeAI/releases)
 [![Website](https://img.shields.io/badge/website-oscarr36.github.io%2FReadMeAI-blue)](https://oscarr36.github.io/ReadMeAI/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.4-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-2.5-brightgreen.svg)](.readmeAI)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 [![AI Ready](https://img.shields.io/badge/AI-ready-purple.svg)](.readmeAI)
 
@@ -22,14 +22,28 @@
 ### ↓ Get it in one command
 
 ```bash
-# bash / mac / linux
-curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
+# bash / mac / linux — auto-detects your AI tools and wires them up
+curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
 ```
 
 ```powershell
-# PowerShell / Windows
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
+# Windows PowerShell — auto-detects your AI tools and wires them up
+irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
 ```
+
+> **What does "auto-detects your AI tools" mean?**
+> The setup script downloads `.readmeAI` and then checks which AI tools you have installed (Claude Code, Cursor, Windsurf, GitHub Copilot, Aider, Continue). For each one found, it creates the right integration file so the AI reads `.readmeAI` automatically at session start — zero manual config.
+>
+> | Tool | File created | Effect |
+> |------|-------------|--------|
+> | Claude Code | `.claude/CLAUDE.md` | Auto-read on project open |
+> | Cursor | `.cursorrules` | Loaded as system context |
+> | Windsurf | `.windsurfrules` | Loaded as system context |
+> | GitHub Copilot | `.github/copilot-instructions.md` | Loaded as custom instructions |
+> | Aider | `.aider.conf.yml` | Passed via `--read` at startup |
+> | Continue | `.continue/rules/readmeai.md` | Loaded as project rules |
+>
+> To create all integrations regardless of what's installed: `bash setup.sh --all`
 
 </div>
 

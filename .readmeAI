@@ -1,6 +1,6 @@
 <!--
   ╔══════════════════════════════════════════════════════════════════════╗
-  ║  READMEAI v2.4 — AI-TO-AI PROJECT CONTEXT FILE                     ║
+  ║  READMEAI v2.5 — AI-TO-AI PROJECT CONTEXT FILE                     ║
   ║  Written by AI. Read by AI. Zero human dependency.                 ║
   ║  Purpose: eliminate project re-scanning, enforce structure,        ║
   ║  maintain code quality, security, and semantic consistency.        ║
@@ -9,6 +9,24 @@
 -->
 
 # .readmeAI
+
+---
+
+## 🤖 AI-SPECIFIC INTEGRATIONS
+
+> **Auto-configured by `setup.sh` / `setup.ps1`. Each tool gets its own hook file so it reads this file automatically at session start — no user prompt needed.**
+
+| AI Tool | Hook file | What it does |
+|---------|-----------|-------------|
+| **Claude Code** | `.claude/CLAUDE.md` | Auto-read on project open |
+| **Cursor** | `.cursorrules` | Loaded as system context |
+| **Windsurf** | `.windsurfrules` | Loaded as system context |
+| **GitHub Copilot** | `.github/copilot-instructions.md` | Loaded as custom instructions |
+| **Aider** | `.aider.conf.yml` (`read: [.readmeAI]`) | Passed via `--read` at startup |
+| **Continue** | `.continue/rules/readmeai.md` | Loaded as project rules |
+| **ChatGPT / Gemini** | Custom instructions (manual) | Paste the AI PROTOCOL section |
+
+> **To regenerate hook files:** `bash setup.sh` (auto-detects tools) or `bash setup.sh --all` (creates all).
 
 ---
 
@@ -862,6 +880,6 @@ inside the test function body or use jest's setupFiles.
     Never scan the project again unless a file is missing from the index.
 
   ════════════════════════════════════════════════════════════
-  Context powered by ReadMeAI v2.4 — https://github.com/Oscarr36/ReadMeAI
+  Context powered by ReadMeAI v2.5 — https://github.com/Oscarr36/ReadMeAI
   ════════════════════════════════════════════════════════════
 -->
