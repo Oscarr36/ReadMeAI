@@ -1,514 +1,461 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>ReadMeAI — AI never forgets your project</title>
-<meta name="description" content="Drop .readmeAI in any project. AI reads it first, every session. No re-explaining, no context drift. Works with Claude, ChatGPT, Copilot, Cursor and Windsurf."/>
+<meta name="description" content="Drop .readmeAI in any project. AI reads it first, every session. No re-explaining, no context drift."/>
 <meta property="og:title" content="ReadMeAI — AI never forgets your project"/>
 <meta property="og:description" content="One file. Persistent AI context. No re-explaining ever again."/>
 <meta property="og:image" content="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/Icon.png"/>
 <meta name="twitter:card" content="summary_large_image"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#060910;--surface:#0d1117;--panel:#111827;
-  --border:#1f2937;--border2:#374151;
-  --green:#22d3a0;--green2:#10b981;--green-glow:rgba(34,211,160,.18);
-  --blue:#60a5fa;--blue2:#3b82f6;
-  --gray:#6b7280;--gray2:#9ca3af;
-  --white:#f9fafb;--white2:#e5e7eb;
-  --purple:#a78bfa;--yellow:#fbbf24;
-  --red:#f87171;
-  --radius:14px;
+  --bg:#03050a;--surface:#080c14;--panel:#0c1220;
+  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.11);
+  --green:#00dc82;--green-dim:rgba(0,220,130,.15);--green-glow:rgba(0,220,130,.08);
+  --blue:#60a5fa;--purple:#a78bfa;
+  --white:#f8fafc;--gray:#94a3b8;--gray2:#64748b;
+  --red:#f87171;--yellow:#fbbf24;
+  --font:'Inter',-apple-system,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --out-expo:cubic-bezier(.19,1,.22,1);
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;overflow-x:hidden;line-height:1.6}
+body{background:var(--bg);color:var(--white);font-family:var(--font);overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 a{color:inherit;text-decoration:none}
-code,pre{font-family:'Cascadia Code',Consolas,'Courier New',monospace}
-
-/* ── NOISE OVERLAY ── */
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
-
-/* ── GLOW ORBS BACKGROUND ── */
-.orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.orb{position:absolute;border-radius:50%;filter:blur(80px);animation:float 12s ease-in-out infinite}
-.orb1{width:500px;height:500px;background:radial-gradient(circle,rgba(34,211,160,.12),transparent 70%);top:-100px;left:-100px;animation-delay:0s}
-.orb2{width:400px;height:400px;background:radial-gradient(circle,rgba(96,165,250,.1),transparent 70%);top:30%;right:-80px;animation-delay:-4s}
-.orb3{width:350px;height:350px;background:radial-gradient(circle,rgba(167,139,250,.08),transparent 70%);bottom:10%;left:20%;animation-delay:-8s}
-@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}}
-
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 clamp(16px,4vw,60px);height:64px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,9,16,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05)}
-.nav-logo{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700}
-.nav-logo-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 12px var(--green);animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.8)}}
-.nav-links{display:flex;align-items:center;gap:32px}
-.nav-links a{color:var(--gray2);font-size:.9rem;transition:color .2s}
-.nav-links a:hover{color:var(--white)}
-.nav-star{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--green2),#059669);color:#fff;padding:8px 20px;border-radius:8px;font-size:.88rem;font-weight:600;transition:all .2s;box-shadow:0 0 20px rgba(16,185,129,.3)}
-.nav-star:hover{transform:translateY(-1px);box-shadow:0 0 32px rgba(16,185,129,.5)}
-@media(max-width:640px){.nav-links{display:none}}
-
-/* ── HERO ── */
-.hero{position:relative;z-index:1;padding:140px clamp(16px,4vw,60px) 100px;text-align:center;max-width:900px;margin:0 auto}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(34,211,160,.08);border:1px solid rgba(34,211,160,.2);border-radius:100px;padding:6px 16px;font-size:.82rem;color:var(--green);margin-bottom:28px;animation:fadeUp .6s ease both}
-.hero-tag span{width:6px;height:6px;background:var(--green);border-radius:50%}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.hero h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:24px;animation:fadeUp .6s .1s ease both}
-.hero h1 .grad{background:linear-gradient(135deg,var(--green) 0%,var(--blue) 60%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero p{font-size:clamp(1rem,2vw,1.2rem);color:var(--gray2);max-width:580px;margin:0 auto 40px;line-height:1.7;animation:fadeUp .6s .2s ease both}
-.compat-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:48px;animation:fadeUp .6s .3s ease both}
-.compat-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--border2);border-radius:100px;padding:5px 14px;font-size:.82rem;color:var(--gray2);transition:all .2s}
-.compat-chip:hover{border-color:var(--green);color:var(--green)}
-.compat-chip .dot{width:5px;height:5px;background:var(--green);border-radius:50%}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;animation:fadeUp .6s .4s ease both}
-.btn-primary{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--green2),#059669);color:#fff;padding:12px 28px;border-radius:10px;font-weight:600;font-size:.95rem;transition:all .25s;box-shadow:0 0 30px rgba(16,185,129,.25)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(16,185,129,.4)}
-.btn-ghost{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--border2);color:var(--white2);padding:12px 28px;border-radius:10px;font-weight:500;font-size:.95rem;transition:all .25s}
-.btn-ghost:hover{background:rgba(255,255,255,.09);border-color:var(--border2);transform:translateY(-2px)}
-
-/* ── TERMINAL DEMO ── */
-.terminal-wrap{position:relative;z-index:1;max-width:920px;margin:0 auto 100px;padding:0 clamp(16px,4vw,40px)}
-.terminal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.05),0 0 80px rgba(34,211,160,.06)}
-.term-bar{display:flex;align-items:center;gap:8px;padding:14px 18px;background:#0a0f1a;border-bottom:1px solid var(--border)}
-.term-dot{width:12px;height:12px;border-radius:50%}
-.td1{background:#f87171}.td2{background:#fbbf24}.td3{background:#34d399}
-.term-title{flex:1;text-align:center;font-size:.8rem;color:var(--gray);font-family:monospace}
-.term-body{display:grid;grid-template-columns:1fr 1fr;min-height:340px}
-.term-col{padding:20px;border-right:1px solid var(--border);position:relative;overflow:hidden}
-.term-col:last-child{border-right:none}
-.term-col-head{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);font-size:.82rem;font-weight:600}
-.head-bad{color:var(--red)}.head-good{color:var(--green)}
-.msg{display:flex;flex-direction:column;gap:3px;margin-bottom:10px;animation:msgIn .3s ease both}
-@keyframes msgIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
-.msg-label{font-size:.7rem;font-weight:700;font-family:monospace}
-.msg-label.u{color:var(--blue)}.msg-label.a{color:var(--green)}.msg-label.ap{color:var(--purple)}
-.msg-bubble{display:inline-block;padding:7px 11px;border-radius:8px;font-size:.8rem;line-height:1.5;font-family:monospace;max-width:95%}
-.bubble-u{background:rgba(96,165,250,.1);color:var(--white2)}
-.bubble-a{background:rgba(34,211,160,.08);color:var(--gray2)}
-.bubble-ai-good{background:rgba(34,211,160,.1);color:var(--green)}
-.bubble-ai-bad{background:rgba(248,113,113,.07);color:var(--red)}
-.term-badge{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;font-size:.78rem;font-family:monospace;margin-top:auto}
-.badge-bad{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);color:var(--red)}
-.badge-good{background:rgba(34,211,160,.08);border:1px solid rgba(34,211,160,.2);color:var(--green)}
-.cursor{display:inline-block;width:7px;height:13px;background:var(--white);vertical-align:middle;margin-left:2px;animation:blink .8s step-end infinite}
-@keyframes blink{50%{opacity:0}}
-
-/* ── INSTALL ── */
-.install-section{position:relative;z-index:1;max-width:760px;margin:0 auto 100px;padding:0 clamp(16px,4vw,40px);text-align:center}
-.install-section h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;margin-bottom:12px}
-.install-section p{color:var(--gray2);margin-bottom:32px}
-.install-card{background:linear-gradient(145deg,rgba(13,17,23,.9),rgba(17,24,39,.9));border:1px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:0 0 60px rgba(34,211,160,.06)}
-.install-tab-bar{display:flex;border-bottom:1px solid var(--border)}
-.itab{padding:10px 20px;font-size:.82rem;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
-.itab.active{color:var(--green);border-bottom-color:var(--green)}
-.install-line{display:flex;align-items:center;gap:12px;padding:18px 20px}
-.prompt-sym{color:var(--green);font-family:monospace;font-weight:700;flex-shrink:0}
-.cmd-text{font-family:monospace;font-size:.85rem;color:var(--white2);flex:1;overflow:auto;white-space:nowrap;scrollbar-width:none}
-.cmd-text::-webkit-scrollbar{display:none}
-.copy-btn{flex-shrink:0;background:rgba(34,211,160,.1);border:1px solid rgba(34,211,160,.25);color:var(--green);padding:5px 14px;border-radius:6px;cursor:pointer;font-size:.78rem;font-family:inherit;transition:all .2s}
-.copy-btn:hover{background:rgba(34,211,160,.2)}
-.step2{padding:0 20px 18px;font-size:.82rem;color:var(--gray2);border-top:1px solid var(--border);padding-top:14px}
-.step2 code{color:var(--green)}
-
-/* ── COMPARE ── */
-.compare{position:relative;z-index:1;max-width:900px;margin:0 auto 100px;padding:0 clamp(16px,4vw,40px)}
-.section-header{text-align:center;margin-bottom:52px}
-.section-tag{display:inline-block;background:rgba(34,211,160,.08);border:1px solid rgba(34,211,160,.2);color:var(--green);font-size:.78rem;font-weight:600;padding:4px 12px;border-radius:100px;margin-bottom:12px;letter-spacing:.05em;text-transform:uppercase}
-.section-header h2{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:700;letter-spacing:-.02em}
-.section-header p{color:var(--gray2);margin-top:12px;font-size:1rem}
-.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:600px){.comp-grid{grid-template-columns:1fr}}
-.comp-card{background:linear-gradient(145deg,var(--panel),var(--surface));border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .3s}
-.comp-card:hover{border-color:var(--border2)}
-.comp-head{padding:16px 20px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:.95rem}
-.comp-head-bad{background:linear-gradient(135deg,rgba(248,113,113,.08),transparent);border-bottom:1px solid rgba(248,113,113,.15);color:var(--red)}
-.comp-head-good{background:linear-gradient(135deg,rgba(34,211,160,.08),transparent);border-bottom:1px solid rgba(34,211,160,.15);color:var(--green)}
-.comp-list{list-style:none;padding:4px 0}
-.comp-list li{display:flex;align-items:flex-start;gap:10px;padding:10px 20px;font-size:.875rem;color:var(--gray2);border-bottom:1px solid rgba(255,255,255,.03)}
-.comp-list li:last-child{border:none}
-.comp-icon{flex-shrink:0;margin-top:2px;font-size:.75rem}
-
-/* ── FEATURES GRID ── */
-.features{position:relative;z-index:1;max-width:900px;margin:0 auto 100px;padding:0 clamp(16px,4vw,40px)}
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.feat-card{background:linear-gradient(145deg,var(--panel),var(--surface));border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s;cursor:default}
-.feat-card:hover{border-color:rgba(34,211,160,.3);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.3),0 0 0 1px rgba(34,211,160,.1)}
-.feat-icon{width:40px;height:40px;border-radius:10px;background:rgba(34,211,160,.08);border:1px solid rgba(34,211,160,.15);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:16px}
-.feat-card h3{font-size:1rem;font-weight:600;margin-bottom:8px}
-.feat-card p{font-size:.875rem;color:var(--gray2);line-height:1.6}
-
-/* ── GIF DEMO ── */
-.gif-demo{position:relative;z-index:1;max-width:900px;margin:0 auto 100px;padding:0 clamp(16px,4vw,40px)}
-.gif-wrap{border-radius:16px;overflow:hidden;border:1px solid var(--border2);box-shadow:0 40px 100px rgba(0,0,0,.5),0 0 60px rgba(34,211,160,.06)}
-.gif-wrap img{width:100%;display:block}
-
-/* ── SECTIONS GRID ── */
-.sections{position:relative;z-index:1;max-width:900px;margin:0 auto 100px;padding:0 clamp(16px,4vw,40px)}
-.sec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
-.sec-chip{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:.84rem;color:var(--gray2);transition:all .2s}
-.sec-chip:hover{border-color:rgba(34,211,160,.3);color:var(--white);background:rgba(34,211,160,.04)}
-.sec-chip .sec-icon{font-size:1rem;flex-shrink:0}
-
-/* ── CTA ── */
-.cta{position:relative;z-index:1;margin:0 clamp(16px,4vw,60px) 80px;border-radius:24px;padding:80px 40px;text-align:center;background:linear-gradient(135deg,rgba(34,211,160,.07) 0%,rgba(96,165,250,.05) 50%,rgba(167,139,250,.06) 100%);border:1px solid rgba(34,211,160,.15);overflow:hidden}
-.cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(34,211,160,.12),transparent 60%);pointer-events:none}
-.cta h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.02em;margin-bottom:16px}
-.cta p{color:var(--gray2);font-size:1.05rem;margin-bottom:36px;max-width:480px;margin-left:auto;margin-right:auto}
-
-/* ── FOOTER ── */
-footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32px clamp(16px,4vw,60px);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
-.footer-logo{font-weight:700;color:var(--green)}
-footer p{font-size:.85rem;color:var(--gray)}
-footer p a{color:var(--gray2);transition:color .2s}
-footer p a:hover{color:var(--white)}
-
-/* ── DIVIDER ── */
-.divider{position:relative;z-index:1;height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:0 clamp(16px,4vw,60px) 100px}
-
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+button{font-family:var(--font);cursor:pointer;border:none;outline:none}
+#c{position:fixed;inset:0;z-index:0;pointer-events:none}
+/* NAV */
+nav{position:fixed;inset:0 0 auto;z-index:200;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,5vw,72px);border-bottom:1px solid var(--border);background:rgba(3,5,10,.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.n-logo{display:flex;align-items:center;gap:10px;font-size:.95rem;font-weight:700;letter-spacing:-.02em}
+.n-mark{width:28px;height:28px;background:linear-gradient(135deg,#00dc82,#00b36b);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#03050a;box-shadow:0 0 24px rgba(0,220,130,.35)}
+.n-links{display:flex;gap:28px;list-style:none}
+.n-links a{font-size:.875rem;color:var(--gray);font-weight:500;transition:color .2s}
+.n-links a:hover{color:var(--white)}
+.n-cta{display:inline-flex;align-items:center;gap:7px;background:var(--green);color:#03050a;padding:7px 18px;border-radius:8px;font-size:.85rem;font-weight:700;transition:all .3s}
+.n-cta:hover{transform:translateY(-1px);box-shadow:0 0 0 6px var(--green-dim),0 8px 24px rgba(0,220,130,.3)}
+@media(max-width:640px){.n-links{display:none}}
+/* HERO */
+.hero{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px clamp(20px,5vw,60px) 60px}
+.h-ey{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 6px;border-radius:100px;border:1px solid rgba(0,220,130,.2);background:rgba(0,220,130,.05);font-size:.76rem;font-weight:600;color:var(--green);letter-spacing:.05em;text-transform:uppercase;margin-bottom:32px;animation:up .8s var(--out-expo) both}
+.h-pill{background:var(--green);color:#03050a;padding:2px 9px;border-radius:100px;font-size:.68rem;font-weight:800}
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+h1.big{font-size:clamp(3rem,7.5vw,6rem);font-weight:900;line-height:1.02;letter-spacing:-.04em;margin-bottom:24px;animation:up .8s .08s var(--out-expo) both}
+h1.big em{font-style:normal;background:linear-gradient(100deg,#00dc82 0%,#00b3ff 55%,var(--purple) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:gs 5s ease infinite}
+@keyframes gs{0%,100%{background-position:0%}50%{background-position:100%}}
+.h-sub{font-size:clamp(1rem,2.2vw,1.2rem);color:var(--gray);max-width:510px;line-height:1.75;margin-bottom:40px;font-weight:400;animation:up .8s .16s var(--out-expo) both}
+.h-sub code{font-family:var(--mono);font-size:.88em;color:var(--green);background:rgba(0,220,130,.08);border:1px solid rgba(0,220,130,.18);padding:1px 6px;border-radius:4px}
+.h-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:44px;animation:up .8s .24s var(--out-expo) both}
+.chip{display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:100px;border:1px solid var(--border2);background:rgba(255,255,255,.03);font-size:.82rem;font-weight:500;color:var(--gray);transition:all .25s;cursor:default}
+.chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.chip:hover{border-color:rgba(0,220,130,.35);color:var(--white);background:rgba(0,220,130,.06);transform:translateY(-2px)}
+.h-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;animation:up .8s .32s var(--out-expo) both}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#03050a;padding:13px 28px;border-radius:10px;font-size:.95rem;font-weight:700;transition:all .3s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 0 0 8px var(--green-dim),0 16px 36px rgba(0,220,130,.28)}
+.btn-g{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-size:.95rem;font-weight:600;border:1px solid var(--border2);color:var(--gray);background:rgba(255,255,255,.03);transition:all .3s}
+.btn-g:hover{border-color:rgba(255,255,255,.2);color:var(--white);background:rgba(255,255,255,.07);transform:translateY(-2px)}
+.scroll-ind{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--gray2);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;animation:up 1s .9s var(--out-expo) both}
+.scroll-box{width:20px;height:32px;border:1.5px solid var(--border2);border-radius:100px;display:flex;align-items:flex-start;justify-content:center;padding-top:5px}
+.scroll-dot{width:3px;height:8px;background:var(--green);border-radius:2px;animation:sd 1.8s ease-in-out infinite}
+@keyframes sd{0%{transform:translateY(0);opacity:1}100%{transform:translateY(10px);opacity:0}}
+/* MARQUEE */
+.mq-wrap{position:relative;z-index:1;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);padding:16px 0;overflow:hidden;mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,black 12%,black 88%,transparent)}
+.mq-track{display:flex;animation:mq 30s linear infinite;width:max-content}
+.mq-track:hover{animation-play-state:paused}
+.mq-item{display:flex;align-items:center;gap:9px;padding:0 32px;font-size:.85rem;font-weight:600;color:var(--gray2);white-space:nowrap;border-right:1px solid var(--border)}
+.mq-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+@keyframes mq{to{transform:translateX(-50%)}}
+/* LAYOUT */
+.wrap{max-width:1060px;margin:0 auto;padding:0 clamp(20px,5vw,72px)}
+section{position:relative;z-index:1;padding:110px 0}
+.s-lbl{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:14px}
+.s-lbl::before{content:'';width:14px;height:1.5px;background:var(--green);border-radius:1px}
+.s-h{font-size:clamp(1.8rem,3.8vw,2.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.15;margin-bottom:10px}
+.s-p{font-size:.975rem;color:var(--gray);line-height:1.75;max-width:460px}
+.divider{position:relative;z-index:1;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:0 clamp(20px,5vw,72px)}
+/* TERMINAL SECTION */
+.t-section .wrap{display:grid;grid-template-columns:1fr 1.7fr;gap:80px;align-items:center}
+@media(max-width:860px){.t-section .wrap{grid-template-columns:1fr}}
+.t-box{background:var(--surface);border:1px solid var(--border2);border-radius:16px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.65),0 0 60px var(--green-glow)}
+.t-bar{display:flex;align-items:center;gap:7px;padding:13px 16px;background:#060a12;border-bottom:1px solid var(--border)}
+.td{width:12px;height:12px;border-radius:50%}
+.td1{background:#f87171}.td2{background:#fb923c}.td3{background:#4ade80}
+.t-ttl{flex:1;text-align:center;font-size:.73rem;color:var(--gray2);font-family:var(--mono)}
+.t-cols{display:grid;grid-template-columns:1fr 1fr;min-height:380px}
+.tc{padding:16px 14px;overflow:hidden}
+.tc-l{border-right:1px solid var(--border);background:rgba(244,63,94,.015)}
+.tc-r{background:rgba(0,220,130,.015)}
+.tc-head{font-size:.7rem;font-weight:700;font-family:var(--mono);padding-bottom:12px;margin-bottom:10px;border-bottom:1px solid var(--border);letter-spacing:.05em}
+.tc-head.bad{color:var(--red)}.tc-head.good{color:var(--green)}
+.t-msg{margin-bottom:8px;animation:mslide .2s var(--out-expo) both}
+@keyframes mslide{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+.t-who{font-size:.63rem;font-family:var(--mono);font-weight:700;margin-bottom:3px}
+.tw-u{color:var(--blue)}.tw-ai{color:var(--green)}.tw-sys{color:var(--purple)}
+.t-bub{display:inline-block;padding:6px 10px;border-radius:7px;font-size:.74rem;font-family:var(--mono);line-height:1.5;max-width:98%}
+.bu{background:rgba(96,165,250,.08);color:#93c5fd;border:1px solid rgba(96,165,250,.14)}
+.bai{background:rgba(0,220,130,.07);color:#6ee7b7;border:1px solid rgba(0,220,130,.12)}
+.bsys{background:rgba(167,139,250,.07);color:#c4b5fd;border:1px solid rgba(167,139,250,.12)}
+.bbad{background:rgba(244,63,94,.06);color:#fca5a5;border:1px solid rgba(244,63,94,.12)}
+.t-bdg{padding:7px 11px;border-radius:8px;font-size:.7rem;font-family:var(--mono);margin-top:8px;display:flex;align-items:center;gap:6px}
+.bdg-bad{background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.15);color:var(--red)}
+.bdg-good{background:rgba(0,220,130,.07);border:1px solid rgba(0,220,130,.16);color:var(--green)}
+/* FEATURES */
+.feat-grid{margin-top:56px;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;border-radius:20px;overflow:hidden;background:var(--border);border:1px solid var(--border)}
+@media(max-width:740px){.feat-grid{grid-template-columns:1fr}}
+.fc{background:var(--surface);padding:30px 28px;transition:background .3s;position:relative;overflow:hidden}
+.fc::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% -10%,var(--green-glow),transparent 55%);opacity:0;transition:opacity .4s}
+.fc:hover{background:var(--panel)}.fc:hover::after{opacity:1}
+.fc-ico{width:42px;height:42px;border-radius:10px;background:rgba(0,220,130,.08);border:1px solid rgba(0,220,130,.16);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:18px;position:relative;z-index:1}
+.fc h3{font-size:.975rem;font-weight:700;margin-bottom:8px;letter-spacing:-.015em;position:relative;z-index:1}
+.fc p{font-size:.855rem;color:var(--gray);line-height:1.7;position:relative;z-index:1}
 </style>
 </head>
 <body>
-
-<div class="orbs">
-  <div class="orb orb1"></div>
-  <div class="orb orb2"></div>
-  <div class="orb orb3"></div>
-</div>
-
-<!-- NAV -->
+<canvas id="c"></canvas>
 <nav>
-  <div class="nav-logo">
-    <div class="nav-logo-dot"></div>
-    ReadMeAI
-  </div>
-  <div class="nav-links">
-    <a href="#demo">Demo</a>
-    <a href="#install">Install</a>
-    <a href="#features">Features</a>
-    <a href="https://github.com/Oscarr36/ReadMeAI">GitHub</a>
-  </div>
-  <a class="nav-star" href="https://github.com/Oscarr36/ReadMeAI/stargazers">⭐ Star on GitHub</a>
+  <div class="n-logo"><div class="n-mark">R</div>ReadMeAI</div>
+  <ul class="n-links">
+    <li><a href="#demo">Demo</a></li><li><a href="#install">Install</a></li>
+    <li><a href="#features">Features</a></li><li><a href="https://github.com/Oscarr36/ReadMeAI">GitHub</a></li>
+  </ul>
+  <a class="n-cta" href="https://github.com/Oscarr36/ReadMeAI/stargazers">&#9733; Star</a>
 </nav>
-
-<!-- HERO -->
 <section class="hero">
-  <div class="hero-tag"><span></span>Open source · MIT License · v2.4</div>
-  <h1>AI never forgets<br/><span class="grad">your project.</span></h1>
-  <p>Drop <code>.readmeAI</code> in any project root. The AI reads it first, every session — no re-explaining, no context drift, no messy structure.</p>
-  <div class="compat-row">
-    <div class="compat-chip"><div class="dot"></div>Claude</div>
-    <div class="compat-chip"><div class="dot"></div>ChatGPT</div>
-    <div class="compat-chip"><div class="dot"></div>GitHub Copilot</div>
-    <div class="compat-chip"><div class="dot"></div>Cursor</div>
-    <div class="compat-chip"><div class="dot"></div>Windsurf</div>
-    <div class="compat-chip"><div class="dot"></div>Gemini</div>
+  <div class="h-ey"><span class="h-pill">NEW</span>v2.4 &middot; Skills &amp; Ecosystem detection</div>
+  <h1 class="big">AI never forgets<br/><em>your project.</em></h1>
+  <p class="h-sub">Drop <code>.readmeAI</code> in any project root. The AI reads it first, every session &mdash; no re-explaining, no context drift, no wasted tokens.</p>
+  <div class="h-chips">
+    <div class="chip">Claude</div><div class="chip">ChatGPT</div><div class="chip">GitHub Copilot</div>
+    <div class="chip">Cursor</div><div class="chip">Windsurf</div><div class="chip">Gemini</div>
   </div>
-  <div class="hero-actions">
-    <a class="btn-primary" href="https://github.com/Oscarr36/ReadMeAI">⭐ Star on GitHub</a>
-    <a class="btn-ghost" href="https://github.com/Oscarr36/ReadMeAI/blob/main/.readmeAI">View template →</a>
+  <div class="h-btns">
+    <a class="btn-p" href="https://github.com/Oscarr36/ReadMeAI">&#9733; Star on GitHub</a>
+    <a class="btn-g" href="#install">Get started &rarr;</a>
   </div>
-</section>
-
-<!-- LIVE TERMINAL DEMO -->
-<div id="demo" class="terminal-wrap">
-  <div class="terminal">
-    <div class="term-bar">
-      <div class="term-dot td1"></div>
-      <div class="term-dot td2"></div>
-      <div class="term-dot td3"></div>
-      <div class="term-title">Day 2 — picking up where you left off</div>
-    </div>
-    <div class="term-body">
-      <div class="term-col" id="col-bad">
-        <div class="term-col-head head-bad">✗ Without ReadMeAI</div>
-        <div id="msgs-bad"></div>
-      </div>
-      <div class="term-col" id="col-good">
-        <div class="term-col-head head-good">✓ With ReadMeAI</div>
-        <div id="msgs-good"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- INSTALL -->
-<section id="install" class="install-section">
-  <h2>One command to start</h2>
-  <p>Drop the file in your project root and you're done.</p>
-  <div class="install-card">
-    <div class="install-tab-bar">
-      <button class="itab active" onclick="switchTab('bash',this)">macOS / Linux</button>
-      <button class="itab" onclick="switchTab('ps',this)">Windows</button>
-    </div>
-    <div class="install-line">
-      <span class="prompt-sym">$</span>
-      <span class="cmd-text" id="cmd-display">curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI</span>
-      <button class="copy-btn" onclick="copyCmd()">copy</button>
-    </div>
-    <div class="step2">
-      Then tell your AI: <code>"Detect my project stack, fill in what you can, ask for the rest."</code>
-    </div>
+  <div class="scroll-ind">
+    <div class="scroll-box"><div class="scroll-dot"></div></div>scroll
   </div>
 </section>
+<div class="mq-wrap"><div class="mq-track" id="mq"></div></div>
+<style>
+/* INSTALL */
+.inst-section .wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:80px;align-items:center}
+@media(max-width:860px){.inst-section .wrap{grid-template-columns:1fr}}
+.code-box{background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.cb-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#060a12;border-bottom:1px solid var(--border)}
+.cb-dots{display:flex;gap:6px}
+.cb-tabs{display:flex;gap:2px}
+.ctab{padding:4px 12px;border-radius:5px;font-size:.73rem;font-family:var(--mono);color:var(--gray2);cursor:pointer;background:transparent;border:1px solid transparent;transition:all .2s}
+.ctab.active{background:rgba(255,255,255,.07);color:var(--white);border-color:var(--border)}
+.cb-body{padding:18px 20px;font-family:var(--mono);font-size:.83rem;line-height:1.8;min-height:80px}
+.c-comment{color:var(--gray2)}.c-prompt{color:var(--green)}.c-cmd{color:var(--white)}
+.cb-foot{display:flex;justify-content:flex-end;padding:0 16px 14px}
+.cp-btn{display:flex;align-items:center;gap:6px;padding:5px 14px;border-radius:6px;font-size:.75rem;font-weight:600;background:rgba(0,220,130,.08);border:1px solid rgba(0,220,130,.2);color:var(--green);transition:all .2s}
+.cp-btn:hover{background:rgba(0,220,130,.16)}
+.steps{list-style:none;display:flex;flex-direction:column;gap:20px;margin-top:32px}
+.step{display:flex;gap:14px;align-items:flex-start}
+.sn{width:26px;height:26px;border-radius:50%;background:rgba(0,220,130,.1);border:1px solid rgba(0,220,130,.2);display:flex;align-items:center;justify-content:center;font-size:.73rem;font-weight:700;color:var(--green);flex-shrink:0;margin-top:2px}
+.sc h4{font-size:.9rem;font-weight:600;margin-bottom:4px}
+.sc p{font-size:.84rem;color:var(--gray);line-height:1.65}
+.sc code{font-family:var(--mono);font-size:.82em;color:var(--green);background:rgba(0,220,130,.07);padding:1px 5px;border-radius:3px}
+/* COMPARE */
+.comp-tbl{margin-top:52px;border:1px solid var(--border2);border-radius:16px;overflow:hidden}
+.comp-hdr{display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--surface)}
+.comp-th{padding:14px 18px;font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.comp-th:not(:last-child){border-right:1px solid var(--border)}
+.cth-t{color:var(--gray2)}.cth-b{color:var(--red)}.cth-g{color:var(--green)}
+.comp-r{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.04)}
+.comp-r:last-child{border:none}
+.comp-td{padding:12px 18px;font-size:.84rem;line-height:1.5}
+.comp-td:not(:last-child){border-right:1px solid rgba(255,255,255,.04)}
+.ctd-t{color:var(--gray);font-weight:500}
+.ctd-b{color:rgba(248,113,113,.75);background:rgba(244,63,94,.02)}
+.ctd-g{color:rgba(0,220,130,.85);background:rgba(0,220,130,.02)}
+@media(max-width:600px){.comp-hdr,.comp-r{grid-template-columns:1fr}}
+/* CLOUD */
+.s-cloud{margin-top:44px;display:flex;flex-wrap:wrap;gap:8px}
+.s-chip{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;border:1px solid var(--border);background:rgba(255,255,255,.02);font-size:.81rem;color:var(--gray);font-family:var(--mono);transition:all .25s;cursor:default}
+.s-chip:hover{border-color:rgba(0,220,130,.3);color:var(--green);background:rgba(0,220,130,.04);transform:translateY(-2px)}
+/* CTA */
+.cta-sec{position:relative;z-index:1;padding:60px clamp(20px,5vw,72px) 100px}
+.cta-in{border-radius:24px;padding:80px 48px;text-align:center;background:linear-gradient(145deg,var(--surface),var(--panel));border:1px solid var(--border2);position:relative;overflow:hidden;box-shadow:0 60px 120px rgba(0,0,0,.5)}
+.cta-in::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:640px;height:640px;background:radial-gradient(circle,rgba(0,220,130,.07),transparent 60%);pointer-events:none}
+.cta-in h2{font-size:clamp(2rem,4.5vw,3.2rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;margin-bottom:14px;position:relative;z-index:1}
+.cta-in p{font-size:1rem;color:var(--gray);margin-bottom:36px;position:relative;z-index:1}
+.cta-in .h-btns{position:relative;z-index:1}
+.cta-meta{margin-top:22px;font-size:.78rem;color:var(--gray2);position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;gap:16px}
+.cta-meta span{display:flex;align-items:center;gap:5px}
+.cta-meta span::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--green)}
+footer{position:relative;z-index:1;padding:26px clamp(20px,5vw,72px);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.f-logo{font-weight:700;color:var(--green);font-size:.9rem}
+footer p{font-size:.82rem;color:var(--gray2)}
+footer a{color:var(--gray);transition:color .2s}
+footer a:hover{color:var(--white)}
+</style>
 
+<section id="demo" class="t-section">
+  <div class="wrap">
+    <div>
+      <div class="s-lbl">Live demo</div>
+      <h2 class="s-h">Day 2. Pick up<br/>exactly where you left.</h2>
+      <p class="s-p" style="margin-top:14px">Without ReadMeAI you spend 3 minutes re-explaining. With it, one message is enough.</p>
+    </div>
+    <div class="t-box">
+      <div class="t-bar">
+        <div class="td td1"></div><div class="td td2"></div><div class="td td3"></div>
+        <div class="t-ttl">session restart &mdash; day 2</div>
+      </div>
+      <div class="t-cols">
+        <div class="tc tc-l"><div class="tc-head bad">&#x2717; Without ReadMeAI</div><div id="bad"></div></div>
+        <div class="tc tc-r"><div class="tc-head good">&#x2713; With ReadMeAI</div><div id="good"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
 <div class="divider"></div>
 
-<!-- COMPARE -->
-<section class="compare">
-  <div class="section-header">
-    <div class="section-tag">Before vs After</div>
-    <h2>Context that actually persists</h2>
-    <p>Every session starts from zero — unless you have ReadMeAI.</p>
-  </div>
-  <div class="comp-grid">
-    <div class="comp-card">
-      <div class="comp-head comp-head-bad">✗ Without ReadMeAI</div>
-      <ul class="comp-list">
-        <li><span class="comp-icon">✗</span>Re-explain architecture every session</li>
-        <li><span class="comp-icon">✗</span>AI invents its own folder structure</li>
-        <li><span class="comp-icon">✗</span>Inconsistent naming & patterns</li>
-        <li><span class="comp-icon">✗</span>Lost decisions and conventions</li>
-        <li><span class="comp-icon">✗</span>"Where did we leave off?"</li>
-        <li><span class="comp-icon">✗</span>AI scans every file to navigate</li>
-      </ul>
-    </div>
-    <div class="comp-card">
-      <div class="comp-head comp-head-good">✓ With ReadMeAI</div>
-      <ul class="comp-list">
-        <li><span class="comp-icon">✓</span>Full context loaded in seconds</li>
-        <li><span class="comp-icon">✓</span>Enforced folder rules, every time</li>
-        <li><span class="comp-icon">✓</span>Conventions locked and applied</li>
-        <li><span class="comp-icon">✓</span>Decisions log grows automatically</li>
-        <li><span class="comp-icon">✓</span>AI resumes from exact last step</li>
-        <li><span class="comp-icon">✓</span>Symbol index → direct file:line jumps</li>
-      </ul>
+<section id="features">
+  <div class="wrap">
+    <div class="s-lbl">Features</div>
+    <h2 class="s-h">Built to eliminate friction.</h2>
+    <div class="feat-grid">
+      <div class="fc"><div class="fc-ico">&#x1F9ED;</div><h3>Auto-read, zero prompts</h3><p>AI reads the file before you type. No command, no reminder. Wired into the protocol.</p></div>
+      <div class="fc"><div class="fc-ico">&#x1F50D;</div><h3>Symbol Index</h3><p>Every function at exact file:line. AI jumps straight there — no scan, no wasted tokens.</p></div>
+      <div class="fc"><div class="fc-ico">&#x1F3D7;&#xFE0F;</div><h3>Structure enforcement</h3><p>Ownership rules per folder. AI flags anything outside spec before writing a single line.</p></div>
+      <div class="fc"><div class="fc-ico">&#x2705;</div><h3>Code quality gate</h3><p>Built-in checklist before every output: naming, nesting, forbidden patterns, constants.</p></div>
+      <div class="fc"><div class="fc-ico">&#x1F4DA;</div><h3>Decisions log</h3><p>Every architectural choice with rationale, auto-appended at session end.</p></div>
+      <div class="fc"><div class="fc-ico">&#x1F9E0;</div><h3>Ecosystem detection</h3><p>Tell it your stack once. It assembles conventions, structure, and security rules automatically.</p></div>
     </div>
   </div>
 </section>
-
-<!-- GIF DEMO -->
-<div class="gif-demo">
-  <div class="gif-wrap">
-    <img src="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/demo.gif" alt="ReadMeAI animated demo"/>
-  </div>
-</div>
-
 <div class="divider"></div>
 
-<!-- FEATURES -->
-<section id="features" class="features">
-  <div class="section-header">
-    <div class="section-tag">Features</div>
-    <h2>Built to eliminate friction</h2>
-    <p>24 auto-maintained sections. Zero manual updates.</p>
+<section id="install" class="inst-section">
+  <div class="wrap">
+    <div>
+      <div class="s-lbl">Quickstart</div>
+      <h2 class="s-h">Up in 30 seconds.</h2>
+      <p class="s-p" style="margin-top:12px">No accounts, no plugins, no lock-in. Just one file.</p>
+      <ol class="steps">
+        <li class="step"><div class="sn">1</div><div class="sc"><h4>Drop the file</h4><p>Run the command in your project root.</p></div></li>
+        <li class="step"><div class="sn">2</div><div class="sc"><h4>First setup</h4><p>Tell your AI: <code>"Detect my stack, fill what you can, ask for the rest."</code></p></div></li>
+        <li class="step"><div class="sn">3</div><div class="sc"><h4>Every session</h4><p>Just say <code>"Continue where we left off."</code></p></div></li>
+      </ol>
+    </div>
+    <div>
+      <div class="code-box">
+        <div class="cb-bar">
+          <div class="cb-dots"><div class="td td1"></div><div class="td td2"></div><div class="td td3"></div></div>
+          <div class="cb-tabs">
+            <button class="ctab active" onclick="setTab('bash',this)">bash</button>
+            <button class="ctab" onclick="setTab('ps',this)">powershell</button>
+          </div>
+        </div>
+        <div class="cb-body" id="code-out"></div>
+        <div class="cb-foot"><button class="cp-btn" onclick="doCopy()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span id="cp-lbl">Copy</span></button></div>
+      </div>
+    </div>
   </div>
-  <div class="feat-grid">
-    <div class="feat-card">
-      <div class="feat-icon">🧭</div>
-      <h3>Auto-read at session start</h3>
-      <p>AI reads the file before the user types anything. No prompt needed — ever.</p>
+</section>
+<div class="divider"></div>
+
+<section>
+  <div class="wrap">
+    <div class="s-lbl">Comparison</div>
+    <h2 class="s-h">Before vs After</h2>
+    <div class="comp-tbl">
+      <div class="comp-hdr">
+        <div class="comp-th cth-t">Scenario</div>
+        <div class="comp-th cth-b">&#x2717; Without</div>
+        <div class="comp-th cth-g">&#x2713; With ReadMeAI</div>
+      </div>
+      <div class="comp-r"><div class="comp-td ctd-t">Session restart</div><div class="comp-td ctd-b">Re-explain everything from scratch</div><div class="comp-td ctd-g">Full context loaded in seconds</div></div>
+      <div class="comp-r"><div class="comp-td ctd-t">Folder structure</div><div class="comp-td ctd-b">AI invents its own layout</div><div class="comp-td ctd-g">Enforced rules, every file</div></div>
+      <div class="comp-r"><div class="comp-td ctd-t">Code conventions</div><div class="comp-td ctd-b">Inconsistent across sessions</div><div class="comp-td ctd-g">Locked and auto-applied</div></div>
+      <div class="comp-r"><div class="comp-td ctd-t">Decisions</div><div class="comp-td ctd-b">Lost when session ends</div><div class="comp-td ctd-g">Logged with rationale forever</div></div>
+      <div class="comp-r"><div class="comp-td ctd-t">Navigation</div><div class="comp-td ctd-b">AI scans every file each time</div><div class="comp-td ctd-g">Symbol index &rarr; direct file:line</div></div>
+      <div class="comp-r"><div class="comp-td ctd-t">Token cost</div><div class="comp-td ctd-b">Re-reads entire project every session</div><div class="comp-td ctd-g">80%+ reduction after first setup</div></div>
     </div>
-    <div class="feat-card">
-      <div class="feat-icon">🔍</div>
-      <h3>Symbol Index</h3>
-      <p>Every key function at exact <code>file:line</code>. AI navigates without scanning the filesystem.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">🏗️</div>
-      <h3>Structure enforcement</h3>
-      <p>Explicit rules per directory. AI flags anything placed outside the spec immediately.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">✅</div>
-      <h3>Code quality gate</h3>
-      <p>Built-in checklist before every output: naming, nesting, forbidden patterns, constants.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">📚</div>
-      <h3>Decisions log</h3>
-      <p>Every architectural decision with rationale, auto-appended after each session.</p>
-    </div>
-    <div class="feat-card">
-      <div class="feat-icon">⚡</div>
-      <h3>Token efficiency</h3>
-      <p>After setup the AI never re-reads the whole project. Context costs drop dramatically.</p>
+  </div>
+</section>
+<div class="divider"></div>
+
+<section>
+  <div class="wrap">
+    <div class="s-lbl">Template</div>
+    <h2 class="s-h">24 sections. All auto-maintained.</h2>
+    <p class="s-p" style="margin-top:10px">AI fills them in and updates them every session.</p>
+    <div class="s-cloud">
+      <div class="s-chip">&#x2699;&#xFE0F; AI Protocol</div><div class="s-chip">&#x1F9ED; Project Context</div>
+      <div class="s-chip">&#x1F9E0; Skills &amp; Ecosystem</div><div class="s-chip">&#x1F4CB; Project Identity</div>
+      <div class="s-chip">&#x1F6E0; Tech Stack</div><div class="s-chip">&#x1F3D7; Structure Map</div>
+      <div class="s-chip">&#x1F50D; Symbol Index</div><div class="s-chip">&#x1F4D0; Conventions</div>
+      <div class="s-chip">&#x2705; Code Quality Gate</div><div class="s-chip">&#x1F50C; API Contracts</div>
+      <div class="s-chip">&#x1F510; Security Model</div><div class="s-chip">&#x26A1; Performance SLAs</div>
+      <div class="s-chip">&#x1F9EA; Testing Strategy</div><div class="s-chip">&#x1F6A8; Error Handling</div>
+      <div class="s-chip">&#x1F4E6; Dependencies</div><div class="s-chip">&#x1F3AF; Session State</div>
+      <div class="s-chip">&#x1F4DA; Decisions Log</div><div class="s-chip">&#x1F41B; Known Issues</div>
+      <div class="s-chip">&#x1F4C8; Progress</div><div class="s-chip">&#x1F517; Cross-Project Refs</div>
+      <div class="s-chip">&#x1F527; Environment</div><div class="s-chip">&#x1F5D2; AI Notes</div>
+      <div class="s-chip">&#x1F4DC; Change Log</div><div class="s-chip">&#x1F504; Session History</div>
     </div>
   </div>
 </section>
 
-<!-- SECTIONS -->
-<section class="sections">
-  <div class="section-header">
-    <div class="section-tag">Template</div>
-    <h2>24 sections, all auto-maintained</h2>
-  </div>
-  <div class="sec-grid">
-    <div class="sec-chip"><span class="sec-icon">⚙️</span>AI Protocol</div>
-    <div class="sec-chip"><span class="sec-icon">🧭</span>Project Context</div>
-    <div class="sec-chip"><span class="sec-icon">🧠</span>Skills & Ecosystem</div>
-    <div class="sec-chip"><span class="sec-icon">📋</span>Project Identity</div>
-    <div class="sec-chip"><span class="sec-icon">🛠</span>Tech Stack</div>
-    <div class="sec-chip"><span class="sec-icon">🏗</span>Structure Map</div>
-    <div class="sec-chip"><span class="sec-icon">🔍</span>Symbol Index</div>
-    <div class="sec-chip"><span class="sec-icon">📐</span>Conventions</div>
-    <div class="sec-chip"><span class="sec-icon">✅</span>Code Quality</div>
-    <div class="sec-chip"><span class="sec-icon">🔌</span>API Contracts</div>
-    <div class="sec-chip"><span class="sec-icon">🔐</span>Security</div>
-    <div class="sec-chip"><span class="sec-icon">⚡</span>Performance</div>
-    <div class="sec-chip"><span class="sec-icon">🧪</span>Testing Strategy</div>
-    <div class="sec-chip"><span class="sec-icon">🚨</span>Error Handling</div>
-    <div class="sec-chip"><span class="sec-icon">📦</span>Dependencies</div>
-    <div class="sec-chip"><span class="sec-icon">🎯</span>Session State</div>
-    <div class="sec-chip"><span class="sec-icon">📚</span>Decisions Log</div>
-    <div class="sec-chip"><span class="sec-icon">🐛</span>Known Issues</div>
-    <div class="sec-chip"><span class="sec-icon">✅</span>Progress</div>
-    <div class="sec-chip"><span class="sec-icon">🔗</span>Cross-Project Refs</div>
-    <div class="sec-chip"><span class="sec-icon">🔧</span>Environment</div>
-    <div class="sec-chip"><span class="sec-icon">🗒</span>AI Notes</div>
-    <div class="sec-chip"><span class="sec-icon">📜</span>Change Log</div>
-    <div class="sec-chip"><span class="sec-icon">⚙️</span>AI Protocol</div>
-  </div>
-</section>
-
-<!-- CTA -->
-<div class="cta">
-  <h2>One file.<br/>Permanent context.</h2>
-  <p>Works with every AI assistant. No plugins, no accounts, no lock-in.</p>
-  <div class="hero-actions" style="justify-content:center">
-    <a class="btn-primary" href="https://github.com/Oscarr36/ReadMeAI">⭐ Get ReadMeAI free</a>
-    <a class="btn-ghost" href="https://github.com/Oscarr36/ReadMeAI/blob/main/.readmeAI">View full template →</a>
+<div class="cta-sec">
+  <div class="cta-in">
+    <h2>One file.<br/><span style="background:linear-gradient(100deg,#00dc82,#00b3ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Permanent context.</span></h2>
+    <p>Works with every AI assistant. No plugins, no accounts, no lock-in. MIT License.</p>
+    <div class="h-btns">
+      <a class="btn-p" href="https://github.com/Oscarr36/ReadMeAI">&#9733; Get ReadMeAI free</a>
+      <a class="btn-g" href="https://github.com/Oscarr36/ReadMeAI/blob/main/.readmeAI">View template &rarr;</a>
+    </div>
+    <div class="cta-meta">
+      <span>MIT License</span><span>Zero dependencies</span><span>Works offline</span><span>Any AI assistant</span>
+    </div>
   </div>
 </div>
-
 <footer>
-  <span class="footer-logo">ReadMeAI</span>
-  <p>MIT License · Made by <a href="https://github.com/Oscarr36">Oscarr36</a> · <a href="https://github.com/Oscarr36/ReadMeAI">github.com/Oscarr36/ReadMeAI</a></p>
+  <span class="f-logo">ReadMeAI</span>
+  <p>Built by <a href="https://github.com/Oscarr36">Oscarr36</a> &middot; <a href="https://github.com/Oscarr36/ReadMeAI">GitHub</a> &middot; MIT</p>
 </footer>
-
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-// ── Terminal animation ──────────────────────────────────────────────────────
-const BAD = [
-  {r:'u', t:'Hey, let\'s continue the auth system.'},
-  {r:'a', t:'Sure! What are we building exactly?'},
-  {r:'u', t:'User auth with JWT tokens.'},
-  {r:'a', t:'Got it. Which framework?'},
-  {r:'u', t:'Express + MongoDB. We use MVC.'},
-  {r:'a', t:'And where did we leave off?'},
-  {r:'u', t:'Login route done, need signup next.'},
-  {r:'a', t:'Okay, starting from scratch then...', bad:true},
+// THREE.JS PARTICLE NETWORK
+(()=>{
+const c=document.getElementById('c');
+const R=new THREE.WebGLRenderer({canvas:c,antialias:true,alpha:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2));R.setClearColor(0,0);
+const S=new THREE.Scene();
+const C=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
+C.position.z=30;
+const N=160,pos=new Float32Array(N*3),vel=[];
+for(let i=0;i<N;i++){
+  pos[i*3]=(Math.random()-.5)*75;pos[i*3+1]=(Math.random()-.5)*48;pos[i*3+2]=(Math.random()-.5)*22;
+  vel.push({x:(Math.random()-.5)*.02,y:(Math.random()-.5)*.015,z:(Math.random()-.5)*.007});
+}
+const pg=new THREE.BufferGeometry();
+pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+const pm=new THREE.PointsMaterial({color:0x00dc82,size:.2,transparent:true,opacity:.8,sizeAttenuation:true});
+S.add(new THREE.Points(pg,pm));
+const lm=new THREE.LineBasicMaterial({color:0x00dc82,transparent:true,opacity:.09});
+let ls=new THREE.LineSegments(new THREE.BufferGeometry(),lm);S.add(ls);
+function upd(){
+  const p=pg.attributes.position.array,v=[];
+  for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+    const dx=p[i*3]-p[j*3],dy=p[i*3+1]-p[j*3+1],dz=p[i*3+2]-p[j*3+2];
+    if(Math.sqrt(dx*dx+dy*dy+dz*dz)<10.5){v.push(p[i*3],p[i*3+1],p[i*3+2],p[j*3],p[j*3+1],p[j*3+2]);}
+  }
+  const nlg=new THREE.BufferGeometry();
+  nlg.setAttribute('position',new THREE.BufferAttribute(new Float32Array(v),3));
+  ls.geometry.dispose();ls.geometry=nlg;
+}
+const mx={x:0,y:0};
+window.addEventListener('mousemove',e=>{mx.x=(e.clientX/innerWidth-.5)*36;mx.y=-(e.clientY/innerHeight-.5)*24;});
+window.addEventListener('resize',()=>{R.setSize(innerWidth,innerHeight);C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();});
+R.setSize(innerWidth,innerHeight);
+let f=0;
+(function animate(){
+  requestAnimationFrame(animate);f++;
+  const p=pg.attributes.position.array;
+  for(let i=0;i<N;i++){
+    p[i*3]+=vel[i].x;p[i*3+1]+=vel[i].y;p[i*3+2]+=vel[i].z;
+    if(Math.abs(p[i*3])>37)vel[i].x*=-1;
+    if(Math.abs(p[i*3+1])>24)vel[i].y*=-1;
+    if(Math.abs(p[i*3+2])>11)vel[i].z*=-1;
+  }
+  pg.attributes.position.needsUpdate=true;
+  if(f%3===0)upd();
+  C.position.x+=(mx.x*.055-C.position.x)*.04;
+  C.position.y+=(mx.y*.055-C.position.y)*.04;
+  R.render(S,C);
+})();
+})();
+
+// MARQUEE
+const tools=['Claude','ChatGPT','GitHub Copilot','Cursor','Windsurf','Gemini','Codeium','Continue','Aider','Tabnine'];
+const mq=document.getElementById('mq');
+[...tools,...tools,...tools,...tools].forEach(t=>{
+  const d=document.createElement('div');d.className='mq-item';
+  d.innerHTML='<span class="mq-dot"></span>'+t;mq.appendChild(d);
+});
+
+// TERMINAL ANIMATION
+const BMS=[
+  {w:'u',t:'Hey, continue the auth system.'},
+  {w:'a',t:'Sure! What are we building?',cls:'bai'},
+  {w:'u',t:'JWT user auth in Express.'},
+  {w:'a',t:'Which database?',cls:'bai'},
+  {w:'u',t:'MongoDB. MVC pattern.'},
+  {w:'a',t:'Where did we leave off?',cls:'bai'},
+  {w:'u',t:'Login done, need signup.'},
+  {w:'a',t:'Starting from scratch...',cls:'bbad'},
 ];
-const GOOD = [
-  {r:'u', t:'Continue where we left off.'},
-  {r:'a', t:'Reading .readmeAI...', purple:true},
-  {r:'a', t:'Loaded. Express+MongoDB, MVC, JWT auth.'},
-  {r:'a', t:'Login done. Writing signup handler now.'},
-  {r:'a', t:'Opening src/controllers/auth.js:47'},
+const GMS=[
+  {w:'u',t:'Continue where we left off.'},
+  {w:'sys',t:'Reading .readmeAI...',cls:'bsys'},
+  {w:'a',t:'Loaded. Express+MongoDB MVC JWT.',cls:'bai'},
+  {w:'a',t:'Login done. Writing signup handler.',cls:'bai'},
+  {w:'a',t:'src/controllers/auth.js:47 ready.',cls:'bai'},
 ];
-
-function makeMsg(m) {
-  const wrap = document.createElement('div');
-  wrap.className = 'msg';
-  const label = document.createElement('div');
-  label.className = 'msg-label ' + (m.r === 'u' ? 'u' : (m.purple ? 'ap' : 'a'));
-  label.textContent = m.r === 'u' ? 'you' : 'ai';
-  const bubble = document.createElement('div');
-  bubble.className = 'msg-bubble ' + (m.r === 'u' ? 'bubble-u' : m.bad ? 'bubble-ai-bad' : m.purple ? 'bubble-u' : 'bubble-ai-good');
-  bubble.textContent = '';
-  wrap.appendChild(label);
-  wrap.appendChild(bubble);
-  return {wrap, bubble};
+const sl=ms=>new Promise(r=>setTimeout(r,ms));
+async function typ(el,txt,spd=15){for(let i=0;i<=txt.length;i++){el.textContent=txt.slice(0,i);await sl(spd+Math.random()*8);}}
+function mkMsg(ct,m){
+  const w=document.createElement('div');w.className='t-msg';
+  const l=document.createElement('div');l.className='t-who tw-'+(m.w==='u'?'u':m.w==='sys'?'sys':'ai');
+  l.textContent=m.w==='u'?'you':m.w==='sys'?'system':'ai';
+  const b=document.createElement('div');b.className='t-bub '+(m.cls||(m.w==='u'?'bu':'bai'));
+  w.appendChild(l);w.appendChild(b);ct.appendChild(w);return b;
 }
-
-async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-async function typeMsg(bubble, text, speed=18) {
-  for(let i=0;i<text.length;i++){
-    bubble.textContent = text.slice(0,i+1);
-    await sleep(speed + Math.random()*10);
-  }
+async function run(){
+  const bd=document.getElementById('bad'),gd=document.getElementById('good');
+  bd.innerHTML='';gd.innerHTML='';await sl(700);
+  for(const m of BMS){const b=mkMsg(bd,m);await typ(b,m.t,m.w==='u'?19:13);await sl(300);}
+  const bb=document.createElement('div');bb.className='t-bdg bdg-bad';
+  bb.innerHTML='&#x2717;&nbsp; 8 messages &mdash; 3 min wasted';bd.appendChild(bb);
+  await sl(450);
+  for(const m of GMS){const b=mkMsg(gd,m);await typ(b,m.t,m.w==='u'?19:m.w==='sys'?9:11);await sl(m.w==='sys'?720:300);}
+  const gb=document.createElement('div');gb.className='t-bdg bdg-good';
+  gb.innerHTML='&#x2713;&nbsp; 1 message &mdash; resumed instantly';gd.appendChild(gb);
+  await sl(5500);run();
 }
+run();
 
-async function runTerminal() {
-  const badEl  = document.getElementById('msgs-bad');
-  const goodEl = document.getElementById('msgs-good');
-
-  // clear
-  badEl.innerHTML = '';
-  goodEl.innerHTML = '';
-  await sleep(800);
-
-  // animate bad side
-  for(const m of BAD) {
-    const {wrap, bubble} = makeMsg(m);
-    badEl.appendChild(wrap);
-    await typeMsg(bubble, m.t, m.r==='u'?22:16);
-    await sleep(350);
-  }
-
-  // badge bad
-  await sleep(200);
-  const bb = document.createElement('div');
-  bb.className = 'term-badge badge-bad';
-  bb.innerHTML = '✗ &nbsp;8 messages — wasted 3 min re-explaining';
-  badEl.appendChild(bb);
-
-  await sleep(500);
-
-  // animate good side
-  for(const m of GOOD) {
-    const {wrap, bubble} = makeMsg(m);
-    goodEl.appendChild(wrap);
-    await typeMsg(bubble, m.t, m.r==='u'?22:12);
-    await sleep(m.purple ? 600 : 300);
-  }
-
-  // badge good
-  await sleep(200);
-  const bg = document.createElement('div');
-  bg.className = 'term-badge badge-good';
-  bg.innerHTML = '✓ &nbsp;1 message — resumed in seconds';
-  goodEl.appendChild(bg);
-
-  await sleep(5000);
-  runTerminal();
-}
-
-runTerminal();
-
-// ── Install tabs ────────────────────────────────────────────────────────────
-const CMDS = {
-  bash: 'curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI',
-  ps:   'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"'
+// INSTALL TABS
+const RAWCMDS={bash:'curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI',ps:'Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"'};
+const CMDS={
+  bash:[['# macOS / Linux','c-comment'],['$ ','c-prompt',true],['curl -o .readmeAI https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI','c-cmd',true]],
+  ps:[['# Windows PowerShell','c-comment'],['> ','c-prompt',true],['Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"','c-cmd',true]]
 };
-let activeCmd = 'bash';
-function switchTab(key, el) {
-  activeCmd = key;
-  document.querySelectorAll('.itab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('cmd-display').textContent = CMDS[key];
-}
-function copyCmd() {
-  navigator.clipboard.writeText(CMDS[activeCmd]);
-  const b = document.querySelector('.copy-btn');
-  b.textContent = 'copied!'; b.style.color = '#22d3a0';
-  setTimeout(()=>{ b.textContent='copy'; b.style.color=''; }, 1600);
-}
-
-// ── Scroll reveal ───────────────────────────────────────────────────────────
-const obs = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; }
+let AT='bash';
+function renderCode(k){
+  const el=document.getElementById('code-out');el.innerHTML='';
+  let div=null;
+  CMDS[k].forEach(([t,cls,inline])=>{
+    if(!inline){div=document.createElement('div');el.appendChild(div);}
+    if(!div){div=document.createElement('div');el.appendChild(div);}
+    const sp=document.createElement('span');sp.className=cls;sp.textContent=t;div.appendChild(sp);
+    if(!inline)div=null;
   });
-},{threshold:.1});
-document.querySelectorAll('.feat-card,.comp-card,.sec-chip').forEach(el=>{
-  el.style.opacity='0'; el.style.transform='translateY(20px)';
-  el.style.transition='opacity .5s ease, transform .5s ease';
+}
+function setTab(k,el){AT=k;document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderCode(k);}
+function doCopy(){navigator.clipboard.writeText(RAWCMDS[AT]);const l=document.getElementById('cp-lbl');l.textContent='Copied!';setTimeout(()=>l.textContent='Copy',1600);}
+renderCode('bash');
+
+// SCROLL REVEAL
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>{e.target.style.opacity='1';e.target.style.transform='translateY(0) scale(1)';},i*40);obs.unobserve(e.target);}
+  });
+},{threshold:.06,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.fc,.comp-r,.s-chip,.step').forEach(el=>{
+  el.style.opacity='0';el.style.transform='translateY(18px) scale(.99)';
+  el.style.transition='opacity .6s cubic-bezier(.19,1,.22,1),transform .6s cubic-bezier(.19,1,.22,1)';
   obs.observe(el);
 });
 </script>
