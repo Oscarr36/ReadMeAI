@@ -112,6 +112,12 @@ Session 2 (days later):
 
 ---
 
+## Demo
+
+![ReadMeAI demo](img/demo.gif)
+
+---
+
 ## Preview
 
 > What `.readmeAI` looks like inside a real project (VS Code):
