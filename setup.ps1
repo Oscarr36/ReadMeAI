@@ -198,6 +198,50 @@ if ($All -or (Get-Command gemini -EA SilentlyContinue)) {
 $claudeHome = Join-Path $env:USERPROFILE ".claude"
 if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHome)) {
   Write-Integration ".claude\CLAUDE.md" "Claude Code" $ClaudeContent
+
+  # Claude Code hooks — auto-inject QUICK REFERENCE at session start + session snapshot on stop
+  $hooksFile = ".claude\settings.json"
+  if (-not (Test-Path $hooksFile)) {
+    New-Item -ItemType Directory -Force ".claude" | Out-Null
+    Set-Content -Path $hooksFile -Encoding utf8 -Value @'
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if (Test-Path '.readmeAI') -and -not (Test-Path '.claude/.readmeai.active') { New-Item .claude/.readmeai.active -Force | Out-Null; Get-Content .readmeAI | Select-String -Pattern '## . QUICK REFERENCE' -Context 0,14 }"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if (Test-Path '.readmeAI') { Remove-Item .claude/.readmeai.active -EA SilentlyContinue; $c = git log -1 --format='%h %s' 2>$null; \"$(Get-Date -f 'yyyy-MM-dd HH:mm') | $c\" | Set-Content .claude/.readmeai.session -Encoding utf8; Write-Host 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.' }"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if ((Test-Path '.readmeAI') -and $env:TOOL_INPUT_PATH) { if (-not (Select-String -Path '.readmeAI' -Pattern $env:TOOL_INPUT_PATH -Quiet)) { Write-Warning \"ReadMeAI: $($env:TOOL_INPUT_PATH) not in STRUCTURE MAP — add it at session end.\" } }"
+          }
+        ]
+      }
+    ]
+  }
+}
+'@
+    $script:Created += "Claude Code hooks -> $hooksFile"
+  }
 }
 
 # Cursor — modern .mdc files + legacy

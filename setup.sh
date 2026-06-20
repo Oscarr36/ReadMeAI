@@ -297,12 +297,22 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
     cat > "$HOOKS_FILE" << 'HOOKSEOF'
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## . QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "[ -f '.readmeAI' ] && echo '' && echo '📝 ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.' || true"
+            "command": "if [ -f '.readmeAI' ]; then rm -f .claude/.readmeai.active 2>/dev/null; COMMIT=$(git log -1 --format='%h %s' 2>/dev/null || echo 'no git'); echo \"$(date '+%Y-%m-%d %H:%M') | $COMMIT\" > .claude/.readmeai.session 2>/dev/null; echo ''; echo 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.'; fi"
           }
         ]
       }
@@ -313,7 +323,7 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"$TOOL_INPUT_PATH\"; [ -f '.readmeAI' ] && grep -q \"$FILE\" .readmeAI || echo \"⚠ ReadMeAI: '$FILE' not in STRUCTURE MAP — add it at session end.\""
+            "command": "FILE=\"$TOOL_INPUT_PATH\"; [ -f '.readmeAI' ] && grep -q \"$FILE\" .readmeAI || echo \"ReadMeAI: '$FILE' not in STRUCTURE MAP — add it at session end.\""
           }
         ]
       }

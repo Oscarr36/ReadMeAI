@@ -169,6 +169,24 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 
 ---
 
+## ReadMeAI vs alternatives
+
+| | ReadMeAI | claude-mem | mem0 |
+|--|--|--|--|
+| **AI tools supported** | All (Cursor, Copilot, Windsurf, Gemini, Aider...) | Claude Code only | Claude Code only |
+| **Setup** | `curl ... \| bash` | npm install + MCP | npm install + API key |
+| **Storage** | Plain text file | SQLite + vector DB | Cloud API |
+| **Dependencies** | None | Node.js + Chroma | Node.js + internet |
+| **Domain rules** | Yes — you write rules that override AI | No | No |
+| **Git-friendly** | Yes — commit it, diff it, review in PRs | No (binary DB) | No (cloud) |
+| **Team sharing** | Yes — one file, whole team benefits | No (per-user local) | No (per-user) |
+| **Works offline** | Yes | Yes | No |
+| **Context budget** | ~200 active lines (~1.5k tokens) | AI-compressed, variable | AI-compressed |
+
+**The key difference:** ReadMeAI is for what the AI *can't* figure out — domain rules, architectural decisions, business constraints. claude-mem captures what the AI *did*. Both are useful; they solve different problems.
+
+---
+
 ## Design principles
 
 | | |
