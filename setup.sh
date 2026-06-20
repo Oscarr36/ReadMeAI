@@ -286,9 +286,43 @@ if $ALL || command -v gemini &>/dev/null; then
   write_integration "GEMINI.md" "Gemini CLI" "$AGENTS_CONTENT"
 fi
 
-# Claude Code
+# Claude Code — CLAUDE.md + lifecycle hooks
 if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
   write_integration ".claude/CLAUDE.md" "Claude Code" "$CLAUDE_CONTENT"
+
+  # Claude Code hooks — session-end reminder + pre-edit structure check
+  HOOKS_FILE=".claude/settings.json"
+  if [[ ! -f "$HOOKS_FILE" ]]; then
+    mkdir -p .claude
+    cat > "$HOOKS_FILE" << 'HOOKSEOF'
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -f '.readmeAI' ] && echo '' && echo '📝 ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.' || true"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$TOOL_INPUT_PATH\"; [ -f '.readmeAI' ] && grep -q \"$FILE\" .readmeAI || echo \"⚠ ReadMeAI: '$FILE' not in STRUCTURE MAP — add it at session end.\""
+          }
+        ]
+      }
+    ]
+  }
+}
+HOOKSEOF
+    CREATED+=("Claude Code hooks → .claude/settings.json")
+  fi
 fi
 
 # Cursor — modern .mdc files (preferred) + legacy .cursorrules fallback
