@@ -17,15 +17,79 @@ set -euo pipefail
 GREEN='\033[0;32m'; GRAY='\033[0;90m'; BOLD='\033[1m'
 YELLOW='\033[0;33m'; RED='\033[0;31m'; RESET='\033[0m'
 
-ALL=false; DETECT=false; VALIDATE=false; UPDATE=false
+ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false
 for arg in "$@"; do
   case "$arg" in
     --all)      ALL=true ;;
     --detect)   DETECT=true ;;
     --validate) VALIDATE=true ;;
     --update)   DETECT=true; UPDATE=true ;;
+    --trim)     TRIM=true ;;
   esac
 done
+
+# ── Trim mode ─────────────────────────────────────────────────────────────────
+# Removes optional/setup comment blocks from .readmeAI once setup is done.
+# Reduces file from ~300 lines to ~150-180 active lines — eliminates context debt.
+if $TRIM; then
+  echo ""; echo -e "${BOLD}ReadMeAI Trim${RESET}"
+  echo -e "${GRAY}────────────────────────────────────${RESET}"
+  [[ ! -f ".readmeAI" ]] && { echo -e "${RED}✗${RESET} .readmeAI not found"; exit 1; }
+
+  BEFORE=$(wc -l < .readmeAI)
+
+  # Check SESSION STATE is filled before trimming setup block
+  SESSION_FILLED=false
+  if ! grep -A3 "### Active objective" .readmeAI 2>/dev/null | grep -qE "^_|^-\s*—"; then
+    SESSION_FILLED=true
+  fi
+
+  # Remove the big HTML comment block (optional sections + first-time setup)
+  # The comment starts with <!-- OPTIONAL SECTIONS or <!-- FIRST-TIME SETUP
+  python3 - ".readmeAI" "$SESSION_FILLED" << 'PYEOF'
+import sys, re
+
+path = sys.argv[1]
+session_filled = sys.argv[2] == "True"
+
+with open(path, encoding="utf-8") as f:
+    content = f.read()
+
+# Remove the optional sections + first-time setup comment block
+# These are in one big HTML comment at the end
+content = re.sub(
+    r'<!--\s*[═\s]*\n\s*OPTIONAL SECTIONS.*?-->\s*$',
+    '',
+    content,
+    flags=re.DOTALL
+)
+
+# If session is filled, also remove the first-time setup block if it's separate
+if session_filled:
+    content = re.sub(
+        r'<!--\s*[═\s]*\n\s*FIRST-TIME SETUP.*?-->\s*',
+        '',
+        content,
+        flags=re.DOTALL
+    )
+
+# Remove trailing whitespace and ensure clean ending
+content = content.rstrip() + "\n"
+
+with open(path, "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("ok")
+PYEOF
+
+  AFTER=$(wc -l < .readmeAI)
+  SAVED=$((BEFORE - AFTER))
+  echo -e "${GREEN}✓${RESET} Trimmed ${SAVED} lines (${BEFORE} → ${AFTER})"
+  echo -e "${GRAY}  Optional sections are still available in the template at github.com/Oscarr36/ReadMeAI${RESET}"
+  echo -e "${GRAY}  To restore: bash setup.sh (re-downloads the full template)${RESET}"
+  echo ""
+  exit 0
+fi
 
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if $VALIDATE; then
