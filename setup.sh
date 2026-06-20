@@ -111,7 +111,7 @@ if $VALIDATE; then
     ["AGENTS.md (universal)"]="AGENTS.md"
     ["Claude Code"]=".claude/CLAUDE.md"
     ["Cursor (legacy)"]=".cursorrules"
-    ["Cursor (.mdc)"]=".cursor/rules/readmeai.mdc"
+    ["Cursor (.mdc)"]=".cursor/rules/readmeai-context.mdc"
     ["Windsurf"]=".windsurfrules"
     ["GitHub Copilot"]=".github/copilot-instructions.md"
     ["Gemini CLI"]="GEMINI.md"
@@ -302,7 +302,7 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## . QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
+            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## .* QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
           }
         ]
       }
@@ -403,7 +403,7 @@ if $DETECT; then
     [[ -n "$fw"      ]] && STACK_LINES+=("| Framework | $fw | — | — |")
     [[ -n "$db"      ]] && STACK_LINES+=("| Database | $db | — | — |")
     [[ -n "$test_fw" ]] && STACK_LINES+=("| Test runner | $test_fw | — | — |")
-    [[ -n "$build_fw"]] && STACK_LINES+=("| Build tool | $build_fw | — | — |")
+    [[ -n "$build_fw" ]] && STACK_LINES+=("| Build tool | $build_fw | — | — |")
   fi
   if [[ -f "requirements.txt" ]] || [[ -f "pyproject.toml" ]] || [[ -f "Pipfile" ]]; then
     REQS=$(cat requirements*.txt Pipfile pyproject.toml 2>/dev/null || true)
@@ -418,7 +418,7 @@ if $DETECT; then
   [[ -f "go.mod"       ]] && STACK_LINES+=("| Runtime | Go | $(go version 2>/dev/null | awk '{print $3}' | tr -d go || echo —) | — |")
   [[ -f "Cargo.toml"   ]] && STACK_LINES+=("| Runtime | Rust | $(rustc --version 2>/dev/null | awk '{print $2}' || echo —) | — |")
   [[ -f "Gemfile"      ]] && STACK_LINES+=("| Runtime | Ruby | $(ruby -v 2>/dev/null | awk '{print $2}' || echo —) | — |")
-  [[ -f "composer.json"]] && STACK_LINES+=("| Runtime | PHP | $(php -v 2>/dev/null | head -1 | awk '{print $2}' || echo —) | — |")
+  [[ -f "composer.json" ]] && STACK_LINES+=("| Runtime | PHP | $(php -v 2>/dev/null | head -1 | awk '{print $2}' || echo —) | — |")
   { [[ -f "Dockerfile" ]] || [[ -f "docker-compose.yml" ]]; } && \
     STACK_LINES+=("| Container | Docker | — | docker-compose.yml |")
 
