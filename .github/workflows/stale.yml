@@ -1,0 +1,24 @@
+name: Stale Issues
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v9
+        with:
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-message: 'Este issue lleva 30 días sin actividad y se marcará como inactivo. Se cerrará en 7 días si no hay respuesta.'
+          stale-pr-message: 'Este PR lleva 30 días sin actividad y se marcará como inactivo. Se cerrará en 7 días si no hay respuesta.'
+          close-issue-message: 'Issue cerrado por inactividad.'
+          close-pr-message: 'PR cerrado por inactividad.'
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
