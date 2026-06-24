@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# ReadMeAI v3.2 — Smart Setup Script
+# ReadMeAI v3.3 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
-#           Aider, Continue, Gemini CLI, and any tool that reads AGENTS.md.
+#           Aider, Continue, Antigravity CLI (agy), and any tool that reads AGENTS.md.
 #
 # Usage:
 #   curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
@@ -114,7 +114,7 @@ if $VALIDATE; then
     ["Cursor (.mdc)"]=".cursor/rules/readmeai-context.mdc"
     ["Windsurf"]=".windsurfrules"
     ["GitHub Copilot"]=".github/copilot-instructions.md"
-    ["Gemini CLI"]="GEMINI.md"
+    ["Antigravity CLI / Gemini"]="GEMINI.md"
   )
   for tool in "${!TOOLS[@]}"; do
     f="${TOOLS[$tool]}"
@@ -129,7 +129,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v3.2 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v3.3 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -169,7 +169,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v3.2](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v3.3](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration
@@ -281,9 +281,10 @@ write_integration() {
 # AGENTS.md — universal standard (always create — 60k+ repos use it)
 write_integration "AGENTS.md" "Universal (AGENTS.md)" "$AGENTS_CONTENT"
 
-# GEMINI.md — Gemini CLI
-if $ALL || command -v gemini &>/dev/null; then
-  write_integration "GEMINI.md" "Gemini CLI" "$AGENTS_CONTENT"
+# GEMINI.md — Antigravity CLI (agy) — replacement for Gemini CLI (retired June 18 2026)
+# Antigravity still reads GEMINI.md from the workspace root (no rename needed)
+if $ALL || command -v agy &>/dev/null || command -v gemini &>/dev/null; then
+  write_integration "GEMINI.md" "Antigravity CLI / Gemini" "$AGENTS_CONTENT"
 fi
 
 # Claude Code — CLAUDE.md + lifecycle hooks

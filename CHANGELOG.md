@@ -6,6 +6,19 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [3.3.0] — 2026-06-25
+
+### Changed
+- **Antigravity CLI support** — Gemini CLI was retired June 18 2026. Setup now detects `agy` (Antigravity) binary in addition to legacy `gemini`. GEMINI.md remains the correct file (Antigravity still reads it — no rename needed).
+- Version bumped to v3.3 across setup.sh, AGENTS.md footer, and README
+- README "Works with" updated: Gemini CLI → Antigravity CLI, added Codex CLI explicitly
+
+### Added
+- Codex CLI (OpenAI) documented as officially supported via AGENTS.md (no extra file needed)
+- Zed editor added to Roadmap
+
+---
+
 ## [1.0.0] — 2026-05-09
 
 ### Added

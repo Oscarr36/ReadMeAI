@@ -16,7 +16,7 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 
-**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Gemini CLI · Aider · Continue · ChatGPT · any tool that reads AGENTS.md
+**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Antigravity CLI · Codex CLI · Aider · Continue · ChatGPT · any tool that reads AGENTS.md
 
 </div>
 
@@ -57,7 +57,7 @@ You explain it again. 8 messages. 10 minutes. Same conversation you had before.
 1. **Auto-reads at session start** — no prompt, no reminder, before the AI types anything
 2. **Captures what the code doesn't say** — domain rules, gotchas, architectural decisions, work in progress
 3. **Updates silently at session end** — session state, decisions, symbol index
-4. **Works with every AI tool** — generates AGENTS.md (universal), CLAUDE.md, .cursorrules, .windsurfrules, GEMINI.md, and more
+4. **Works with every AI tool** — generates AGENTS.md (universal), CLAUDE.md, .cursorrules, .windsurfrules, GEMINI.md (Antigravity CLI), and more
 
 **The result:** "Continue where we left off" actually works. Every time.
 
@@ -69,8 +69,8 @@ Run the setup script once. It detects every AI tool you have and creates the rig
 
 | Created file | Read by | Token cost |
 |-------------|---------|-----------|
-| `AGENTS.md` | Cursor, Windsurf, Copilot agent, Codex, Amp, 30+ tools | once per session |
-| `GEMINI.md` | Gemini CLI | once per session |
+| `AGENTS.md` | Cursor, Windsurf, Copilot agent, Codex CLI, Amp, 30+ tools | once per session |
+| `GEMINI.md` | Antigravity CLI (`agy`) — formerly Gemini CLI | once per session |
 | `.claude/CLAUDE.md` | Claude Code | once per session |
 | `.cursor/rules/*.mdc` | Cursor (modern, scoped) | JIT — only when relevant |
 | `.cursorrules` | Cursor (legacy) | once per session |
@@ -173,7 +173,7 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 
 | | ReadMeAI | claude-mem | mem0 |
 |--|--|--|--|
-| **AI tools supported** | All (Cursor, Copilot, Windsurf, Gemini, Aider...) | Claude Code only | Claude Code only |
+| **AI tools supported** | All (Cursor, Copilot, Windsurf, Antigravity, Codex CLI, Aider...) | Claude Code only | Claude Code only |
 | **Setup** | `curl ... \| bash` | npm install + MCP | npm install + API key |
 | **Storage** | Plain text file | SQLite + vector DB | Cloud API |
 | **Dependencies** | None | Node.js + Chroma | Node.js + internet |
@@ -203,14 +203,16 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 ## Roadmap
 
 - [x] AGENTS.md universal standard support
-- [x] GEMINI.md (Gemini CLI)
+- [x] GEMINI.md — now supports Antigravity CLI (`agy`), backward-compatible with Gemini CLI
 - [x] Cursor .mdc scoped rules (JIT loading)
 - [x] `--detect` with git history scanning + comment extraction
 - [x] GitHub Actions sync validation
 - [x] QUICK REFERENCE for hot restarts
+- [x] Codex CLI (OpenAI) — reads AGENTS.md natively, no extra file needed
 - [ ] `readmeai` CLI (npm/pip install)
 - [ ] VS Code extension — syntax highlighting + snippets
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI
+- [ ] Zed editor support
 
 ---
 
