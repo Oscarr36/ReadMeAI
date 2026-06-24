@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# ReadMeAI v3.3 — Smart Setup Script
+# ReadMeAI v3.4 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
-#           Aider, Continue, Antigravity CLI (agy), and any tool that reads AGENTS.md.
+#           Aider, Continue, Antigravity CLI (agy), Zed, and any tool that reads AGENTS.md.
 #
 # Usage:
 #   curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
@@ -11,13 +11,15 @@
 #   bash setup.sh --validate     # check .readmeAI is in sync with the codebase
 #   bash setup.sh --update       # re-scan and update TECH STACK section
 #   bash setup.sh --all --detect # everything at once
+#   bash setup.sh --sync         # auto-update context from last git session (no cost, no API)
+#   bash setup.sh --health       # score .readmeAI quality and find gaps
 
 set -euo pipefail
 
 GREEN='\033[0;32m'; GRAY='\033[0;90m'; BOLD='\033[1m'
 YELLOW='\033[0;33m'; RED='\033[0;31m'; RESET='\033[0m'
 
-ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false
+ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false
 for arg in "$@"; do
   case "$arg" in
     --all)      ALL=true ;;
@@ -25,6 +27,8 @@ for arg in "$@"; do
     --validate) VALIDATE=true ;;
     --update)   DETECT=true; UPDATE=true ;;
     --trim)     TRIM=true ;;
+    --sync)     SYNC=true ;;
+    --health)   HEALTH=true ;;
   esac
 done
 
@@ -91,6 +95,206 @@ PYEOF
   exit 0
 fi
 
+# ── Sync mode ─────────────────────────────────────────────────────────────────
+# Reads git diff from the last session and auto-patches STRUCTURE MAP,
+# SYMBOL INDEX, and QUICK REFERENCE. No API calls, no cost — pure git + grep.
+if $SYNC; then
+  echo ""; echo -e "${BOLD}ReadMeAI Sync${RESET}"
+  echo -e "${GRAY}────────────────────────────────────${RESET}"
+  [[ ! -f ".readmeAI" ]] && { echo -e "${RED}✗${RESET} .readmeAI not found. Run: bash setup.sh"; exit 1; }
+  git rev-parse --git-dir &>/dev/null || { echo -e "${RED}✗${RESET} Not a git repository"; exit 1; }
+
+  UPDATED=0; TODAY=$(date '+%Y-%m-%d')
+
+  # 1. Files changed in last commit
+  CHANGED=$(git diff HEAD~1 HEAD --name-status 2>/dev/null || \
+            git diff --cached --name-status 2>/dev/null || true)
+
+  NEW_FILES=(); MOD_FILES=(); DEL_FILES=()
+  while IFS=$'\t' read -r status file _; do
+    [[ -z "$status" || -z "$file" ]] && continue
+    case "$status" in
+      A) NEW_FILES+=("$file") ;;
+      M) MOD_FILES+=("$file") ;;
+      D) DEL_FILES+=("$file") ;;
+    esac
+  done <<< "$CHANGED"
+
+  # 2. New files → flag missing from STRUCTURE MAP
+  for f in "${NEW_FILES[@]}"; do
+    [[ -z "$f" ]] && continue
+    if ! grep -qF "$f" .readmeAI 2>/dev/null; then
+      echo -e "${YELLOW}+${RESET} New file not in STRUCTURE MAP: ${BOLD}$f${RESET}"
+      echo -e "   ${GRAY}→ Add a one-line description in your STRUCTURE MAP section${RESET}"
+      ((UPDATED++)) || true
+    fi
+  done
+
+  # 3. New symbols in added/modified files → suggest SYMBOL INDEX additions
+  SYMBOL_HITS=0
+  for f in "${NEW_FILES[@]}" "${MOD_FILES[@]}"; do
+    [[ -f "$f" ]] || continue
+    ext="${f##*.}"
+    SYMS=()
+    case "$ext" in
+      js|ts|jsx|tsx|mjs|cjs)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(function|const|let|var|class|async function) ([a-zA-Z_][a-zA-Z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^(export )?(default )?(async )?function [a-zA-Z]|^(export )?(const|let|var) [a-zA-Z]+ = (async )?\(|^(export )?class [A-Z]" "$f" 2>/dev/null | head -8)
+        ;;
+      py)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(def|class) ([a-zA-Z_][a-zA-Z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^(async )?def [a-zA-Z_]|^class [A-Z]" "$f" 2>/dev/null | head -8)
+        ;;
+      go)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "func [A-Za-z_][A-Za-z0-9_]*" | awk '{print $2}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^func [A-Z]" "$f" 2>/dev/null | head -8)
+        ;;
+      rs)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(fn|struct|impl|trait) ([a-zA-Z_][a-zA-Z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^pub (fn|struct|impl|trait) [A-Z]" "$f" 2>/dev/null | head -8)
+        ;;
+    esac
+    for sym in "${SYMS[@]}"; do
+      if ! grep -qF "$sym" .readmeAI 2>/dev/null; then
+        echo -e "${YELLOW}+${RESET} New symbol not in SYMBOL INDEX: ${BOLD}$sym${RESET} (${GRAY}$f${RESET})"
+        ((SYMBOL_HITS++)) || true
+        ((UPDATED++)) || true
+      fi
+    done
+  done
+  [[ $SYMBOL_HITS -gt 0 ]] && echo -e "   ${GRAY}→ Add these to SYMBOL INDEX with a one-line purpose description${RESET}"
+
+  # 4. Deleted files still referenced in .readmeAI → stale reference warning
+  for f in "${DEL_FILES[@]}"; do
+    [[ -z "$f" ]] && continue
+    if grep -qF "$f" .readmeAI 2>/dev/null; then
+      echo -e "${RED}✗${RESET} Deleted file still in .readmeAI: ${BOLD}$f${RESET}"
+      echo -e "   ${GRAY}→ Remove or update its entry in STRUCTURE MAP / SYMBOL INDEX${RESET}"
+      ((UPDATED++)) || true
+    fi
+  done
+
+  # 5. Update QUICK REFERENCE "Last action" with latest commit message
+  LAST_COMMIT=$(git log -1 --format="%s" 2>/dev/null || true)
+  LAST_DATE=$(git log -1 --format="%ci" 2>/dev/null | cut -d' ' -f1 || true)
+  if [[ -n "$LAST_COMMIT" ]]; then
+    # Patch "| Last action |" row in QUICK REFERENCE table
+    if grep -q "| Last action" .readmeAI 2>/dev/null; then
+      sed -i "s|| Last action |.*||| Last action | $LAST_DATE — $LAST_COMMIT ||" .readmeAI 2>/dev/null || true
+      echo -e "${GREEN}✓${RESET} QUICK REFERENCE → Last action: $LAST_COMMIT"
+    fi
+  fi
+
+  # 6. Token budget estimate
+  LINES=$(wc -l < .readmeAI)
+  TOKENS=$(( $(wc -c < .readmeAI) / 4 ))
+  echo ""
+  echo -e "${GRAY}Context budget: ${LINES} lines · ~${TOKENS} tokens${RESET}"
+
+  echo ""
+  if [[ $UPDATED -gt 0 ]]; then
+    echo -e "${BOLD}${YELLOW}$UPDATED item(s) need attention${RESET} — update .readmeAI then commit it alongside your code."
+  else
+    echo -e "${GREEN}Context is in sync with the codebase.${RESET}"
+  fi
+  echo -e "${GRAY}Run after each coding session: bash setup.sh --sync${RESET}"
+  exit 0
+fi
+
+# ── Health mode ────────────────────────────────────────────────────────────────
+# Scores your .readmeAI on 5 quality dimensions. No cost — pure file analysis.
+if $HEALTH; then
+  echo ""; echo -e "${BOLD}ReadMeAI Health Check${RESET}"
+  echo -e "${GRAY}────────────────────────────────────${RESET}"
+  [[ ! -f ".readmeAI" ]] && { echo -e "${RED}✗${RESET} .readmeAI not found"; exit 1; }
+
+  SCORE=0; LINES=$(wc -l < .readmeAI); TOKENS=$(( $(wc -c < .readmeAI) / 4 ))
+
+  # 1. Size (20pts) — ideal is 150-600 lines
+  if [[ $LINES -lt 80 ]]; then
+    echo -e "${RED}✗${RESET}  [0/20]  Size: $LINES lines — too sparse. Fill key sections."
+  elif [[ $LINES -gt 800 ]]; then
+    echo -e "${RED}✗${RESET}  [5/20]  Size: $LINES lines — too bloated (AI ignores past ~500). Run: --trim"
+    ((SCORE+=5))
+  elif [[ $LINES -gt 500 ]]; then
+    echo -e "${YELLOW}⚠${RESET}  [12/20] Size: $LINES lines (~$TOKENS tokens) — a bit heavy. Consider --trim"
+    ((SCORE+=12))
+  else
+    echo -e "${GREEN}✓${RESET}  [20/20] Size: $LINES lines (~$TOKENS tokens) — ideal"
+    ((SCORE+=20))
+  fi
+
+  # 2. QUICK REFERENCE (20pts) — enables hot restart
+  QR_ROWS=$(grep -A10 "QUICK REFERENCE" .readmeAI 2>/dev/null | grep -cE "^\|.+\|.+\|" || true)
+  if [[ $QR_ROWS -ge 3 ]]; then
+    echo -e "${GREEN}✓${RESET}  [20/20] QUICK REFERENCE: $QR_ROWS rows — hot restart ready"
+    ((SCORE+=20))
+  elif [[ $QR_ROWS -gt 0 ]]; then
+    echo -e "${YELLOW}⚠${RESET}  [10/20] QUICK REFERENCE: $QR_ROWS row(s) — partially filled"
+    ((SCORE+=10))
+  else
+    echo -e "${RED}✗${RESET}  [0/20]  QUICK REFERENCE: empty — AI restarts cold every session"
+  fi
+
+  # 3. DOMAIN RULES (20pts) — highest-value section
+  DR=$(grep -A30 "DOMAIN RULES" .readmeAI 2>/dev/null | grep -cE "^- |^\* |^[0-9]+\." || true)
+  if [[ $DR -ge 5 ]]; then
+    echo -e "${GREEN}✓${RESET}  [20/20] DOMAIN RULES: $DR rules — AI will respect your project constraints"
+    ((SCORE+=20))
+  elif [[ $DR -ge 2 ]]; then
+    echo -e "${YELLOW}⚠${RESET}  [12/20] DOMAIN RULES: $DR rule(s) — add more for full protection"
+    ((SCORE+=12))
+  elif [[ $DR -eq 1 ]]; then
+    echo -e "${YELLOW}⚠${RESET}  [6/20]  DOMAIN RULES: $DR rule — bare minimum"
+    ((SCORE+=6))
+  else
+    echo -e "${RED}✗${RESET}  [0/20]  DOMAIN RULES: empty — this is the most valuable section"
+  fi
+
+  # 4. SESSION STATE (20pts) — continuity between sessions
+  if ! grep -A3 "Active objective" .readmeAI 2>/dev/null | grep -qE "^_|^\s*—\s*$|^\s*$"; then
+    echo -e "${GREEN}✓${RESET}  [20/20] SESSION STATE: filled — AI can resume without re-explanation"
+    ((SCORE+=20))
+  else
+    echo -e "${YELLOW}⚠${RESET}  [0/20]  SESSION STATE: empty — AI starts cold every session"
+  fi
+
+  # 5. SYMBOL INDEX (20pts) — prevents AI filesystem scanning
+  SI=$(grep -A50 "SYMBOL INDEX" .readmeAI 2>/dev/null | grep -cE "^\| [a-zA-Z]" || true)
+  if [[ $SI -ge 5 ]]; then
+    echo -e "${GREEN}✓${RESET}  [20/20] SYMBOL INDEX: $SI entries — AI navigates without scanning files"
+    ((SCORE+=20))
+  elif [[ $SI -ge 2 ]]; then
+    echo -e "${YELLOW}⚠${RESET}  [10/20] SYMBOL INDEX: $SI entries — add key symbols"
+    ((SCORE+=10))
+  else
+    echo -e "${RED}✗${RESET}  [0/20]  SYMBOL INDEX: empty — AI will grep the whole codebase instead"
+  fi
+
+  # Result
+  echo ""
+  BAR=""
+  FILLED=$(( SCORE / 5 ))
+  for ((i=0; i<20; i++)); do [[ $i -lt $FILLED ]] && BAR+="█" || BAR+="░"; done
+  echo -e "${BOLD}Health: [$BAR] $SCORE/100${RESET}"
+  if   [[ $SCORE -ge 90 ]]; then echo -e "${GREEN}Excellent — your .readmeAI is fully operational.${RESET}"
+  elif [[ $SCORE -ge 70 ]]; then echo -e "${GREEN}Good — a couple sections need attention.${RESET}"
+  elif [[ $SCORE -ge 50 ]]; then echo -e "${YELLOW}Fair — key sections missing. AI is partially blind.${RESET}"
+  elif [[ $SCORE -ge 30 ]]; then echo -e "${YELLOW}Poor — AI restarts cold and ignores your constraints.${RESET}"
+  else echo -e "${RED}Critical — tell your AI: \"Fill .readmeAI, ask only for what you can't infer.\"${RESET}"
+  fi
+  echo -e "${GRAY}Fix: bash setup.sh --sync  (after coding)  |  bash setup.sh --validate${RESET}"
+  exit 0
+fi
+
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if $VALIDATE; then
   echo ""; echo -e "${BOLD}ReadMeAI Validate${RESET}"
@@ -115,6 +319,7 @@ if $VALIDATE; then
     ["Windsurf"]=".windsurfrules"
     ["GitHub Copilot"]=".github/copilot-instructions.md"
     ["Antigravity CLI / Gemini"]="GEMINI.md"
+    ["Zed"]=".rules"
   )
   for tool in "${!TOOLS[@]}"; do
     f="${TOOLS[$tool]}"
@@ -129,7 +334,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v3.3 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v3.4 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -169,7 +374,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v3.3](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v3.4](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration
@@ -313,7 +518,7 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '.readmeAI' ]; then rm -f .claude/.readmeai.active 2>/dev/null; COMMIT=$(git log -1 --format='%h %s' 2>/dev/null || echo 'no git'); echo \"$(date '+%Y-%m-%d %H:%M') | $COMMIT\" > .claude/.readmeai.session 2>/dev/null; echo ''; echo 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.'; fi"
+            "command": "if [ -f '.readmeAI' ]; then rm -f .claude/.readmeai.active 2>/dev/null; COMMIT=$(git log -1 --format='%h %s' 2>/dev/null || echo 'no git'); echo \"$(date '+%Y-%m-%d %H:%M') | $COMMIT\" > .claude/.readmeai.session 2>/dev/null; echo ''; echo 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing. Run: bash setup.sh --sync  (auto-checks what changed)'; fi"
           }
         ]
       }
@@ -366,6 +571,12 @@ fi
 # Continue
 if $ALL || [[ -d "$HOME/.continue" ]] || [[ -d ".continue" ]]; then
   write_integration ".continue/rules/readmeai.md" "Continue" "$COMPACT_CONTENT"
+fi
+
+# Zed — uses .rules file in project root (or ~/.config/zed/rules on global)
+# Zed's agent reads project-level .rules at session start (@rules mention)
+if $ALL || command -v zed &>/dev/null || [[ -d ".zed" ]]; then
+  write_integration ".rules" "Zed" "$COMPACT_CONTENT"
 fi
 
 # ── 5. Stack detection ────────────────────────────────────────────────────────

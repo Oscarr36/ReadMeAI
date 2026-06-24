@@ -10,13 +10,13 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
-[![Version](https://img.shields.io/badge/version-3.3-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-3.4-brightgreen.svg)](.readmeAI)
 [![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](AGENTS.md)
 [![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 
-**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Antigravity CLI · Codex CLI · Aider · Continue · ChatGPT · any tool that reads AGENTS.md
+**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Antigravity CLI · Codex CLI · Aider · Continue · Zed · ChatGPT · any tool that reads AGENTS.md
 
 </div>
 
@@ -78,6 +78,7 @@ Run the setup script once. It detects every AI tool you have and creates the rig
 | `.github/copilot-instructions.md` | GitHub Copilot | once per session |
 | `.aider.conf.yml` | Aider | every run |
 | `.continue/rules/readmeai.md` | Continue | once per session |
+| `.rules` | Zed (`@rules` mention) | on-demand |
 
 **Cursor gets 3 scoped .mdc files** — `readmeai-context.mdc` (always), `readmeai-security.mdc` (auto-loads on auth files), `readmeai-conventions.mdc` (on-demand). JIT loading: context only when needed.
 
@@ -136,7 +137,11 @@ bash setup.sh --detect       # also scan project and pre-fill TECH STACK + AI NO
 bash setup.sh --validate     # check .readmeAI is in sync with the codebase
 bash setup.sh --update       # refresh TECH STACK after adding dependencies
 bash setup.sh --all --detect # everything at once
+bash setup.sh --sync         # after each coding session: flags new files, new symbols, deleted refs
+bash setup.sh --health       # score your .readmeAI quality [0-100] and find gaps
 ```
+
+**Run `--sync` after every session** — it reads your last git commit, flags new files not in STRUCTURE MAP, new functions not in SYMBOL INDEX, and deleted files still referenced. No API calls, no cost — pure git + grep.
 
 `--detect` does real work:
 - Reads `package.json` / `pyproject.toml` / `go.mod` / `Cargo.toml` / `Gemfile` — fills TECH STACK with real versions
@@ -203,16 +208,19 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 ## Roadmap
 
 - [x] AGENTS.md universal standard support
-- [x] GEMINI.md — now supports Antigravity CLI (`agy`), backward-compatible with Gemini CLI
+- [x] GEMINI.md — supports Antigravity CLI (`agy`), backward-compatible with Gemini CLI
 - [x] Cursor .mdc scoped rules (JIT loading)
 - [x] `--detect` with git history scanning + comment extraction
 - [x] GitHub Actions sync validation
 - [x] QUICK REFERENCE for hot restarts
 - [x] Codex CLI (OpenAI) — reads AGENTS.md natively, no extra file needed
+- [x] `--sync` — post-session context sync: flags new files, symbols, stale refs from git diff
+- [x] `--health` — quality score [0-100] with actionable gaps across 5 dimensions
+- [x] Zed editor support via `.rules` file
 - [ ] `readmeai` CLI (npm/pip install)
 - [ ] VS Code extension — syntax highlighting + snippets
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI
-- [ ] Zed editor support
+- [ ] Auto-apply sync patches (currently flags, future: writes)
 
 ---
 

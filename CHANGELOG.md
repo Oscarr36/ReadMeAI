@@ -6,6 +6,19 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [3.4.0] — 2026-06-25
+
+### Added
+- **`--sync`** — post-session context sync. Reads last git commit, flags new files not in STRUCTURE MAP, new symbols (functions/classes in JS/TS/Python/Go/Rust) not in SYMBOL INDEX, deleted files still referenced, and patches QUICK REFERENCE "Last action". No API calls, zero cost.
+- **`--health`** — quality score [0-100] across 5 dimensions: file size, QUICK REFERENCE, DOMAIN RULES, SESSION STATE, SYMBOL INDEX. Progress bar + actionable advice per section.
+- **Zed editor support** — creates `.rules` file (read via `@rules` in Zed agent). Detected by `zed` binary or `.zed/` directory.
+- Stop hook now suggests running `--sync` at session end
+
+### Changed
+- Version bumped to v3.4 across setup.sh and AGENTS.md footer
+
+---
+
 ## [3.3.0] — 2026-06-25
 
 ### Changed
