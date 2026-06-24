@@ -182,14 +182,16 @@ if $SYNC; then
     fi
   done
 
-  # 5. Update QUICK REFERENCE "Last action" with latest commit message
-  LAST_COMMIT=$(git log -1 --format="%s" 2>/dev/null || true)
-  LAST_DATE=$(git log -1 --format="%ci" 2>/dev/null | cut -d' ' -f1 || true)
-  if [[ -n "$LAST_COMMIT" ]]; then
-    # Patch "| Last action |" row in QUICK REFERENCE table
-    if grep -q "| Last action" .readmeAI 2>/dev/null; then
-      sed -i "s|| Last action |.*||| Last action | $LAST_DATE — $LAST_COMMIT ||" .readmeAI 2>/dev/null || true
+  # 5. Auto-patch QUICK REFERENCE "Last action" from latest commit
+  LAST_COMMIT=$(git log -1 --format='%s' 2>/dev/null || true)
+  LAST_DATE=$(git log -1 --format='%ci' 2>/dev/null | cut -d' ' -f1 || true)
+  if [[ -n "$LAST_COMMIT" && -n "$LAST_DATE" ]]; then
+    if grep -q "Last action" .readmeAI 2>/dev/null; then
+      # Use @ as sed delimiter to avoid conflicts with | in table syntax
+      SAFE_MSG=$(printf '%s' "$LAST_COMMIT" | sed 's/[@&/\\]/\\&/g')
+      sed -i "s@.*Last action.*@| Last action | $LAST_DATE — $SAFE_MSG |@" .readmeAI 2>/dev/null || true
       echo -e "${GREEN}✓${RESET} QUICK REFERENCE → Last action: $LAST_COMMIT"
+      ((UPDATED++)) || true
     fi
   fi
 
@@ -334,7 +336,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v3.4 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v3.5 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -374,7 +376,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v3.4](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v3.5](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration
@@ -492,14 +494,119 @@ if $ALL || command -v agy &>/dev/null || command -v gemini &>/dev/null; then
   write_integration "GEMINI.md" "Antigravity CLI / Gemini" "$AGENTS_CONTENT"
 fi
 
-# Claude Code — CLAUDE.md + lifecycle hooks
+# Claude Code — CLAUDE.md + autonomous lifecycle hooks
 if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
   write_integration ".claude/CLAUDE.md" "Claude Code" "$CLAUDE_CONTENT"
 
-  # Claude Code hooks — session-end reminder + pre-edit structure check
+  mkdir -p .claude
+
+  # ── Autonomous sync engine (.claude/readmeai-sync.sh) ─────────────────────
+  # Called automatically by the Stop hook — no user action needed.
+  # Auto-patches QUICK REFERENCE from git, flags gaps, logs the session.
+  cat > ".claude/readmeai-sync.sh" << 'SYNCEOF'
+#!/usr/bin/env bash
+# ReadMeAI Autonomous Sync Engine — runs automatically at session end via hook.
+# Auto-patches .readmeAI from git. Zero user action required.
+
+[[ -f '.readmeAI' ]] || exit 0
+
+rm -f .claude/.readmeai.active 2>/dev/null || true
+PATCHED=0; FLAGGED=0
+CDATE=$(git log -1 --format='%ci' 2>/dev/null | cut -d' ' -f1 || date '+%Y-%m-%d')
+CMSG=$(git log -1 --format='%s' 2>/dev/null || true)
+
+# ── 1. Auto-patch QUICK REFERENCE "Last action" from git commit ───────────
+if [[ -n "$CMSG" ]] && grep -q 'Last action' .readmeAI 2>/dev/null; then
+  # Replace the entire | Last action | ... | row in-place
+  ESCAPED=$(printf '%s' "$CDATE — $CMSG" | sed 's/[&/\]/\\&/g')
+  sed -i "s|^.*Last action.*|| Last action | $ESCAPED ||" .readmeAI 2>/dev/null || true
+  ((PATCHED++)) || true
+fi
+
+# ── 2. Flag new files (--diff-filter=A) not yet in .readmeAI ─────────────
+MISSING_FILES=()
+while IFS= read -r f; do
+  [[ -z "$f" ]] && continue
+  grep -qF "$f" .readmeAI 2>/dev/null || MISSING_FILES+=("$f")
+done < <(git diff HEAD~1 HEAD --name-only --diff-filter=A 2>/dev/null | head -10 || true)
+
+# ── 3. Flag deleted files still referenced in .readmeAI ──────────────────
+STALE_FILES=()
+while IFS= read -r f; do
+  [[ -z "$f" ]] && continue
+  grep -qF "$f" .readmeAI 2>/dev/null && STALE_FILES+=("$f")
+done < <(git diff HEAD~1 HEAD --name-only --diff-filter=D 2>/dev/null | head -10 || true)
+
+# ── 4. Flag new public symbols not in SYMBOL INDEX ───────────────────────
+MISSING_SYMS=()
+while IFS= read -r f; do
+  [[ -f "$f" ]] || continue
+  ext="${f##*.}"
+  case "$ext" in
+    js|ts|jsx|tsx|mjs)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -oE "(export (default )?(async )?function|export (const|let|class)) [a-zA-Z_][a-zA-Z0-9_]*" "$f" 2>/dev/null \
+        | grep -oE "[a-zA-Z_][a-zA-Z0-9_]*$" | head -5 || true)
+      ;;
+    py)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^(async )?def [a-zA-Z_]|^class [A-Z]" "$f" 2>/dev/null \
+        | grep -oE "(def|class) [a-zA-Z_][a-zA-Z0-9_]*" | awk '{print $2}' | head -5 || true)
+      ;;
+    go)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^func [A-Z]" "$f" 2>/dev/null \
+        | grep -oE "func [A-Z][a-zA-Z0-9_]*" | awk '{print $2}' | head -5 || true)
+      ;;
+    rs)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^pub (fn|struct|trait) [A-Z]" "$f" 2>/dev/null \
+        | grep -oE "(fn|struct|trait) [A-Z][a-zA-Z0-9_]*" | awk '{print $2}' | head -5 || true)
+      ;;
+  esac
+done < <(git diff HEAD~1 HEAD --name-only --diff-filter=AM 2>/dev/null | head -10 || true)
+
+# ── 5. Log session to .claude/.readmeai.session ──────────────────────────
+LINES=$(wc -l < .readmeAI 2>/dev/null || echo '?')
+TOKENS=$(( $(wc -c < .readmeAI 2>/dev/null || echo 0) / 4 ))
+echo "$(date '+%Y-%m-%d %H:%M') | $CMSG | ${LINES}L/${TOKENS}t" \
+  >> .claude/.readmeai.session 2>/dev/null || true
+
+# ── Output ────────────────────────────────────────────────────────────────
+echo ''
+[[ $PATCHED -gt 0 ]] && echo "ReadMeAI ✓ QUICK REFERENCE auto-patched (last action: $CMSG)"
+
+if [[ ${#MISSING_FILES[@]} -gt 0 ]]; then
+  echo "ReadMeAI ▸ new files not in STRUCTURE MAP:"
+  printf '  + %s\n' "${MISSING_FILES[@]}"
+  ((FLAGGED+=${#MISSING_FILES[@]})) || true
+fi
+if [[ ${#STALE_FILES[@]} -gt 0 ]]; then
+  echo "ReadMeAI ▸ deleted files still in .readmeAI (remove them):"
+  printf '  - %s\n' "${STALE_FILES[@]}"
+  ((FLAGGED+=${#STALE_FILES[@]})) || true
+fi
+if [[ ${#MISSING_SYMS[@]} -gt 0 ]]; then
+  echo "ReadMeAI ▸ new symbols not in SYMBOL INDEX:"
+  printf '  + %s\n' "${MISSING_SYMS[@]}"
+  ((FLAGGED+=${#MISSING_SYMS[@]})) || true
+fi
+
+echo "ReadMeAI ▸ ${LINES}L · ~${TOKENS} tokens · $FLAGGED gap(s) found"
+[[ $FLAGGED -gt 0 ]] \
+  && echo "ReadMeAI ▸ ask Claude: \"Update .readmeAI with the items above\"" \
+  || echo "ReadMeAI ▸ context is in sync — update SESSION STATE and close."
+SYNCEOF
+  chmod +x ".claude/readmeai-sync.sh"
+  CREATED+=("Autonomous sync engine → .claude/readmeai-sync.sh")
+
+  # ── Hooks — fully autonomous, zero user commands needed ───────────────────
   HOOKS_FILE=".claude/settings.json"
   if [[ ! -f "$HOOKS_FILE" ]]; then
-    mkdir -p .claude
     cat > "$HOOKS_FILE" << 'HOOKSEOF'
 {
   "hooks": {
@@ -508,7 +615,7 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## .* QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
+            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; echo ''; echo '── ReadMeAI context ──────────────────'; awk '/## .* QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI 2>/dev/null | head -12; L=$(wc -l < .readmeAI 2>/dev/null || echo 0); T=$(( $(wc -c < .readmeAI 2>/dev/null || echo 0) / 4 )); echo \"── ${L}L · ~${T} tokens ──────────────────\"; fi"
           }
         ]
       }
@@ -518,7 +625,7 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '.readmeAI' ]; then rm -f .claude/.readmeai.active 2>/dev/null; COMMIT=$(git log -1 --format='%h %s' 2>/dev/null || echo 'no git'); echo \"$(date '+%Y-%m-%d %H:%M') | $COMMIT\" > .claude/.readmeai.session 2>/dev/null; echo ''; echo 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing. Run: bash setup.sh --sync  (auto-checks what changed)'; fi"
+            "command": "bash .claude/readmeai-sync.sh 2>/dev/null || true"
           }
         ]
       }
@@ -529,7 +636,7 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"$TOOL_INPUT_PATH\"; [ -f '.readmeAI' ] && grep -q \"$FILE\" .readmeAI || echo \"ReadMeAI: '$FILE' not in STRUCTURE MAP — add it at session end.\""
+            "command": "FILE=\"$TOOL_INPUT_PATH\"; if [ -f '.readmeAI' ] && ! grep -qF \"$FILE\" .readmeAI 2>/dev/null; then echo \"ReadMeAI ▸ '$FILE' is new — add to STRUCTURE MAP\"; fi"
           }
         ]
       }
@@ -537,7 +644,7 @@ if $ALL || command -v claude &>/dev/null || [[ -d "$HOME/.claude" ]]; then
   }
 }
 HOOKSEOF
-    CREATED+=("Claude Code hooks → .claude/settings.json")
+    CREATED+=("Autonomous hooks → .claude/settings.json")
   fi
 fi
 
@@ -691,14 +798,10 @@ $MATCHES")
 
   # Append to AI NOTES section
   if [[ ${#AI_NOTES_LINES[@]} -gt 0 ]]; then
-    # Insert before the closing comment block
-    NOTES_BLOCK="\n"
-    for note in "${AI_NOTES_LINES[@]}"; do
-      NOTES_BLOCK+="\n$note\n"
-    done
-    # Append after "## 🗒 AI NOTES" section header placeholder
     if grep -q "_AI: write anything here" .readmeAI 2>/dev/null; then
-      printf '\n%s\n' "${AI_NOTES_LINES[@]}" >> .readmeAI
+      for note in "${AI_NOTES_LINES[@]}"; do
+        printf '\n%s\n' "$note" >> .readmeAI
+      done
       echo -e "${GREEN}✓${RESET} AI NOTES pre-populated from git history (${#AI_NOTES_LINES[@]} entries)"
     fi
   fi
