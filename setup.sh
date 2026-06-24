@@ -746,7 +746,7 @@ if $DETECT; then
       sed -i '/## 🛠 TECH STACK/,/^---/{/^---/!d}' .readmeAI 2>/dev/null || true
     fi
     if ! grep -q "## 🛠 TECH STACK" .readmeAI; then
-      { printf '\n\n## 🛠 TECH STACK\n_Auto-detected %s_\n\n| Layer | Technology | Version | Notes |\n|-------|-----------|---------|-------|\n'; \
+      { printf '\n\n## 🛠 TECH STACK\n_Auto-detected %s_\n\n| Layer | Technology | Version | Notes |\n|-------|-----------|---------|-------|\n' "$TODAY"; \
         printf '%s\n' "${STACK_LINES[@]}"; } >> .readmeAI
       echo -e "${GREEN}✓${RESET} Stack pre-filled (${#STACK_LINES[@]} layers)"
     else
