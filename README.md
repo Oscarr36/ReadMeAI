@@ -10,7 +10,7 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
-[![Version](https://img.shields.io/badge/version-3.9-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-4.0-brightgreen.svg)](.readmeAI)
 [![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](AGENTS.md)
 [![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -143,6 +143,7 @@ bash setup.sh --update       # refresh TECH STACK after adding dependencies
 bash setup.sh --all --detect # everything at once
 bash setup.sh --sync         # after each coding session: flags new files, new symbols, deleted refs
 bash setup.sh --health       # score your .readmeAI quality [0-100] and find gaps
+bash setup.sh --upgrade      # upgrade to the latest ReadMeAI version (re-runs setup --all)
 ```
 
 **Autonomous sync — no commands needed.** Setup installs a git `post-commit` hook that runs automatically after every `git commit`, in any editor. The hook auto-patches QUICK REFERENCE and flags gaps. Claude Code users also get a Stop hook that fires after every response.
@@ -228,6 +229,7 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 - [x] Roo Code support — `.roo/rules/readmeai.md` (widely deployed Cline fork)
 - [x] Junie support — `.junie/guidelines.md` (JetBrains AI agent)
 - [x] Template v3.9 — ERROR PATTERNS section, Deprecated/Renamed table, session "do NOT touch", branch state
+- [x] `--upgrade` / `-Upgrade` — one-command update to latest version with version-behind notification
 - [ ] `readmeai` CLI (npm/pip install)
 - [ ] VS Code extension — syntax highlighting + snippets
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI

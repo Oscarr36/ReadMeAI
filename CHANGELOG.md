@@ -6,6 +6,21 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [4.0.0] — 2026-06-25
+
+### Added
+- **`--upgrade` flag** (`setup.sh`) — one command to upgrade to the latest ReadMeAI version. Downloads the latest `setup.sh` from GitHub and re-runs it with `--all`, updating `.readmeAI`, all integration files, and hooks.
+- **`-Upgrade` flag** (`setup.ps1`) — Windows equivalent. Downloads the latest `setup.ps1` to a temp file and re-runs it with `-All`.
+- **Version-behind notification** — `--sync` and `--health` (both bash and PowerShell) now fetch the remote version (3s timeout, no cost) and print an upgrade hint if a newer version is available: `⬆  ReadMeAI v4.0 available (you have v3.6) → Upgrade: bash setup.sh --upgrade`.
+- `check_version()` helper function in `setup.sh` — reusable, called at end of `--sync` and `--health` modes.
+- `Invoke-VersionCheck` function in `setup.ps1` — PowerShell equivalent.
+- Usage comments updated in both files to document `--upgrade` / `-Upgrade`.
+
+### Changed
+- Version bumped to v4.0 in `setup.sh`, `setup.ps1`, `.readmeAI` header, `.readmeAI` footer, README badge.
+
+---
+
 ## [3.9.0] — 2026-06-25
 
 ### Added

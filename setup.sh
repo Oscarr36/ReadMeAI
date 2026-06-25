@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ReadMeAI v3.8 — Smart Setup Script
+# ReadMeAI v4.0 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -14,13 +14,14 @@
 #   bash setup.sh --all --detect # everything at once
 #   bash setup.sh --sync         # auto-update context from last git session (no cost, no API)
 #   bash setup.sh --health       # score .readmeAI quality and find gaps
+#   bash setup.sh --upgrade      # upgrade to the latest ReadMeAI version
 
 set -euo pipefail
 
 GREEN='\033[0;32m'; GRAY='\033[0;90m'; BOLD='\033[1m'
 YELLOW='\033[0;33m'; RED='\033[0;31m'; RESET='\033[0m'
 
-ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false
+ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; UPGRADE=false
 for arg in "$@"; do
   case "$arg" in
     --all)      ALL=true ;;
@@ -30,8 +31,37 @@ for arg in "$@"; do
     --trim)     TRIM=true ;;
     --sync)     SYNC=true ;;
     --health)   HEALTH=true ;;
+    --upgrade)  UPGRADE=true ;;
   esac
 done
+
+# ── Version check helper ───────────────────────────────────────────────────────
+# Fetches remote version (3s timeout), compares with local. Prints upgrade hint.
+check_version() {
+  local local_ver remote_ver
+  local_ver=$(grep -o 'READMEAI v[0-9][0-9.]*' .readmeAI 2>/dev/null | grep -o 'v[0-9][0-9.]*' | head -1 || echo "")
+  [[ -z "$local_ver" ]] && return
+  remote_ver=$(curl -sSL --max-time 3 \
+    "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" 2>/dev/null \
+    | grep -o 'READMEAI v[0-9][0-9.]*' | grep -o 'v[0-9][0-9.]*' | head -1 || echo "")
+  [[ -z "$remote_ver" ]] && return
+  if [[ "$remote_ver" != "$local_ver" ]]; then
+    echo ""
+    echo -e "${YELLOW}⬆  ReadMeAI $remote_ver available (you have $local_ver)${RESET}"
+    echo -e "   ${GRAY}→ Upgrade: bash setup.sh --upgrade${RESET}"
+  fi
+}
+
+# ── Upgrade mode ──────────────────────────────────────────────────────────────
+if $UPGRADE; then
+  echo ""; echo -e "${BOLD}ReadMeAI Upgrade${RESET}"
+  echo -e "${GRAY}────────────────────────────────────${RESET}"
+  LOCAL_VER=$(grep -o 'READMEAI v[0-9][0-9.]*' .readmeAI 2>/dev/null | grep -o 'v[0-9][0-9.]*' | head -1 || echo "unknown")
+  echo -e "Current: ${BOLD}$LOCAL_VER${RESET}"
+  echo -e "Fetching latest setup from GitHub..."
+  bash <(curl -sSL "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh") --all
+  exit 0
+fi
 
 # ── Trim mode ─────────────────────────────────────────────────────────────────
 # Removes optional/setup comment blocks from .readmeAI once setup is done.
@@ -209,6 +239,7 @@ if $SYNC; then
     echo -e "${GREEN}Context is in sync with the codebase.${RESET}"
   fi
   echo -e "${GRAY}Run after each coding session: bash setup.sh --sync${RESET}"
+  check_version
   exit 0
 fi
 
@@ -295,6 +326,7 @@ if $HEALTH; then
   else echo -e "${RED}Critical — tell your AI: \"Fill .readmeAI, ask only for what you can't infer.\"${RESET}"
   fi
   echo -e "${GRAY}Fix: bash setup.sh --sync  (after coding)  |  bash setup.sh --validate${RESET}"
+  check_version
   exit 0
 fi
 

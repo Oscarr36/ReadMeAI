@@ -1,4 +1,4 @@
-# ReadMeAI v3.8 — Smart Setup Script (Windows PowerShell)
+# ReadMeAI v4.0 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -12,12 +12,48 @@
 #   .\setup.ps1 -Update         # refresh TECH STACK
 #   .\setup.ps1 -Sync           # auto-update context from last git commit (no cost)
 #   .\setup.ps1 -Health         # score .readmeAI quality [0-100]
+#   .\setup.ps1 -Upgrade        # upgrade to the latest ReadMeAI version
 #   .\setup.ps1 -All -Detect
 
-param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim)
+param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Upgrade)
 if ($Update) { $Detect = $true }
 
 $G = "`e[32m"; $Gr = "`e[90m"; $B = "`e[1m"; $Y = "`e[33m"; $R = "`e[31m"; $Re = "`e[0m"
+
+# ── Version check helper ──────────────────────────────────────────────────────
+function Invoke-VersionCheck {
+  if (-not (Test-Path ".readmeAI")) { return }
+  $localVer = (Select-String -Path ".readmeAI" -Pattern "READMEAI v[\d.]+" -EA SilentlyContinue |
+    Select-Object -First 1).Matches.Value -replace "READMEAI ",""
+  if (-not $localVer) { return }
+  try {
+    $remoteRaw = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" `
+      -TimeoutSec 3 -UseBasicParsing -EA Stop
+    $remoteVer = ([regex]::Match($remoteRaw.Content, "READMEAI v[\d.]+")).Value -replace "READMEAI ",""
+  } catch { return }
+  if ($remoteVer -and $remoteVer -ne $localVer) {
+    Write-Host ""; Write-Host "${Y}⬆  ReadMeAI $remoteVer available (you have $localVer)${Re}"
+    Write-Host "   ${Gr}→ Upgrade: .\setup.ps1 -Upgrade${Re}"
+  }
+}
+
+# ── Upgrade mode ──────────────────────────────────────────────────────────────
+if ($Upgrade) {
+  Write-Host ""; Write-Host "${B}ReadMeAI Upgrade${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+  $localVer = "unknown"
+  if (Test-Path ".readmeAI") {
+    $m = Select-String -Path ".readmeAI" -Pattern "READMEAI v[\d.]+" -EA SilentlyContinue | Select-Object -First 1
+    if ($m) { $localVer = $m.Matches.Value -replace "READMEAI ","" }
+  }
+  Write-Host "Current: ${B}$localVer${Re}"
+  Write-Host "Fetching latest setup from GitHub..."
+  $setupUrl = "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1"
+  $tmpFile  = Join-Path $env:TEMP "readmeai_upgrade.ps1"
+  Invoke-WebRequest -Uri $setupUrl -OutFile $tmpFile -UseBasicParsing
+  & $tmpFile -All
+  Remove-Item $tmpFile -EA SilentlyContinue
+  exit 0
+}
 
 # ── Sync mode — auto-update context from last git commit (no API, no cost) ───
 if ($Sync) {
@@ -76,6 +112,7 @@ if ($Sync) {
   Write-Host ""; Write-Host "${Gr}Context: $lineCount lines · ~$tokens tokens${Re}"; Write-Host ""
   if ($updated -gt 0) { Write-Host "${Y}${B}$updated item(s) need attention${Re} — update .readmeAI then commit." }
   else { Write-Host "${G}Context is in sync with the codebase.${Re}" }
+  Invoke-VersionCheck
   exit 0
 }
 
@@ -124,6 +161,7 @@ if ($Health) {
   elseif ($score -ge 70) { Write-Host "${G}Good — a couple sections need attention.${Re}" }
   elseif ($score -ge 50) { Write-Host "${Y}Fair — key sections missing. AI is partially blind.${Re}" }
   else                   { Write-Host "${R}Critical — tell your AI: 'Fill .readmeAI, ask only for what you can't infer.'${Re}" }
+  Invoke-VersionCheck
   exit 0
 }
 
@@ -155,7 +193,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v3.8 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v4.0 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
@@ -191,7 +229,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v3.8](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.0](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'
@@ -550,5 +588,5 @@ Write-Host ""
 Write-Host "${B}Next step:${Re} tell your AI → ${G}""Detect my stack, fill what you can.""${Re}"
 if ($Detect) { Write-Host "  ${Gr}Or: ${G}""Read .readmeAI and continue.""${Re}${Gr}${Re}" }
 Write-Host ""
-Write-Host "${Gr}Flags: -All · -Detect · -Validate · -Update · -Sync · -Health${Re}"
+Write-Host "${Gr}Flags: -All · -Detect · -Validate · -Update · -Sync · -Health · -Upgrade${Re}"
 Write-Host ""
