@@ -6,6 +6,26 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [4.2.0] — 2026-06-25
+
+### Added
+- **Enhanced `--detect` / `-Detect`: 7 new language stacks** — both `setup.sh` and `setup.ps1` now auto-detect:
+  - **Ruby** — framework detection: Rails, Sinatra, Hanami (from `Gemfile`)
+  - **PHP** — framework detection: Laravel, Symfony, Slim (from `composer.json`)
+  - **Flutter / Dart** — detected via `pubspec.yaml`
+  - **Kotlin / Java (Gradle)** — detected via `build.gradle` or `build.gradle.kts`
+  - **Java / Maven** — detected via `pom.xml`
+  - **C# / .NET** — detected via `*.csproj` or `*.sln`; reports installed `dotnet` version
+  - **Elixir** — detected via `mix.exs`
+- Ruby and PHP detection now reports framework alongside runtime (was a single line before).
+
+### Changed
+- Version bumped to v4.2 in `setup.sh`, `setup.ps1`, `.readmeAI` header, README badge.
+- `setup.sh` title corrected from "v3.5" (stale leftover) to "v4.2".
+- AGENTS.md footer in `setup.sh` corrected from "v3.5" to "v4.2".
+
+---
+
 ## [4.1.0] — 2026-06-25
 
 ### Fixed

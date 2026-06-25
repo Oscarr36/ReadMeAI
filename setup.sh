@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ReadMeAI v4.0 — Smart Setup Script
+# ReadMeAI v4.2 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -372,7 +372,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v3.5 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v4.2 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -412,7 +412,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v3.5](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.2](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration
@@ -822,8 +822,35 @@ if $DETECT; then
   fi
   [[ -f "go.mod"       ]] && STACK_LINES+=("| Runtime | Go | $(go version 2>/dev/null | awk '{print $3}' | tr -d go || echo —) | — |")
   [[ -f "Cargo.toml"   ]] && STACK_LINES+=("| Runtime | Rust | $(rustc --version 2>/dev/null | awk '{print $2}' || echo —) | — |")
-  [[ -f "Gemfile"      ]] && STACK_LINES+=("| Runtime | Ruby | $(ruby -v 2>/dev/null | awk '{print $2}' || echo —) | — |")
-  [[ -f "composer.json" ]] && STACK_LINES+=("| Runtime | PHP | $(php -v 2>/dev/null | head -1 | awk '{print $2}' || echo —) | — |")
+  if [[ -f "Gemfile" ]]; then
+    GEMFILE_CONTENT=$(cat Gemfile)
+    ruby_fw=""
+    grep -qiE "gem ['\"]rails['\"]" <<< "$GEMFILE_CONTENT" && ruby_fw="Rails"
+    grep -qi "sinatra" <<< "$GEMFILE_CONTENT" && [[ -z "$ruby_fw" ]] && ruby_fw="Sinatra"
+    grep -qi "hanami"  <<< "$GEMFILE_CONTENT" && [[ -z "$ruby_fw" ]] && ruby_fw="Hanami"
+    STACK_LINES+=("| Runtime | Ruby | $(ruby -v 2>/dev/null | awk '{print $2}' || echo —) | — |")
+    [[ -n "$ruby_fw" ]] && STACK_LINES+=("| Framework | $ruby_fw | — | — |")
+  fi
+  if [[ -f "composer.json" ]]; then
+    COMP_CONTENT=$(cat composer.json)
+    php_fw=""
+    grep -q 'laravel/framework' <<< "$COMP_CONTENT" && php_fw="Laravel"
+    grep -q 'symfony/symfony'   <<< "$COMP_CONTENT" && [[ -z "$php_fw" ]] && php_fw="Symfony"
+    grep -q 'slim/slim'         <<< "$COMP_CONTENT" && [[ -z "$php_fw" ]] && php_fw="Slim"
+    STACK_LINES+=("| Runtime | PHP | $(php -v 2>/dev/null | head -1 | awk '{print $2}' || echo —) | — |")
+    [[ -n "$php_fw" ]] && STACK_LINES+=("| Framework | $php_fw | — | — |")
+  fi
+  [[ -f "pubspec.yaml" ]] && \
+    STACK_LINES+=("| Runtime | Flutter / Dart | $(dart --version 2>&1 | awk '{print $4}' || echo —) | pubspec.yaml |")
+  { [[ -f "build.gradle" ]] || [[ -f "build.gradle.kts" ]]; } && \
+    STACK_LINES+=("| Runtime | Kotlin / Java | $(java -version 2>&1 | head -1 | awk '{print $3}' | tr -d '"' || echo —) | build.gradle |")
+  [[ -f "pom.xml" ]] && \
+    STACK_LINES+=("| Runtime | Java / Maven | $(java -version 2>&1 | head -1 | awk '{print $3}' | tr -d '"' || echo —) | pom.xml |")
+  _dotnet=$(find . -maxdepth 3 \( -name "*.csproj" -o -name "*.sln" \) 2>/dev/null | head -1)
+  [[ -n "$_dotnet" ]] && \
+    STACK_LINES+=("| Runtime | C# / .NET | $(dotnet --version 2>/dev/null || echo —) | .csproj |")
+  [[ -f "mix.exs" ]] && \
+    STACK_LINES+=("| Runtime | Elixir | $(elixir --version 2>/dev/null | grep -oE 'Elixir [0-9.]+' | awk '{print $2}' || echo —) | mix.exs |")
   { [[ -f "Dockerfile" ]] || [[ -f "docker-compose.yml" ]]; } && \
     STACK_LINES+=("| Container | Docker | — | docker-compose.yml |")
 

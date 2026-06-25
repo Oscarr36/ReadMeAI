@@ -1,4 +1,4 @@
-﻿# ReadMeAI v4.0 — Smart Setup Script (Windows PowerShell)
+﻿# ReadMeAI v4.2 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -219,7 +219,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v4.0 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v4.2 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI (only if not already present) ──────────────────────
 if (Test-Path ".readmeAI") {
@@ -259,7 +259,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.0](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.2](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'
@@ -596,6 +596,40 @@ if ($Detect) {
   }
   if (Test-Path "go.mod")      { $stackLines += "| Runtime | Go | — | — |" }
   if (Test-Path "Cargo.toml")  { $stackLines += "| Runtime | Rust | — | — |" }
+  if (Test-Path "Gemfile") {
+    $gemfileContent = Get-Content "Gemfile" -Raw -EA SilentlyContinue
+    $rubyFw = if ($gemfileContent -match "gem ['""]rails['""]") { "Rails" } `
+              elseif ($gemfileContent -match "sinatra") { "Sinatra" } `
+              elseif ($gemfileContent -match "hanami")  { "Hanami"  } else { "" }
+    $rubyVerRaw = ruby -v 2>$null; $rubyVer = if ($rubyVerRaw) { ($rubyVerRaw -split ' ')[1] } else { "—" }
+    $stackLines += "| Runtime | Ruby | $rubyVer | Gemfile |"
+    if ($rubyFw) { $stackLines += "| Framework | $rubyFw | — | — |" }
+  }
+  if (Test-Path "composer.json") {
+    $compContent = Get-Content "composer.json" -Raw -EA SilentlyContinue
+    $phpFw = if ($compContent -match "laravel/framework") { "Laravel" } `
+             elseif ($compContent -match "symfony/symfony") { "Symfony" } `
+             elseif ($compContent -match "slim/slim") { "Slim" } else { "" }
+    $phpVerRaw = (php -v 2>$null | Select-Object -First 1); $phpVer = if ($phpVerRaw) { ($phpVerRaw -split ' ')[1] } else { "—" }
+    $stackLines += "| Runtime | PHP | $phpVer | composer.json |"
+    if ($phpFw) { $stackLines += "| Framework | $phpFw | — | — |" }
+  }
+  if (Test-Path "pubspec.yaml") {
+    $stackLines += "| Runtime | Flutter / Dart | — | pubspec.yaml |"
+  }
+  if ((Test-Path "build.gradle") -or (Test-Path "build.gradle.kts")) {
+    $stackLines += "| Runtime | Kotlin / Java | — | build.gradle |"
+  }
+  if (Test-Path "pom.xml") {
+    $stackLines += "| Runtime | Java / Maven | — | pom.xml |"
+  }
+  if ((Test-Path "*.csproj") -or (Test-Path "*.sln")) {
+    $dotnetVer = (dotnet --version 2>$null); if (-not $dotnetVer) { $dotnetVer = "—" }
+    $stackLines += "| Runtime | C# / .NET | $dotnetVer | .csproj |"
+  }
+  if (Test-Path "mix.exs") {
+    $stackLines += "| Runtime | Elixir | — | mix.exs |"
+  }
   if ((Test-Path "Dockerfile") -or (Test-Path "docker-compose.yml")) {
     $stackLines += "| Container | Docker | — | docker-compose.yml |"
   }
