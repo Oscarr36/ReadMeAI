@@ -1,4 +1,4 @@
-﻿# ReadMeAI v4.4 — Smart Setup Script (Windows PowerShell)
+﻿# ReadMeAI v4.5 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -12,10 +12,11 @@
 #   .\setup.ps1 -Update         # refresh TECH STACK
 #   .\setup.ps1 -Sync           # auto-update context from last git commit (no cost)
 #   .\setup.ps1 -Health         # score .readmeAI quality [0-100]
+#   .\setup.ps1 -Lint           # list every unfilled field + actionable issues in .readmeAI
 #   .\setup.ps1 -Upgrade        # upgrade to the latest ReadMeAI version
 #   .\setup.ps1 -All -Detect
 
-param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Upgrade, [string]$New = "")
+param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Lint, [switch]$Upgrade, [string]$New = "")
 if ($Update) { $Detect = $true }
 
 $ESC = [char]27
@@ -189,6 +190,59 @@ if ($Health) {
   exit 0
 }
 
+# ── Lint mode ─────────────────────────────────────────────────────────────────
+# Finds every unfilled placeholder + actionable issues. Different from -Health
+# (which scores quality) — lint gives a precise list of exactly what to fix.
+if ($Lint) {
+  Write-Host ""; Write-Host "${B}ReadMeAI Lint${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+  if (-not (Test-Path ".readmeAI")) { Write-Host "${R}✗${Re} .readmeAI not found"; exit 1 }
+
+  $issues  = 0
+  $content = Get-Content ".readmeAI" -Raw
+  $lines   = Get-Content ".readmeAI"
+
+  # 1. Unfilled placeholder rows — pattern: | **Field** | — |
+  $blanks = $lines | Where-Object { $_ -match '^\| \*\*[^|]+\*\* \| — \|' }
+  foreach ($row in $blanks) {
+    if ($row -match '\*\*([^*]+)\*\*') {
+      Write-Host "  ${Y}●${Re} Unfilled: ${B}$($Matches[1])${Re}"
+      $issues++
+    }
+  }
+  if ($blanks.Count -gt 0) {
+    Write-Host "    ${Gr}→ Tell your AI: 'Fill .readmeAI — ask only for what you can't infer'${Re}"
+  }
+
+  # 2. File bloat
+  $lineCount = $lines.Count
+  if     ($lineCount -gt 800) {
+    Write-Host "  ${R}●${Re} File too large: ${B}$lineCount lines${Re} (>800 means AI stops reading). Run: -Trim"
+    $issues++
+  } elseif ($lineCount -gt 600) {
+    Write-Host "  ${Y}●${Re} File heavy: ${B}$lineCount lines${Re} (>600). Consider pruning old DECISIONS LOG entries."
+    $issues++
+  }
+
+  # 3. Stale sync — Last action date > 14 days ago
+  $lastDateMatch = [regex]::Match($content, '\*\*Last action\*\*[^\n]*(\d{4}-\d{2}-\d{2})')
+  if ($lastDateMatch.Success) {
+    try {
+      $lastDate = [datetime]::ParseExact($lastDateMatch.Groups[1].Value, 'yyyy-MM-dd', $null)
+      $days = ([datetime]::Today - $lastDate).Days
+      if ($days -gt 14) {
+        Write-Host "  ${Y}●${Re} Context stale: last sync ${B}$days days ago${Re} ($($lastDateMatch.Groups[1].Value)). Run: -Sync"
+        $issues++
+      }
+    } catch { }
+  }
+
+  Write-Host ""
+  if ($issues -eq 0) { Write-Host "${G}✓ No issues — .readmeAI is clean.${Re}" }
+  else { Write-Host "${Y}${B}$issues issue(s) found.${Re} Fix in .readmeAI then re-run: .\setup.ps1 -Lint" }
+  Invoke-VersionCheck
+  exit 0
+}
+
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if ($Validate) {
   Write-Host ""; Write-Host "${B}ReadMeAI Validate${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
@@ -219,7 +273,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v4.4 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v4.5 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI (only if not already present) ──────────────────────
 if (Test-Path ".readmeAI") {
@@ -271,7 +325,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.4](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.5](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'

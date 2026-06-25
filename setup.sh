@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ReadMeAI v4.4 — Smart Setup Script
+# ReadMeAI v4.5 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -14,6 +14,7 @@
 #   bash setup.sh --all --detect # everything at once
 #   bash setup.sh --sync         # auto-update context from last git session (no cost, no API)
 #   bash setup.sh --health       # score .readmeAI quality and find gaps
+#   bash setup.sh --lint         # list every unfilled field + actionable issues in .readmeAI
 #   bash setup.sh --upgrade      # upgrade to the latest ReadMeAI version
 #   bash setup.sh --new="idea"   # new project: inject idea so AI bootstraps the project
 
@@ -22,7 +23,7 @@ set -euo pipefail
 GREEN='\033[0;32m'; GRAY='\033[0;90m'; BOLD='\033[1m'
 YELLOW='\033[0;33m'; RED='\033[0;31m'; RESET='\033[0m'
 
-ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; UPGRADE=false; NEW_IDEA=""
+ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; LINT=false; UPGRADE=false; NEW_IDEA=""
 for arg in "$@"; do
   case "$arg" in
     --all)      ALL=true ;;
@@ -32,6 +33,7 @@ for arg in "$@"; do
     --trim)     TRIM=true ;;
     --sync)     SYNC=true ;;
     --health)   HEALTH=true ;;
+    --lint)     LINT=true ;;
     --upgrade)  UPGRADE=true ;;
     --new=*)    NEW_IDEA="${arg#--new=}" ;;
   esac
@@ -368,6 +370,66 @@ if $HEALTH; then
   exit 0
 fi
 
+# ── Lint mode ─────────────────────────────────────────────────────────────────
+# Finds every unfilled placeholder + actionable issues. Different from --health
+# (which scores quality) — lint gives you a precise list of what to fix.
+if $LINT; then
+  echo ""; echo -e "${BOLD}ReadMeAI Lint${RESET}"
+  echo -e "${GRAY}────────────────────────────────────${RESET}"
+  [[ ! -f ".readmeAI" ]] && { echo -e "${RED}✗${RESET} .readmeAI not found"; exit 1; }
+
+  ISSUES=0
+
+  # 1. Unfilled placeholder rows — pattern: | **Field** | — |
+  BLANK_COUNT=0
+  while IFS= read -r raw; do
+    line="${raw#*:}"
+    FIELD=$(echo "$line" | grep -oE '\*\*[^*]+\*\*' | head -1 | tr -d '*')
+    [[ -z "$FIELD" ]] && continue
+    echo -e "  ${YELLOW}●${RESET} Unfilled: ${BOLD}$FIELD${RESET}"
+    ((BLANK_COUNT++)) || true
+  done < <(grep -nE '^\| \*\*[^|]+\*\* \| — \|' .readmeAI 2>/dev/null | head -20)
+  if [[ $BLANK_COUNT -gt 0 ]]; then
+    echo -e "    ${GRAY}→ Tell your AI: 'Fill .readmeAI — ask only for what you can't infer'${RESET}"
+    ((ISSUES+=BLANK_COUNT)) || true
+  fi
+
+  # 2. File bloat
+  LINES=$(wc -l < .readmeAI)
+  if [[ $LINES -gt 800 ]]; then
+    echo -e "  ${RED}●${RESET} File too large: ${BOLD}$LINES lines${RESET} (>800 means AI stops reading). Run: bash setup.sh --trim"
+    ((ISSUES++)) || true
+  elif [[ $LINES -gt 600 ]]; then
+    echo -e "  ${YELLOW}●${RESET} File heavy: ${BOLD}$LINES lines${RESET} (>600). Consider pruning old DECISIONS LOG entries."
+    ((ISSUES++)) || true
+  fi
+
+  # 3. Stale sync — Last action date > 14 days ago
+  LAST_DATE=$(grep -E '\*\*Last action\*\*' .readmeAI 2>/dev/null \
+    | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1 || true)
+  if [[ -n "$LAST_DATE" ]]; then
+    TODAY_EPOCH=$(date +%s 2>/dev/null || echo "")
+    LAST_EPOCH=$(date -d "$LAST_DATE" +%s 2>/dev/null \
+      || date -j -f "%Y-%m-%d" "$LAST_DATE" +%s 2>/dev/null || echo "")
+    if [[ -n "$TODAY_EPOCH" && -n "$LAST_EPOCH" ]]; then
+      DAYS=$(( (TODAY_EPOCH - LAST_EPOCH) / 86400 ))
+      if [[ $DAYS -gt 14 ]]; then
+        echo -e "  ${YELLOW}●${RESET} Context stale: last sync ${BOLD}${DAYS} days ago${RESET} ($LAST_DATE). Run: bash setup.sh --sync"
+        ((ISSUES++)) || true
+      fi
+    fi
+  fi
+
+  echo ""
+  if [[ $ISSUES -eq 0 ]]; then
+    echo -e "${GREEN}✓ No issues — .readmeAI is clean.${RESET}"
+  else
+    echo -e "${BOLD}${YELLOW}$ISSUES issue(s) found.${RESET} Fix in .readmeAI then re-run: bash setup.sh --lint"
+  fi
+  check_version
+  exit 0
+fi
+
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if $VALIDATE; then
   echo ""; echo -e "${BOLD}ReadMeAI Validate${RESET}"
@@ -410,7 +472,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v4.4 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v4.5 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -466,7 +528,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.4](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.5](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration

@@ -6,6 +6,19 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [4.5.0] — 2026-06-25
+
+### Added
+- **`--lint` flag** (`setup.sh`) and **`-Lint`** (`setup.ps1`) — precise issue scanner:
+  - Lists every unfilled placeholder row (`| **Field** | — |`) by field name
+  - Warns when file exceeds 600 lines (heavy) or 800 lines (AI-ignored territory)
+  - Detects stale context: if Last action in QUICK REFERENCE is >14 days ago, suggests `--sync`
+  - Complements `--health` (which scores quality 0-100) — `--lint` gives a flat, actionable list of exactly what's wrong
+  - Usage: `bash setup.sh --lint` / `.\setup.ps1 -Lint`
+- Version bumped to v4.5 across all files.
+
+---
+
 ## [4.4.0] — 2026-06-25
 
 ### Added
