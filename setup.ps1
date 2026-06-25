@@ -1,7 +1,7 @@
-# ReadMeAI v3.2 — Smart Setup Script (Windows PowerShell)
+# ReadMeAI v3.7 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
-#           Aider, Continue, Gemini CLI, AGENTS.md universal standard.
+#           Aider, Continue, Antigravity CLI (agy), Zed, AGENTS.md universal standard.
 #
 # Usage:
 #   irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
@@ -9,12 +9,122 @@
 #   .\setup.ps1 -Detect         # pre-fill TECH STACK
 #   .\setup.ps1 -Validate       # check sync with codebase
 #   .\setup.ps1 -Update         # refresh TECH STACK
+#   .\setup.ps1 -Sync           # auto-update context from last git commit (no cost)
+#   .\setup.ps1 -Health         # score .readmeAI quality [0-100]
 #   .\setup.ps1 -All -Detect
 
-param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update)
+param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim)
 if ($Update) { $Detect = $true }
 
 $G = "`e[32m"; $Gr = "`e[90m"; $B = "`e[1m"; $Y = "`e[33m"; $R = "`e[31m"; $Re = "`e[0m"
+
+# ── Sync mode — auto-update context from last git commit (no API, no cost) ───
+if ($Sync) {
+  Write-Host ""; Write-Host "${B}ReadMeAI Sync${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+  if (-not (Test-Path ".readmeAI")) { Write-Host "${R}✗${Re} .readmeAI not found. Run: .\setup.ps1"; exit 1 }
+  $gitDir = git rev-parse --git-dir 2>$null
+  if (-not $gitDir) { Write-Host "${R}✗${Re} Not a git repository"; exit 1 }
+
+  $updated = 0; $content = Get-Content ".readmeAI" -Raw
+
+  # 1. Changed files in last commit
+  $changed = git diff HEAD~1 HEAD --name-status 2>$null
+  $newFiles = @(); $delFiles = @()
+  $changed | ForEach-Object {
+    if ($_ -match '^A\t(.+)') { $newFiles += $Matches[1] }
+    elseif ($_ -match '^D\t(.+)') { $delFiles += $Matches[1] }
+  }
+
+  # 2. New files not in .readmeAI
+  foreach ($f in $newFiles) {
+    if ($f -and $content -notmatch [regex]::Escape($f)) {
+      Write-Host "${Y}+${Re} New file not in STRUCTURE MAP: ${B}$f${Re}"
+      Write-Host "   ${Gr}→ Add a one-line description in STRUCTURE MAP${Re}"
+      $updated++
+    }
+  }
+
+  # 3. Deleted files still referenced
+  foreach ($f in $delFiles) {
+    if ($f -and $content -match [regex]::Escape($f)) {
+      Write-Host "${R}✗${Re} Deleted file still in .readmeAI: ${B}$f${Re}"
+      Write-Host "   ${Gr}→ Remove from STRUCTURE MAP / SYMBOL INDEX${Re}"
+      $updated++
+    }
+  }
+
+  # 4. Auto-patch QUICK REFERENCE Last action
+  $lastMsg  = git log -1 --format='%s'  2>$null
+  $lastDate = (git log -1 --format='%ci' 2>$null) -replace ' .*',''
+  if ($lastMsg -and $lastDate) {
+    $lines = Get-Content ".readmeAI"
+    $patched = $false
+    $lines = $lines | ForEach-Object {
+      if ($_ -match '\*\*Last action\*\*') { $patched = $true; "| **Last action** | $lastDate — $lastMsg |" }
+      else { $_ }
+    }
+    if ($patched) {
+      Set-Content ".readmeAI" $lines -Encoding utf8
+      Write-Host "${G}✓${Re} QUICK REFERENCE → Last action: $lastMsg"
+      $updated++
+    }
+  }
+
+  $lineCount = (Get-Content ".readmeAI").Count
+  $tokens    = [int]((Get-Item ".readmeAI").Length / 4)
+  Write-Host ""; Write-Host "${Gr}Context: $lineCount lines · ~$tokens tokens${Re}"; Write-Host ""
+  if ($updated -gt 0) { Write-Host "${Y}${B}$updated item(s) need attention${Re} — update .readmeAI then commit." }
+  else { Write-Host "${G}Context is in sync with the codebase.${Re}" }
+  exit 0
+}
+
+# ── Health mode — quality score [0-100] across 5 dimensions ──────────────────
+if ($Health) {
+  Write-Host ""; Write-Host "${B}ReadMeAI Health Check${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+  if (-not (Test-Path ".readmeAI")) { Write-Host "${R}✗${Re} .readmeAI not found"; exit 1 }
+  $score = 0; $content = Get-Content ".readmeAI" -Raw
+  $lineCount = (Get-Content ".readmeAI").Count; $tokens = [int]((Get-Item ".readmeAI").Length / 4)
+
+  # 1. Size (20pts)
+  if     ($lineCount -lt 80)   { Write-Host "${R}✗${Re}  [0/20]  Size: $lineCount lines — too sparse" }
+  elseif ($lineCount -gt 800)  { Write-Host "${R}✗${Re}  [5/20]  Size: $lineCount lines — too bloated. Run: -Trim"; $score += 5 }
+  elseif ($lineCount -gt 500)  { Write-Host "${Y}⚠${Re}  [12/20] Size: $lineCount lines (~$tokens tokens) — heavy"; $score += 12 }
+  else                         { Write-Host "${G}✓${Re}  [20/20] Size: $lineCount lines (~$tokens tokens)"; $score += 20 }
+
+  # 2. QUICK REFERENCE (20pts)
+  $qrRows = ([regex]::Matches($content, '(?m)^\|.+\|.+\|')).Count
+  if     ($qrRows -ge 3) { Write-Host "${G}✓${Re}  [20/20] QUICK REFERENCE: $qrRows rows — hot restart ready"; $score += 20 }
+  elseif ($qrRows -gt 0) { Write-Host "${Y}⚠${Re}  [10/20] QUICK REFERENCE: $qrRows rows — partially filled"; $score += 10 }
+  else                   { Write-Host "${R}✗${Re}  [0/20]  QUICK REFERENCE: empty — AI restarts cold every session" }
+
+  # 3. DOMAIN RULES (20pts)
+  $dr = ([regex]::Matches($content, '(?m)^- (?!—)')).Count
+  if     ($dr -ge 5) { Write-Host "${G}✓${Re}  [20/20] DOMAIN RULES: $dr rules"; $score += 20 }
+  elseif ($dr -ge 2) { Write-Host "${Y}⚠${Re}  [12/20] DOMAIN RULES: $dr rules — add more"; $score += 12 }
+  elseif ($dr -eq 1) { Write-Host "${Y}⚠${Re}  [6/20]  DOMAIN RULES: 1 rule — bare minimum"; $score += 6 }
+  else               { Write-Host "${R}✗${Re}  [0/20]  DOMAIN RULES: empty — most valuable section" }
+
+  # 4. SESSION STATE (20pts)
+  if ($content -notmatch "One sentence: what are we building") {
+    Write-Host "${G}✓${Re}  [20/20] SESSION STATE: filled"; $score += 20
+  } else { Write-Host "${Y}⚠${Re}  [0/20]  SESSION STATE: empty — AI starts cold every session" }
+
+  # 5. SYMBOL INDEX (20pts)
+  $si = ([regex]::Matches($content, '(?m)^\| [a-zA-Z`]')).Count
+  if     ($si -ge 5) { Write-Host "${G}✓${Re}  [20/20] SYMBOL INDEX: $si entries"; $score += 20 }
+  elseif ($si -ge 2) { Write-Host "${Y}⚠${Re}  [10/20] SYMBOL INDEX: $si entries — add more"; $score += 10 }
+  else               { Write-Host "${R}✗${Re}  [0/20]  SYMBOL INDEX: empty" }
+
+  Write-Host ""
+  $filled = [int]($score / 5)
+  $bar = ([string]"█" * $filled) + ([string]"░" * (20 - $filled))
+  Write-Host "${B}Health: [$bar] $score/100${Re}"
+  if     ($score -ge 90) { Write-Host "${G}Excellent — your .readmeAI is fully operational.${Re}" }
+  elseif ($score -ge 70) { Write-Host "${G}Good — a couple sections need attention.${Re}" }
+  elseif ($score -ge 50) { Write-Host "${Y}Fair — key sections missing. AI is partially blind.${Re}" }
+  else                   { Write-Host "${R}Critical — tell your AI: 'Fill .readmeAI, ask only for what you can't infer.'${Re}" }
+  exit 0
+}
 
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if ($Validate) {
@@ -26,13 +136,14 @@ if ($Validate) {
     Write-Host "${Y}⚠${Re}  SESSION STATE blank"
   } else { Write-Host "${G}✓${Re} SESSION STATE filled" }
   @{
-    "AGENTS.md (universal)"  = "AGENTS.md"
-    "GEMINI.md"              = "GEMINI.md"
-    "Claude Code"            = ".claude\CLAUDE.md"
-    "Cursor (.mdc)"          = ".cursor\rules\readmeai-context.mdc"
-    "Cursor (legacy)"        = ".cursorrules"
-    "Windsurf"               = ".windsurfrules"
-    "GitHub Copilot"         = ".github\copilot-instructions.md"
+    "AGENTS.md (universal)"    = "AGENTS.md"
+    "Antigravity CLI / Gemini" = "GEMINI.md"
+    "Claude Code"              = ".claude\CLAUDE.md"
+    "Cursor (.mdc)"            = ".cursor\rules\readmeai-context.mdc"
+    "Cursor (legacy)"          = ".cursorrules"
+    "Windsurf"                 = ".windsurfrules"
+    "GitHub Copilot"           = ".github\copilot-instructions.md"
+    "Zed"                      = ".rules"
   }.GetEnumerator() | ForEach-Object {
     if (Test-Path $_.Value) { Write-Host "${G}✓${Re} $($_.Key) → $($_.Value)" }
     else { Write-Host "${Gr}–${Re}  $($_.Key) not wired" }
@@ -40,7 +151,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v3.2 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v3.7 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
@@ -76,7 +187,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v3.2](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v3.7](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'
@@ -189,9 +300,9 @@ function Write-Integration {
 # AGENTS.md — universal standard (always create)
 Write-Integration "AGENTS.md" "Universal (AGENTS.md)" $AgentsContent
 
-# GEMINI.md
-if ($All -or (Get-Command gemini -EA SilentlyContinue)) {
-  Write-Integration "GEMINI.md" "Gemini CLI" $AgentsContent
+# GEMINI.md — Antigravity CLI (agy) — replacement for Gemini CLI (retired June 18 2026)
+if ($All -or (Get-Command agy -EA SilentlyContinue) -or (Get-Command gemini -EA SilentlyContinue)) {
+  Write-Integration "GEMINI.md" "Antigravity CLI / Gemini" $AgentsContent
 }
 
 # Claude Code
@@ -211,7 +322,7 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; awk '/## .* QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
+            "command": "if [ -f '.readmeAI' ] && [ ! -f '.claude/.readmeai.active' ]; then touch .claude/.readmeai.active 2>/dev/null; LINES=$(wc -l < .readmeAI 2>/dev/null || echo 0); BYTES=$(wc -c < .readmeAI 2>/dev/null || echo 0); TOKENS=$(( BYTES / 4 )); printf '\\nReadMeAI context: %s lines ~%s tokens\\n' \"$LINES\" \"$TOKENS\"; awk '/## .* QUICK REFERENCE/{f=1} f && /^---$/{c++; if(c==2)exit} f{print}' .readmeAI | head -14; fi"
           }
         ]
       }
@@ -221,7 +332,7 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f '.readmeAI' ]; then rm -f .claude/.readmeai.active 2>/dev/null; COMMIT=$(git log -1 --format='%h %s' 2>/dev/null || echo 'no git'); echo \"$(date '+%Y-%m-%d %H:%M') | $COMMIT\" > .claude/.readmeai.session 2>/dev/null; echo ''; echo 'ReadMeAI: update QUICK REFERENCE + SESSION STATE before closing.'; fi"
+            "command": "rm -f .claude/.readmeai.active 2>/dev/null; bash .claude/readmeai-sync.sh 2>/dev/null || true"
           }
         ]
       }
@@ -241,6 +352,77 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
 }
 '@
     $script:Created += "Claude Code hooks -> $hooksFile"
+  }
+
+  # Generate readmeai-sync.sh — autonomous sync engine (called by Stop hook)
+  $syncScript = ".claude\readmeai-sync.sh"
+  if (-not (Test-Path $syncScript)) {
+    $syncContent = @'
+#!/usr/bin/env bash
+# ReadMeAI Autonomous Sync Engine — runs automatically at session end via Stop hook.
+# Also called by git post-commit hook. No API calls, no cost.
+[[ -f '.readmeAI' ]] || exit 0
+
+LINES=$(wc -l < .readmeAI 2>/dev/null || echo 0)
+TOKENS=$(( $(wc -c < .readmeAI 2>/dev/null || echo 0) / 4 ))
+printf '\nReadMeAI Sync — %s lines · ~%s tokens\n' "$LINES" "$TOKENS"
+
+# 1. Auto-patch QUICK REFERENCE Last action from last git commit
+if git rev-parse --git-dir &>/dev/null 2>&1; then
+  LAST_COMMIT=$(git log -1 --format='%s' 2>/dev/null || true)
+  LAST_DATE=$(git log -1 --format='%ci' 2>/dev/null | cut -d' ' -f1 || true)
+  if [[ -n "$LAST_COMMIT" ]] && grep -q 'Last action' .readmeAI 2>/dev/null; then
+    SAFE_MSG=$(printf '%s' "$LAST_COMMIT" | sed 's/[@&/\\]/\\&/g')
+    sed -i "s@.*Last action.*@| **Last action** | $LAST_DATE — $SAFE_MSG |@" .readmeAI 2>/dev/null || true
+    printf 'ReadMeAI ✓ QUICK REFERENCE auto-patched\n'
+  fi
+
+  # 2. Flag new files from last commit not in .readmeAI
+  CONTENT=$(cat .readmeAI)
+  git diff HEAD~1 HEAD --name-status 2>/dev/null | while IFS=$'\t' read -r STATUS FILE; do
+    [[ -z "$FILE" ]] && continue
+    if [[ "$STATUS" == "A" ]] && ! grep -qF "$FILE" .readmeAI 2>/dev/null; then
+      printf '+ New file not in STRUCTURE MAP: %s\n' "$FILE"
+    elif [[ "$STATUS" == "D" ]] && grep -qF "$FILE" .readmeAI 2>/dev/null; then
+      printf '✗ Deleted file still in .readmeAI: %s\n' "$FILE"
+    fi
+  done
+fi
+
+# 3. Log session timestamp
+mkdir -p .claude
+printf '%s | session end\n' "$(date '+%Y-%m-%d %H:%M')" >> .claude/.readmeai.log 2>/dev/null || true
+'@
+    New-Item -ItemType Directory -Force ".claude" | Out-Null
+    Set-Content -Path $syncScript -Value $syncContent -Encoding utf8
+    $script:Created += "ReadMeAI sync engine → $syncScript"
+  }
+}
+
+# ── Git post-commit hook — autonomous sync in any editor ─────────────────────
+$gitDir = git rev-parse --git-dir 2>$null
+if ($gitDir) {
+  $hookFile = Join-Path $gitDir "hooks\post-commit"
+  $hookExists = (Test-Path $hookFile) -and (Select-String -Path $hookFile -Pattern "readmeai" -Quiet -EA SilentlyContinue)
+  if (-not $hookExists) {
+    $hookContent = @'
+#!/usr/bin/env bash
+# ReadMeAI — auto-sync context after every commit (works in any editor)
+if [ -f '.claude/readmeai-sync.sh' ]; then
+  bash .claude/readmeai-sync.sh 2>/dev/null || true
+elif [ -f '.readmeAI' ] && command -v git &>/dev/null; then
+  CMSG=$(git log -1 --format='%s' 2>/dev/null || true)
+  CDATE=$(git log -1 --format='%ci' 2>/dev/null | cut -d' ' -f1 || true)
+  if [ -n "$CMSG" ] && grep -q 'Last action' .readmeAI 2>/dev/null; then
+    SAFE=$(printf '%s' "$CDATE — $CMSG" | sed 's/[@&/\\]/\\&/g')
+    sed -i "s@.*Last action.*@| **Last action** | $SAFE |@" .readmeAI 2>/dev/null || true
+    printf '\nReadMeAI ✓ QUICK REFERENCE auto-patched\n'
+  fi
+fi
+'@
+    Set-Content -Path $hookFile -Value $hookContent -Encoding utf8
+    if (Get-Command chmod -EA SilentlyContinue) { chmod +x $hookFile 2>$null }
+    $Created += "git post-commit hook → $hookFile"
   }
 }
 
@@ -276,6 +458,11 @@ if ($All -or (Get-Command aider -EA SilentlyContinue)) {
 $continueHome = Join-Path $env:USERPROFILE ".continue"
 if ($All -or (Test-Path $continueHome) -or (Test-Path ".continue")) {
   Write-Integration ".continue\rules\readmeai.md" "Continue" $CompactContent
+}
+
+# Zed — reads .rules via @rules mention
+if ($All -or (Get-Command zed -EA SilentlyContinue) -or (Test-Path ".zed")) {
+  Write-Integration ".rules" "Zed" $CompactContent
 }
 
 # ── 5. Stack detection ────────────────────────────────────────────────────────
@@ -344,5 +531,5 @@ Write-Host ""
 Write-Host "${B}Next step:${Re} tell your AI → ${G}""Detect my stack, fill what you can.""${Re}"
 if ($Detect) { Write-Host "  ${Gr}Or: ${G}""Read .readmeAI and continue.""${Re}${Gr}${Re}" }
 Write-Host ""
-Write-Host "${Gr}Flags: -All · -Detect · -Validate · -Update${Re}"
+Write-Host "${Gr}Flags: -All · -Detect · -Validate · -Update · -Sync · -Health${Re}"
 Write-Host ""

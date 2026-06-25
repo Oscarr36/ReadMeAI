@@ -6,6 +6,27 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [3.7.0] — 2026-06-25
+
+### Added
+- **`setup.ps1` full Windows parity** — PowerShell script now matches `setup.sh` feature-for-feature:
+  - `-Sync` flag: reads last git commit, flags new/deleted files not in .readmeAI, auto-patches QUICK REFERENCE "Last action"
+  - `-Health` flag: 5-dimension quality score [0-100] with progress bar and actionable advice
+  - **Antigravity CLI** detection (`agy` binary, with `gemini` fallback) — installs `GEMINI.md`
+  - **Zed editor** support — installs `.rules` file (read via `@rules` mention in Zed)
+  - **Autonomous sync engine** — generates `.claude/readmeai-sync.sh` called automatically by Claude Code Stop hook
+  - **Git `post-commit` hook** — installed when a git repo is detected; auto-patches QUICK REFERENCE in any editor
+  - **Updated Claude Code Stop hook** — now calls `readmeai-sync.sh` instead of printing a manual reminder
+  - **Updated UserPromptSubmit hook** — now shows context size (lines + token estimate) at session start
+  - `-Validate` map updated: added Zed, renamed Gemini CLI → Antigravity CLI / Gemini
+  - Flags summary updated: added `-Sync · -Health`
+  - Version bumped to v3.7 in setup title and AGENTS.md footer
+
+### Changed
+- README Roadmap: `setup.ps1 full Windows parity` marked `[x]` complete
+
+---
+
 ## [3.6.0] — 2026-06-25
 
 ### Added
