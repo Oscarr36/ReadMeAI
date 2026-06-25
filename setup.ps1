@@ -18,7 +18,14 @@
 param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Upgrade)
 if ($Update) { $Detect = $true }
 
-$G = "`e[32m"; $Gr = "`e[90m"; $B = "`e[1m"; $Y = "`e[33m"; $R = "`e[31m"; $Re = "`e[0m"
+$ESC = [char]27
+$G = "$ESC[32m"; $Gr = "$ESC[90m"; $B = "$ESC[1m"; $Y = "$ESC[33m"; $R = "$ESC[31m"; $Re = "$ESC[0m"
+# Enable VT processing for Windows consoles that need it (no-op if already enabled)
+try {
+  $stdout = (Add-Type -MemberDefinition '[DllImport("kernel32.dll")]public static extern IntPtr GetStdHandle(int n);[DllImport("kernel32.dll")]public static extern bool GetConsoleMode(IntPtr h,out uint m);[DllImport("kernel32.dll")]public static extern bool SetConsoleMode(IntPtr h,uint m);' -Name WinCon -Namespace ReadMeAI -PassThru)::GetStdHandle(-11)
+  $mode = 0; [ReadMeAI.WinCon]::GetConsoleMode($stdout, [ref]$mode) | Out-Null
+  [ReadMeAI.WinCon]::SetConsoleMode($stdout, $mode -bor 4) | Out-Null
+} catch {}
 
 # ── Version check helper ──────────────────────────────────────────────────────
 function Invoke-VersionCheck {
