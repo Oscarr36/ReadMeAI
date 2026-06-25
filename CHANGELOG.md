@@ -6,6 +6,21 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [3.6.0] — 2026-06-25
+
+### Added
+- **Git `post-commit` hook** — installed automatically by `setup.sh` when a git repo is detected. Fires after every `git commit` in ANY editor (Cursor, Windsurf, Zed, VS Code, JetBrains, terminal). Calls `.claude/readmeai-sync.sh` if present, falls back to inline QUICK REFERENCE patch. Makes context sync truly autonomous — no editor-specific hook system needed.
+- **OpenCode** (95K⭐, 2.5M devs/month) documented as supported via AGENTS.md
+- **Kilo Code** documented as supported via AGENTS.md
+- `.readmeAI` updated with actual project context (QUICK REFERENCE, SESSION STATE, DOMAIN RULES, STRUCTURE MAP, SYMBOL INDEX, DECISIONS LOG)
+
+### Changed
+- README "Works with" updated: OpenCode, Kilo Code added
+- AGENTS.md table updated: 40+ tools (was 30+)
+- Version bumped to v3.6
+
+---
+
 ## [3.5.0] — 2026-06-25
 
 ### Added

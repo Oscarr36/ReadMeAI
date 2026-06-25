@@ -16,7 +16,7 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 
-**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Antigravity CLI · Codex CLI · Aider · Continue · Zed · ChatGPT · any tool that reads AGENTS.md
+**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Antigravity CLI · Codex CLI · OpenCode · Kilo Code · Aider · Continue · Zed · any tool that reads AGENTS.md
 
 </div>
 
@@ -69,7 +69,7 @@ Run the setup script once. It detects every AI tool you have and creates the rig
 
 | Created file | Read by | Token cost |
 |-------------|---------|-----------|
-| `AGENTS.md` | Cursor, Windsurf, Copilot agent, Codex CLI, Amp, 30+ tools | once per session |
+| `AGENTS.md` | Cursor, Windsurf, Copilot agent, Codex CLI, OpenCode, Kilo Code, Amp, 40+ tools | once per session |
 | `GEMINI.md` | Antigravity CLI (`agy`) — formerly Gemini CLI | once per session |
 | `.claude/CLAUDE.md` | Claude Code | once per session |
 | `.cursor/rules/*.mdc` | Cursor (modern, scoped) | JIT — only when relevant |
@@ -141,7 +141,7 @@ bash setup.sh --sync         # after each coding session: flags new files, new s
 bash setup.sh --health       # score your .readmeAI quality [0-100] and find gaps
 ```
 
-**Run `--sync` after every session** — it reads your last git commit, flags new files not in STRUCTURE MAP, new functions not in SYMBOL INDEX, and deleted files still referenced. No API calls, no cost — pure git + grep.
+**Autonomous sync — no commands needed.** Setup installs a git `post-commit` hook that runs automatically after every `git commit`, in any editor. The hook auto-patches QUICK REFERENCE and flags gaps. Claude Code users also get a Stop hook that fires after every response.
 
 `--detect` does real work:
 - Reads `package.json` / `pyproject.toml` / `go.mod` / `Cargo.toml` / `Gemfile` — fills TECH STACK with real versions
@@ -217,10 +217,12 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 - [x] `--sync` — post-session context sync: flags new files, symbols, stale refs from git diff
 - [x] `--health` — quality score [0-100] with actionable gaps across 5 dimensions
 - [x] Zed editor support via `.rules` file
+- [x] Git `post-commit` hook — autonomous sync in **any** editor after every commit
+- [x] OpenCode + Kilo Code documented as supported via AGENTS.md
 - [ ] `readmeai` CLI (npm/pip install)
 - [ ] VS Code extension — syntax highlighting + snippets
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI
-- [ ] Auto-apply sync patches (currently flags, future: writes)
+- [ ] setup.ps1 full Windows parity
 
 ---
 

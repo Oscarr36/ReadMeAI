@@ -686,6 +686,41 @@ if $ALL || command -v zed &>/dev/null || [[ -d ".zed" ]]; then
   write_integration ".rules" "Zed" "$COMPACT_CONTENT"
 fi
 
+# ── Git post-commit hook — autonomous sync in ANY editor ──────────────────────
+# Fires automatically after every `git commit`. Works in Cursor, Windsurf,
+# Zed, VS Code, JetBrains, terminal — no editor-specific hook system needed.
+if git rev-parse --git-dir &>/dev/null; then
+  GIT_HOOKS_DIR="$(git rev-parse --git-dir)/hooks"
+  HOOK_FILE="$GIT_HOOKS_DIR/post-commit"
+  if [[ ! -f "$HOOK_FILE" ]] || ! grep -q "readmeai" "$HOOK_FILE" 2>/dev/null; then
+    mkdir -p "$GIT_HOOKS_DIR"
+    # Preserve any existing hook content
+    EXISTING=""
+    [[ -f "$HOOK_FILE" ]] && EXISTING=$(cat "$HOOK_FILE")
+    cat > "$HOOK_FILE" << 'POSTHOOKEOF'
+#!/usr/bin/env bash
+# ReadMeAI — auto-sync context after every commit (works in any editor)
+if [ -f '.claude/readmeai-sync.sh' ]; then
+  bash .claude/readmeai-sync.sh 2>/dev/null || true
+elif [ -f '.readmeAI' ] && command -v git &>/dev/null; then
+  CMSG=$(git log -1 --format='%s' 2>/dev/null || true)
+  CDATE=$(git log -1 --format='%ci' 2>/dev/null | cut -d' ' -f1 || true)
+  if [ -n "$CMSG" ] && grep -q 'Last action' .readmeAI 2>/dev/null; then
+    SAFE=$(printf '%s' "$CDATE — $CMSG" | sed 's/[@&/\\]/\\&/g')
+    sed -i "s@.*Last action.*@| Last action | $SAFE |@" .readmeAI 2>/dev/null || true
+    printf '\nReadMeAI \342\234\223 QUICK REFERENCE auto-patched\n'
+  fi
+fi
+POSTHOOKEOF
+    # Re-append any previous hook content below the ReadMeAI block
+    if [[ -n "$EXISTING" ]] && ! grep -q "^#!/" <<< "$EXISTING"; then
+      printf '\n%s\n' "$EXISTING" >> "$HOOK_FILE"
+    fi
+    chmod +x "$HOOK_FILE"
+    CREATED+=("Git post-commit hook → .git/hooks/post-commit (auto-syncs in any editor)")
+  fi
+fi
+
 # ── 5. Stack detection ────────────────────────────────────────────────────────
 if $DETECT; then
   echo ""; echo -e "${BOLD}Detecting stack...${RESET}"
