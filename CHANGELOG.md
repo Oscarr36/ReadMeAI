@@ -6,6 +6,21 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [4.1.0] — 2026-06-25
+
+### Fixed
+- **[CRITICAL] `.readmeAI` overwritten on every run** — now skips download if file exists, preserving user content. `-Upgrade` still refreshes it.
+- **[CRITICAL] `setup.ps1` fails when run as `.\setup.ps1` on PS 5.1** — added UTF-8 BOM so PowerShell 5.1 reads the file in the correct encoding instead of falling back to Windows-1252.
+- **[CRITICAL] `-Upgrade` always showed "Current: unknown"** — variable name collision between `$m` (VT console mode `[uint32]`) and `$m` (Select-String result). Renamed VT variable to `$mMode`.
+- **[CRITICAL] `.sh` files written with UTF-8 BOM** — `Set-Content -Encoding utf8` in PS 5.1 adds BOM which breaks bash shebang. Now uses `[System.IO.File]::WriteAllText` with `UTF8Encoding($false)` for `readmeai-sync.sh` and the git post-commit hook.
+- **`-Upgrade` saved script to disk** (UTF-8 without BOM, same parse failure) — now uses `Invoke-Expression (Invoke-WebRequest ...).Content` to execute in-memory, bypassing file encoding issues.
+- **`-Health` gave false high scores on blank template** — regex for QUICK REFERENCE, DOMAIN RULES, and SYMBOL INDEX was matching all table rows/list items across the entire file. Now scoped to each specific section using regex extraction. Blank template scores correctly low.
+- **`-Update` was identical to `-Detect`** — now actually removes the old TECH STACK section before re-adding the refreshed one.
+- **`-Validate` was missing Continue and Aider** — added `.continue\rules\readmeai.md` and `.aider.conf.yml` to the tool checklist.
+- **Cosmetic: "Claude Code hooks ->"** — changed to use `→` like all other summary lines.
+
+---
+
 ## [4.0.0] — 2026-06-25
 
 ### Added

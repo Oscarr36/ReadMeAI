@@ -1,4 +1,4 @@
-# ReadMeAI v4.0 — Smart Setup Script (Windows PowerShell)
+﻿# ReadMeAI v4.0 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -32,9 +32,9 @@ public class RMAConsole {
 }
 '@
   }
-  $h = [RMAConsole]::GetStdHandle(-11); [uint32]$m = 0
-  [RMAConsole]::GetConsoleMode($h, [ref]$m) | Out-Null
-  [RMAConsole]::SetConsoleMode($h, $m -bor [uint32]4) | Out-Null
+  $h = [RMAConsole]::GetStdHandle(-11); [uint32]$mMode = 0
+  [RMAConsole]::GetConsoleMode($h, [ref]$mMode) | Out-Null
+  [RMAConsole]::SetConsoleMode($h, $mMode -bor [uint32]4) | Out-Null
   $G = "$ESC[32m"; $Gr = "$ESC[90m"; $B = "$ESC[1m"; $Y = "$ESC[33m"; $R = "$ESC[31m"; $Re = "$ESC[0m"
 } catch {
   $G = ''; $Gr = ''; $B = ''; $Y = ''; $R = ''; $Re = ''
@@ -62,16 +62,13 @@ if ($Upgrade) {
   Write-Host ""; Write-Host "${B}ReadMeAI Upgrade${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
   $localVer = "unknown"
   if (Test-Path ".readmeAI") {
-    $m = Select-String -Path ".readmeAI" -Pattern "READMEAI v[\d.]+" -EA SilentlyContinue | Select-Object -First 1
-    if ($m) { $localVer = $m.Matches.Value -replace "READMEAI ","" }
+    $verMatch = Select-String -Path ".readmeAI" -Pattern "READMEAI v[\d.]+" -EA SilentlyContinue | Select-Object -First 1
+    if ($verMatch) { $localVer = $verMatch.Matches.Value -replace "READMEAI ","" }
   }
   Write-Host "Current: ${B}$localVer${Re}"
   Write-Host "Fetching latest setup from GitHub..."
   $setupUrl = "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1"
-  $tmpFile  = Join-Path $env:TEMP "readmeai_upgrade.ps1"
-  Invoke-WebRequest -Uri $setupUrl -OutFile $tmpFile -UseBasicParsing
-  & $tmpFile -All
-  Remove-Item $tmpFile -EA SilentlyContinue
+  Invoke-Expression (Invoke-WebRequest -Uri $setupUrl -UseBasicParsing).Content
   exit 0
 }
 
@@ -149,14 +146,19 @@ if ($Health) {
   elseif ($lineCount -gt 500)  { Write-Host "${Y}⚠${Re}  [12/20] Size: $lineCount lines (~$tokens tokens) — heavy"; $score += 12 }
   else                         { Write-Host "${G}✓${Re}  [20/20] Size: $lineCount lines (~$tokens tokens)"; $score += 20 }
 
-  # 2. QUICK REFERENCE (20pts)
-  $qrRows = ([regex]::Matches($content, '(?m)^\|.+\|.+\|')).Count
-  if     ($qrRows -ge 3) { Write-Host "${G}✓${Re}  [20/20] QUICK REFERENCE: $qrRows rows — hot restart ready"; $score += 20 }
-  elseif ($qrRows -gt 0) { Write-Host "${Y}⚠${Re}  [10/20] QUICK REFERENCE: $qrRows rows — partially filled"; $score += 10 }
+  # 2. QUICK REFERENCE (20pts) — scoped to just that section
+  $qrMatch = [regex]::Match($content, '(?s)## .* QUICK REFERENCE.*?(?=\n---)')
+  $qrSection = if ($qrMatch.Success) { $qrMatch.Value } else { "" }
+  $qrRows = ([regex]::Matches($qrSection, '(?m)^\| \*\*[A-Z]')).Count
+  $qrFilled = $qrRows -gt 0 -and $qrSection -notmatch '\| — \|'
+  if     ($qrFilled)     { Write-Host "${G}✓${Re}  [20/20] QUICK REFERENCE: filled — hot restart ready"; $score += 20 }
+  elseif ($qrRows -gt 0) { Write-Host "${Y}⚠${Re}  [10/20] QUICK REFERENCE: table exists but all values are — (blank)"; $score += 10 }
   else                   { Write-Host "${R}✗${Re}  [0/20]  QUICK REFERENCE: empty — AI restarts cold every session" }
 
-  # 3. DOMAIN RULES (20pts)
-  $dr = ([regex]::Matches($content, '(?m)^- (?!—)')).Count
+  # 3. DOMAIN RULES (20pts) — scoped to just that section
+  $drMatch = [regex]::Match($content, '(?s)## .* DOMAIN RULES.*?(?=\n---)')
+  $drSection = if ($drMatch.Success) { $drMatch.Value } else { "" }
+  $dr = ([regex]::Matches($drSection, '(?m)^- (?!—)')).Count
   if     ($dr -ge 5) { Write-Host "${G}✓${Re}  [20/20] DOMAIN RULES: $dr rules"; $score += 20 }
   elseif ($dr -ge 2) { Write-Host "${Y}⚠${Re}  [12/20] DOMAIN RULES: $dr rules — add more"; $score += 12 }
   elseif ($dr -eq 1) { Write-Host "${Y}⚠${Re}  [6/20]  DOMAIN RULES: 1 rule — bare minimum"; $score += 6 }
@@ -167,8 +169,10 @@ if ($Health) {
     Write-Host "${G}✓${Re}  [20/20] SESSION STATE: filled"; $score += 20
   } else { Write-Host "${Y}⚠${Re}  [0/20]  SESSION STATE: empty — AI starts cold every session" }
 
-  # 5. SYMBOL INDEX (20pts)
-  $si = ([regex]::Matches($content, '(?m)^\| [a-zA-Z`]')).Count
+  # 5. SYMBOL INDEX (20pts) — scoped to just that section, exclude placeholder rows
+  $siMatch = [regex]::Match($content, '(?s)## .* SYMBOL INDEX.*?(?=\n---)')
+  $siSection = if ($siMatch.Success) { $siMatch.Value } else { "" }
+  $si = ([regex]::Matches($siSection, '(?m)^\| [a-zA-Z`][^\|]*\| [^\|]+\| (?!—)[^\|]+\|')).Count
   if     ($si -ge 5) { Write-Host "${G}✓${Re}  [20/20] SYMBOL INDEX: $si entries"; $score += 20 }
   elseif ($si -ge 2) { Write-Host "${Y}⚠${Re}  [10/20] SYMBOL INDEX: $si entries — add more"; $score += 10 }
   else               { Write-Host "${R}✗${Re}  [0/20]  SYMBOL INDEX: empty" }
@@ -206,6 +210,8 @@ if ($Validate) {
     "Cline"                    = ".clinerules\readmeai.md"
     "Roo Code"                 = ".roo\rules\readmeai.md"
     "Junie (JetBrains)"        = ".junie\guidelines.md"
+    "Continue"                 = ".continue\rules\readmeai.md"
+    "Aider"                    = ".aider.conf.yml"
   }.GetEnumerator() | ForEach-Object {
     if (Test-Path $_.Value) { Write-Host "${G}✓${Re} $($_.Key) → $($_.Value)" }
     else { Write-Host "${Gr}–${Re}  $($_.Key) not wired" }
@@ -215,9 +221,13 @@ if ($Validate) {
 
 Write-Host ""; Write-Host "${B}ReadMeAI v4.0 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
-# ── 1. Download .readmeAI ─────────────────────────────────────────────────────
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
-Write-Host "${G}✓${Re} .readmeAI downloaded"
+# ── 1. Download .readmeAI (only if not already present) ──────────────────────
+if (Test-Path ".readmeAI") {
+  Write-Host "${Gr}–${Re}  .readmeAI already exists — preserved (run -Upgrade to refresh)"
+} else {
+  Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI" -UseBasicParsing
+  Write-Host "${G}✓${Re} .readmeAI downloaded"
+}
 
 $Created = @()
 
@@ -413,7 +423,7 @@ if ($All -or (Get-Command claude -EA SilentlyContinue) -or (Test-Path $claudeHom
   }
 }
 '@
-    $script:Created += "Claude Code hooks -> $hooksFile"
+    $script:Created += "Claude Code hooks → $hooksFile"
   }
 
   # Generate readmeai-sync.sh — autonomous sync engine (called by Stop hook)
@@ -456,7 +466,9 @@ mkdir -p .claude
 printf '%s | session end\n' "$(date '+%Y-%m-%d %H:%M')" >> .claude/.readmeai.log 2>/dev/null || true
 '@
     New-Item -ItemType Directory -Force ".claude" | Out-Null
-    Set-Content -Path $syncScript -Value $syncContent -Encoding utf8
+    # UTF-8 without BOM — bash rejects BOM in shebang line
+    [System.IO.File]::WriteAllText((Resolve-Path ".claude" | Join-Path -ChildPath "readmeai-sync.sh"),
+      $syncContent, (New-Object System.Text.UTF8Encoding $false))
     $script:Created += "ReadMeAI sync engine → $syncScript"
   }
 }
@@ -482,7 +494,9 @@ elif [ -f '.readmeAI' ] && command -v git &>/dev/null; then
   fi
 fi
 '@
-    Set-Content -Path $hookFile -Value $hookContent -Encoding utf8
+    # UTF-8 without BOM — bash rejects BOM in shebang line
+    $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+    [System.IO.File]::WriteAllText($hookFile, $hookContent, $utf8NoBom)
     if (Get-Command chmod -EA SilentlyContinue) { chmod +x $hookFile 2>$null }
     $Created += "git post-commit hook → $hookFile"
   }
@@ -588,12 +602,25 @@ if ($Detect) {
 
   if ($stackLines.Count -gt 0) {
     $existing = Get-Content ".readmeAI" -Raw
-    if ($existing -notmatch "## 🛠 TECH STACK") {
+    $hasStack = $existing -match "## 🛠 TECH STACK"
+    if ($hasStack -and -not $Update) {
+      Write-Host "${Gr}–${Re}  TECH STACK exists (run -Update to refresh)"
+    } else {
+      if ($hasStack) {
+        # Remove old TECH STACK section before re-adding
+        $lines = Get-Content ".readmeAI"
+        $inSection = $false; $newLines = @()
+        foreach ($line in $lines) {
+          if ($line -match "## 🛠 TECH STACK")      { $inSection = $true; continue }
+          if ($inSection -and $line -match "^---\s*$") { $inSection = $false; continue }
+          if (-not $inSection) { $newLines += $line }
+        }
+        Set-Content ".readmeAI" $newLines -Encoding utf8
+      }
       $section = "`n`n## 🛠 TECH STACK`n_Auto-detected $today_`n`n| Layer | Technology | Version | Notes |`n|-------|-----------|---------|-------|`n" + ($stackLines -join "`n")
       Add-Content ".readmeAI" $section -Encoding utf8
-      Write-Host "${G}✓${Re} Stack pre-filled ($($stackLines.Count) layers)"
-    } else {
-      Write-Host "${Gr}–${Re}  TECH STACK exists (use -Update to refresh)"
+      $action = if ($hasStack) { "refreshed" } else { "pre-filled" }
+      Write-Host "${G}✓${Re} Stack $action ($($stackLines.Count) layers)"
     }
   } else { Write-Host "${Y}⚠${Re}  No stack detected." }
 }
