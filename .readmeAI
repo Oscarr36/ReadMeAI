@@ -1,6 +1,6 @@
 <!--
   ╔══════════════════════════════════════════════════════════════════════╗
-  ║  READMEAI v3.8 — AI-TO-AI PROJECT CONTEXT FILE                     ║
+  ║  READMEAI v3.9 — AI-TO-AI PROJECT CONTEXT FILE                     ║
   ║  Lean by default · Every line earns its place · Zero drift         ║
   ║  Setup: bash setup.sh  ·  Docs: github.com/Oscarr36/ReadMeAI      ║
   ╚══════════════════════════════════════════════════════════════════════╝
@@ -84,6 +84,13 @@
 - —
 
 _What belongs here: "User IDs are UUIDs in the API but integers in the DB — never expose the integer", "Prices stored in cents, never floats", "The `active` flag is soft-delete — always filter by it", "Tokens expire at midnight UTC regardless of creation time", "The free tier has a 5-req/min limit enforced client-side AND server-side — both must be updated together"._
+
+### Deprecated / Renamed
+> **Anti-hallucination anchors. Never reach for these — use the replacement instead.**
+
+| Dead symbol / API | Replaced by | Why |
+|-------------------|-------------|-----|
+| — | — | — |
 
 ---
 
@@ -186,6 +193,13 @@ _Specific enough to resume from exactly here._
 ### Next immediate step
 _Exact action. No ambiguity. If blocked, state what is needed to unblock._
 
+### Do NOT touch this session
+_Areas frozen, under migration, or owned by another team member. Flag and stop if asked to modify._
+- —
+
+### Branch / workspace
+_Branch: — · Uncommitted: — · Open PR: —_
+
 ### Blockers
 - —
 
@@ -225,6 +239,17 @@ _Format: `- [x] YYYY-MM-DD — description`_
 | ID | Status | Description | Workaround | Root cause |
 |----|--------|-------------|-----------|------------|
 | — | `open` · `in-progress` · `resolved` | — | — | — |
+
+---
+
+## ❌ ERROR PATTERNS
+
+> **Confirmed mistakes the AI has repeated across sessions. Read before writing code.**
+> **Format: symptom → root cause → correct approach. Append only.**
+
+| Symptom | Root cause | Correct approach |
+|---------|-----------|-----------------|
+| — | — | — |
 
 ---
 
@@ -336,6 +361,13 @@ Entity: —
 |---------|-------------|
 | — | — |
 
+### Environment variables
+> **Exact names prevent AI hallucination of wrong var names.**
+
+| Variable | Required | Purpose | Example (non-secret) |
+|----------|----------|---------|---------------------|
+| — | yes/no | — | — |
+
 ════════════════════════════════════════════════════════════════════════
 FIRST-TIME SETUP — execute when SESSION STATE is blank. Once only.
 ════════════════════════════════════════════════════════════════════════
@@ -418,6 +450,6 @@ STEP 5 — Confirm and lock
   Write SESSION STATE to mark first setup complete.
 
 ════════════════════════════════════════════════════════════════════════
-Context powered by ReadMeAI v3.6 — https://github.com/Oscarr36/ReadMeAI
+Context powered by ReadMeAI v3.9 — https://github.com/Oscarr36/ReadMeAI
 ════════════════════════════════════════════════════════════════════════
 -->

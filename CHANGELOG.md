@@ -6,6 +6,22 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [3.9.0] — 2026-06-25
+
+### Added
+- **`❌ ERROR PATTERNS` section** (new) — table of confirmed AI mistakes with symptom → root cause → correct approach. Lives between KNOWN ISSUES and AI NOTES. Prevents the AI from repeating the same class of mistake across sessions.
+- **`Deprecated / Renamed` subsection in DOMAIN RULES** — anti-hallucination anchors listing dead APIs/symbols alongside their replacements. Prevents the AI from reaching for removed functions.
+- **`Do NOT touch this session` in SESSION STATE** — frozen areas (under migration, owned by another team member). AI stops and flags if asked to touch these.
+- **`Branch / workspace` line in SESSION STATE** — branch name, uncommitted files, open PR. Recovers exact workspace state in one line on hot restart.
+- **`Environment variables` table in optional ENVIRONMENT section** — exact var names, required/optional, example (non-secret). Prevents AI hallucination of wrong env var names.
+- Version bumped to v3.9 in header, template footer, README badge
+
+### Changed
+- README: version badge updated to 3.9
+- README: v3.9 improvements documented in Roadmap
+
+---
+
 ## [3.8.0] — 2026-06-25
 
 ### Added

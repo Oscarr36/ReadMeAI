@@ -10,7 +10,7 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
-[![Version](https://img.shields.io/badge/version-3.8-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-3.9-brightgreen.svg)](.readmeAI)
 [![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](AGENTS.md)
 [![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -95,15 +95,16 @@ Lean by default (~300 lines). Every section earns its place:
 ⚡  QUICK REFERENCE   — 5 lines. Hot restart in <50 tokens.
 ⚙️  AI PROTOCOL       — when to read what, session start/end rules
 📋  PROJECT IDENTITY  — stack, commands, repo
-🧠  DOMAIN RULES      — rules that cause bugs when unknown (highest value)
+🧠  DOMAIN RULES      — rules that cause bugs when unknown (+ Deprecated/Renamed table)
 🏗  STRUCTURE MAP     — annotated file tree — replaces filesystem scanning
 🔍  SYMBOL INDEX      — key symbols with purpose — no stale line numbers
 📐  CONVENTIONS       — naming, git, comments — enforced on all output
 ✅  CODE QUALITY      — pre-output checklist + forbidden patterns (mandatory)
-🎯  SESSION STATE     — hot-restart point: objective, last action, next step
+🎯  SESSION STATE     — objective, last action, next step, "do NOT touch", branch state
 📚  DECISIONS LOG     — architecture choices with rationale (append-only)
 ✅  PROGRESS          — in-progress, backlog, completed
 🐛  KNOWN ISSUES      — bugs and tech debt
+❌  ERROR PATTERNS    — confirmed AI mistakes: symptom → root cause → fix (new in v3.9)
 🗒  AI NOTES          — gotchas, surprises [!] [~] [?] severity tags
 ```
 
@@ -226,6 +227,7 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 - [x] Cline support — `.clinerules/readmeai.md` (VS Code extension, 58k⭐)
 - [x] Roo Code support — `.roo/rules/readmeai.md` (widely deployed Cline fork)
 - [x] Junie support — `.junie/guidelines.md` (JetBrains AI agent)
+- [x] Template v3.9 — ERROR PATTERNS section, Deprecated/Renamed table, session "do NOT touch", branch state
 - [ ] `readmeai` CLI (npm/pip install)
 - [ ] VS Code extension — syntax highlighting + snippets
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI
