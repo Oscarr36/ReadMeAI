@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ReadMeAI v4.2 — Smart Setup Script
+# ReadMeAI v4.3 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -192,6 +192,42 @@ if $SYNC; then
           [[ -n "$name" ]] && SYMS+=("$name")
         done < <(grep -E "^pub (fn|struct|impl|trait) [A-Z]" "$f" 2>/dev/null | head -8)
         ;;
+      rb)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(def|class|module) ([A-Za-z_][A-Za-z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^(class|module) [A-Z]|^ {0,2}def [a-z]" "$f" 2>/dev/null | head -8)
+        ;;
+      php)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(function|class) ([A-Za-z_][A-Za-z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^(class|interface|trait) [A-Z]|^ {0,4}(public |protected |static )*function [a-z]" "$f" 2>/dev/null | head -8)
+        ;;
+      kt|kts)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(fun|class|object|interface) ([A-Za-z_][A-Za-z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^(class|object|interface|data class|fun) [A-Z]|^ {0,4}fun [a-z]" "$f" 2>/dev/null | head -8)
+        ;;
+      java)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(class|interface|enum|[A-Z][a-zA-Z0-9]*) ([A-Za-z_][A-Za-z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^(public|protected) (static )?(class|interface|enum|[A-Z])" "$f" 2>/dev/null | head -8)
+        ;;
+      cs)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(class|interface|record|struct|[A-Z][a-zA-Z0-9]*) ([A-Za-z_][A-Za-z0-9_]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^ {0,4}(public|internal|protected) (static |abstract |sealed |partial )*(class|interface|record|struct|[A-Z])" "$f" 2>/dev/null | head -8)
+        ;;
+      ex|exs)
+        while IFS= read -r line; do
+          name=$(echo "$line" | grep -oE "(defmodule|def) ([A-Za-z_.][A-Za-z0-9_.]*)" | awk '{print $NF}' | head -1)
+          [[ -n "$name" ]] && SYMS+=("$name")
+        done < <(grep -E "^defmodule [A-Z]|^ {2}def [a-z]" "$f" 2>/dev/null | head -8)
+        ;;
     esac
     for sym in "${SYMS[@]}"; do
       if ! grep -qF "$sym" .readmeAI 2>/dev/null; then
@@ -372,7 +408,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v4.2 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v4.3 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -412,7 +448,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.2](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.3](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration
@@ -602,6 +638,42 @@ while IFS= read -r f; do
         grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
       done < <(grep -E "^pub (fn|struct|trait) [A-Z]" "$f" 2>/dev/null \
         | grep -oE "(fn|struct|trait) [A-Z][a-zA-Z0-9_]*" | awk '{print $2}' | head -5 || true)
+      ;;
+    rb)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^(class|module) [A-Z]|^ {0,2}def [a-z]" "$f" 2>/dev/null \
+        | grep -oE "(def|class|module) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $2}' | head -5 || true)
+      ;;
+    php)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^(class|interface|trait) [A-Z]|^ {0,4}(public |protected |static )*function [a-z]" "$f" 2>/dev/null \
+        | grep -oE "(function|class|interface|trait) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $2}' | head -5 || true)
+      ;;
+    kt|kts)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^(class|object|interface|data class|fun) [A-Z]|^ {0,4}fun [a-z]" "$f" 2>/dev/null \
+        | grep -oE "(fun|class|object|interface) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $2}' | head -5 || true)
+      ;;
+    java)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^(public|protected) (static )?(class|interface|enum|[A-Z])" "$f" 2>/dev/null \
+        | grep -oE "[A-Za-z_][A-Za-z0-9_]*\s*[({]" | grep -oE "^[A-Za-z_][A-Za-z0-9_]*" | head -5 || true)
+      ;;
+    cs)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^ {0,4}(public|internal|protected) (static |abstract |sealed |partial )*(class|interface|record|struct|[A-Z])" "$f" 2>/dev/null \
+        | grep -oE "(class|interface|record|struct|[A-Z][a-zA-Z0-9]*) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $NF}' | head -5 || true)
+      ;;
+    ex|exs)
+      while IFS= read -r sym; do
+        grep -qF "$sym" .readmeAI 2>/dev/null || MISSING_SYMS+=("$sym ($f)")
+      done < <(grep -E "^defmodule [A-Z]|^ {2}def [a-z]" "$f" 2>/dev/null \
+        | grep -oE "(defmodule|def) [A-Za-z_.][A-Za-z0-9_.]*" | awk '{print $2}' | head -5 || true)
       ;;
   esac
 done < <(git diff HEAD~1 HEAD --name-only --diff-filter=AM 2>/dev/null | head -10 || true)

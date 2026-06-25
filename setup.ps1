@@ -1,4 +1,4 @@
-﻿# ReadMeAI v4.2 — Smart Setup Script (Windows PowerShell)
+﻿# ReadMeAI v4.3 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -219,7 +219,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v4.2 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v4.3 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI (only if not already present) ──────────────────────
 if (Test-Path ".readmeAI") {
@@ -259,7 +259,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.2](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.3](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'
@@ -450,7 +450,6 @@ if git rev-parse --git-dir &>/dev/null 2>&1; then
   fi
 
   # 2. Flag new files from last commit not in .readmeAI
-  CONTENT=$(cat .readmeAI)
   git diff HEAD~1 HEAD --name-status 2>/dev/null | while IFS=$'\t' read -r STATUS FILE; do
     [[ -z "$FILE" ]] && continue
     if [[ "$STATUS" == "A" ]] && ! grep -qF "$FILE" .readmeAI 2>/dev/null; then
@@ -459,9 +458,77 @@ if git rev-parse --git-dir &>/dev/null 2>&1; then
       printf '✗ Deleted file still in .readmeAI: %s\n' "$FILE"
     fi
   done
+
+  # 3. Flag new public symbols not in SYMBOL INDEX
+  while IFS= read -r f; do
+    [[ -f "$f" ]] || continue
+    ext="${f##*.}"
+    case "$ext" in
+      js|ts|jsx|tsx|mjs)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -oE "(export (default )?(async )?function|export (const|let|class)) [a-zA-Z_][a-zA-Z0-9_]*" "$f" 2>/dev/null \
+          | grep -oE "[a-zA-Z_][a-zA-Z0-9_]*$" | head -5 || true)
+        ;;
+      py)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^(async )?def [a-zA-Z_]|^class [A-Z]" "$f" 2>/dev/null \
+          | grep -oE "(def|class) [a-zA-Z_][a-zA-Z0-9_]*" | awk '{print $2}' | head -5 || true)
+        ;;
+      go)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^func [A-Z]" "$f" 2>/dev/null \
+          | grep -oE "func [A-Z][a-zA-Z0-9_]*" | awk '{print $2}' | head -5 || true)
+        ;;
+      rs)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^pub (fn|struct|trait) [A-Z]" "$f" 2>/dev/null \
+          | grep -oE "(fn|struct|trait) [A-Z][a-zA-Z0-9_]*" | awk '{print $2}' | head -5 || true)
+        ;;
+      rb)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^(class|module) [A-Z]|^ {0,2}def [a-z]" "$f" 2>/dev/null \
+          | grep -oE "(def|class|module) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $2}' | head -5 || true)
+        ;;
+      php)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^(class|interface|trait) [A-Z]|^ {0,4}(public |protected |static )*function [a-z]" "$f" 2>/dev/null \
+          | grep -oE "(function|class|interface|trait) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $2}' | head -5 || true)
+        ;;
+      kt|kts)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^(class|object|interface|data class|fun) [A-Z]|^ {0,4}fun [a-z]" "$f" 2>/dev/null \
+          | grep -oE "(fun|class|object|interface) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $2}' | head -5 || true)
+        ;;
+      java)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^(public|protected) (static )?(class|interface|enum|[A-Z])" "$f" 2>/dev/null \
+          | grep -oE "[A-Za-z_][A-Za-z0-9_]*[[:space:]]*[({]" | grep -oE "^[A-Za-z_][A-Za-z0-9_]*" | head -5 || true)
+        ;;
+      cs)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^ {0,4}(public|internal|protected) (static |abstract |sealed |partial )*(class|interface|record|struct|[A-Z])" "$f" 2>/dev/null \
+          | grep -oE "(class|interface|record|struct|[A-Z][a-zA-Z0-9]*) [A-Za-z_][A-Za-z0-9_]*" | awk '{print $NF}' | head -5 || true)
+        ;;
+      ex|exs)
+        while IFS= read -r sym; do
+          grep -qF "$sym" .readmeAI 2>/dev/null || printf '+ New symbol not in SYMBOL INDEX: %s (%s)\n' "$sym" "$f"
+        done < <(grep -E "^defmodule [A-Z]|^ {2}def [a-z]" "$f" 2>/dev/null \
+          | grep -oE "(defmodule|def) [A-Za-z_.][A-Za-z0-9_.]*" | awk '{print $2}' | head -5 || true)
+        ;;
+    esac
+  done < <(git diff HEAD~1 HEAD --name-only --diff-filter=AM 2>/dev/null | head -10 || true)
 fi
 
-# 3. Log session timestamp
+# 4. Log session timestamp
 mkdir -p .claude
 printf '%s | session end\n' "$(date '+%Y-%m-%d %H:%M')" >> .claude/.readmeai.log 2>/dev/null || true
 '@
