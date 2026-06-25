@@ -19,13 +19,26 @@ param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch
 if ($Update) { $Detect = $true }
 
 $ESC = [char]27
-$G = "$ESC[32m"; $Gr = "$ESC[90m"; $B = "$ESC[1m"; $Y = "$ESC[33m"; $R = "$ESC[31m"; $Re = "$ESC[0m"
-# Enable VT processing for Windows consoles that need it (no-op if already enabled)
+# Enable ANSI/VT in Windows Console Host — falls back to plain text if unsupported.
+# Colors are only assigned if VT enable succeeds; otherwise all color vars = ''.
 try {
-  $stdout = (Add-Type -MemberDefinition '[DllImport("kernel32.dll")]public static extern IntPtr GetStdHandle(int n);[DllImport("kernel32.dll")]public static extern bool GetConsoleMode(IntPtr h,out uint m);[DllImport("kernel32.dll")]public static extern bool SetConsoleMode(IntPtr h,uint m);' -Name WinCon -Namespace ReadMeAI -PassThru)::GetStdHandle(-11)
-  $mode = 0; [ReadMeAI.WinCon]::GetConsoleMode($stdout, [ref]$mode) | Out-Null
-  [ReadMeAI.WinCon]::SetConsoleMode($stdout, $mode -bor 4) | Out-Null
-} catch {}
+  if (-not ([System.Management.Automation.PSTypeName]'RMAConsole').Type) {
+    Add-Type -TypeDefinition @'
+using System; using System.Runtime.InteropServices;
+public class RMAConsole {
+    [DllImport("kernel32.dll")] public static extern IntPtr GetStdHandle(int n);
+    [DllImport("kernel32.dll")] public static extern bool GetConsoleMode(IntPtr h, out uint m);
+    [DllImport("kernel32.dll")] public static extern bool SetConsoleMode(IntPtr h, uint m);
+}
+'@
+  }
+  $h = [RMAConsole]::GetStdHandle(-11); [uint32]$m = 0
+  [RMAConsole]::GetConsoleMode($h, [ref]$m) | Out-Null
+  [RMAConsole]::SetConsoleMode($h, $m -bor [uint32]4) | Out-Null
+  $G = "$ESC[32m"; $Gr = "$ESC[90m"; $B = "$ESC[1m"; $Y = "$ESC[33m"; $R = "$ESC[31m"; $Re = "$ESC[0m"
+} catch {
+  $G = ''; $Gr = ''; $B = ''; $Y = ''; $R = ''; $Re = ''
+}
 
 # ── Version check helper ──────────────────────────────────────────────────────
 function Invoke-VersionCheck {
