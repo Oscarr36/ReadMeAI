@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ReadMeAI v4.3 — Smart Setup Script
+# ReadMeAI v4.4 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -15,13 +15,14 @@
 #   bash setup.sh --sync         # auto-update context from last git session (no cost, no API)
 #   bash setup.sh --health       # score .readmeAI quality and find gaps
 #   bash setup.sh --upgrade      # upgrade to the latest ReadMeAI version
+#   bash setup.sh --new="idea"   # new project: inject idea so AI bootstraps the project
 
 set -euo pipefail
 
 GREEN='\033[0;32m'; GRAY='\033[0;90m'; BOLD='\033[1m'
 YELLOW='\033[0;33m'; RED='\033[0;31m'; RESET='\033[0m'
 
-ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; UPGRADE=false
+ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; UPGRADE=false; NEW_IDEA=""
 for arg in "$@"; do
   case "$arg" in
     --all)      ALL=true ;;
@@ -32,6 +33,7 @@ for arg in "$@"; do
     --sync)     SYNC=true ;;
     --health)   HEALTH=true ;;
     --upgrade)  UPGRADE=true ;;
+    --new=*)    NEW_IDEA="${arg#--new=}" ;;
   esac
 done
 
@@ -408,13 +410,29 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v4.3 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v4.4 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
 curl -sSL -o .readmeAI \
   https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI
 echo -e "${GREEN}✓${RESET} .readmeAI downloaded"
+
+# ── --new: inject idea into PROJECT IDENTITY so AI bootstraps the project ─────
+if [[ -n "$NEW_IDEA" ]]; then
+  awk -v idea="$NEW_IDEA" '
+    /^\| \*\*Name\*\* \| — \|/ {
+      print "| **Name** | _" idea "_ |"
+      next
+    }
+    { print }
+  ' .readmeAI > .readmeAI.tmp && mv .readmeAI.tmp .readmeAI
+  echo -e "${GREEN}✓${RESET} Project idea saved → .readmeAI (PROJECT IDENTITY)"
+  echo ""
+  echo -e "${BOLD}New project ready.${RESET} Start your AI session and say:"
+  echo -e "  ${GREEN}\"Read .readmeAI and bootstrap the project.\"${RESET}"
+  echo -e "  ${GRAY}The AI will recommend a stack and scaffold the structure.${RESET}"
+fi
 
 CREATED=()
 
@@ -448,7 +466,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.3](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.4](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration

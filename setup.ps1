@@ -1,4 +1,4 @@
-﻿# ReadMeAI v4.3 — Smart Setup Script (Windows PowerShell)
+﻿# ReadMeAI v4.4 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -15,7 +15,7 @@
 #   .\setup.ps1 -Upgrade        # upgrade to the latest ReadMeAI version
 #   .\setup.ps1 -All -Detect
 
-param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Upgrade)
+param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Upgrade, [string]$New = "")
 if ($Update) { $Detect = $true }
 
 $ESC = [char]27
@@ -219,7 +219,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v4.3 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v4.4 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI (only if not already present) ──────────────────────
 if (Test-Path ".readmeAI") {
@@ -227,6 +227,18 @@ if (Test-Path ".readmeAI") {
 } else {
   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI" -UseBasicParsing
   Write-Host "${G}✓${Re} .readmeAI downloaded"
+}
+
+# ── -New: inject idea into PROJECT IDENTITY so AI bootstraps the project ──────
+if ($New) {
+  $content = Get-Content ".readmeAI" -Raw
+  $content = $content -replace [regex]::Escape('| **Name** | — |'), "| **Name** | _$New_ |"
+  Set-Content ".readmeAI" $content -Encoding utf8
+  Write-Host "${G}✓${Re} Project idea saved → .readmeAI (PROJECT IDENTITY)"
+  Write-Host ""
+  Write-Host "${B}New project ready.${Re} Start your AI session and say:"
+  Write-Host "  ${G}""Read .readmeAI and bootstrap the project.""${Re}"
+  Write-Host "  ${Gr}The AI will recommend a stack and scaffold the structure.${Re}"
 }
 
 $Created = @()
@@ -259,7 +271,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.3](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.4](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'

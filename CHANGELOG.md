@@ -6,6 +6,23 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [4.4.0] — 2026-06-25
+
+### Added
+- **`--new="idea"` flag** (`setup.sh`) and **`-New "idea"`** (`setup.ps1`) — new project bootstrap mode:
+  - Injects the project idea into `.readmeAI` `PROJECT IDENTITY → Name` field.
+  - On first AI session, the AI reads the idea and runs the **New Project Protocol** (see below).
+  - Usage: `bash setup.sh --new="task manager with real-time collaboration"` (or pipe from curl)
+- **New Project Protocol** in `.readmeAI` FIRST-TIME SETUP — new STEP 1B activated when:
+  - The directory has no config files (package.json, go.mod, etc.) — empty project.
+  - In this mode the AI: reads the idea from PROJECT IDENTITY (or asks if blank), picks the
+    best-fit stack from the STEP 2 table with justification, gets confirmation, fills all
+    sections from the recommendation instead of the codebase, and offers to scaffold the
+    initial file structure automatically.
+- Version bumped to v4.4 across all files including `.readmeAI` footer.
+
+---
+
 ## [4.3.0] — 2026-06-25
 
 ### Added
