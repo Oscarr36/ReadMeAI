@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# ReadMeAI v3.4 — Smart Setup Script
+# ReadMeAI v3.8 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
-#           Aider, Continue, Antigravity CLI (agy), Zed, and any tool that reads AGENTS.md.
+#           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
+#           and any tool that reads AGENTS.md.
 #
 # Usage:
 #   curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
@@ -322,6 +323,9 @@ if $VALIDATE; then
     ["GitHub Copilot"]=".github/copilot-instructions.md"
     ["Antigravity CLI / Gemini"]="GEMINI.md"
     ["Zed"]=".rules"
+    ["Cline"]=".clinerules/readmeai.md"
+    ["Roo Code"]=".roo/rules/readmeai.md"
+    ["Junie (JetBrains)"]=".junie/guidelines.md"
   )
   for tool in "${!TOOLS[@]}"; do
     f="${TOOLS[$tool]}"
@@ -349,7 +353,7 @@ CREATED=()
 # ── 2. Integration content ────────────────────────────────────────────────────
 
 # AGENTS.md — universal cross-tool standard (concise, ~200 words)
-# Read by: Cursor, Windsurf, Copilot agent, Codex, Amp, Factory, Kilo, Zed, Warp, 30+ more
+# Read by: Cursor, Windsurf, Copilot agent, Codex, Amp, Factory, Kilo, Zed, Warp, 40+ more
 AGENTS_CONTENT='# ReadMeAI Agent Protocol
 
 ## Context
@@ -684,6 +688,21 @@ fi
 # Zed's agent reads project-level .rules at session start (@rules mention)
 if $ALL || command -v zed &>/dev/null || [[ -d ".zed" ]]; then
   write_integration ".rules" "Zed" "$COMPACT_CONTENT"
+fi
+
+# Cline — VS Code extension (58k stars). Reads .clinerules/ directory.
+if $ALL || [[ -d ".clinerules" ]]; then
+  write_integration ".clinerules/readmeai.md" "Cline" "$COMPACT_CONTENT"
+fi
+
+# Roo Code — Cline fork, widely deployed. Reads .roo/rules/ directory.
+if $ALL || [[ -d ".roo" ]]; then
+  write_integration ".roo/rules/readmeai.md" "Roo Code" "$COMPACT_CONTENT"
+fi
+
+# Junie — JetBrains AI agent. Reads .junie/guidelines.md (also reads AGENTS.md).
+if $ALL || [[ -d ".junie" ]]; then
+  write_integration ".junie/guidelines.md" "Junie (JetBrains)" "$COMPACT_CONTENT"
 fi
 
 # ── Git post-commit hook — autonomous sync in ANY editor ──────────────────────

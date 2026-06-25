@@ -6,6 +6,21 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [3.8.0] — 2026-06-25
+
+### Added
+- **Cline support** — creates `.clinerules/readmeai.md`. Detected when `.clinerules/` directory exists or `-All` flag used. Cline is the most popular VS Code AI coding extension (58k GitHub stars).
+- **Roo Code support** — creates `.roo/rules/readmeai.md`. Detected when `.roo/` directory exists or `-All` flag used. Roo Code is a widely-deployed Cline fork with mode-specific rules.
+- **Junie support** — creates `.junie/guidelines.md`. Detected when `.junie/` directory exists or `-All` flag used. JetBrains AI agent used across IntelliJ, PyCharm, WebStorm, etc.
+- `--validate` / `-Validate` maps updated: Cline, Roo Code, Junie added to tool checklist
+- Header comments updated: both `setup.sh` and `setup.ps1` list new tools
+- README "Works with" updated: Cline, Roo Code, Junie added
+- README integration table: 3 new rows (`.clinerules/`, `.roo/rules/`, `.junie/`)
+- Roadmap: Cline, Roo Code, Junie marked `[x]` complete
+- Version bumped to v3.8
+
+---
+
 ## [3.7.0] — 2026-06-25
 
 ### Added

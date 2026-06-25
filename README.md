@@ -10,13 +10,13 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
-[![Version](https://img.shields.io/badge/version-3.7-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-3.8-brightgreen.svg)](.readmeAI)
 [![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](AGENTS.md)
 [![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange.svg)](CONTRIBUTING.md)
 
-**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Antigravity CLI · Codex CLI · OpenCode · Kilo Code · Aider · Continue · Zed · any tool that reads AGENTS.md
+**Works with:** Claude Code · Cursor · Windsurf · GitHub Copilot · Antigravity CLI · Codex CLI · OpenCode · Kilo Code · Cline · Roo Code · Junie · Aider · Continue · Zed · any tool that reads AGENTS.md
 
 </div>
 
@@ -79,6 +79,9 @@ Run the setup script once. It detects every AI tool you have and creates the rig
 | `.aider.conf.yml` | Aider | every run |
 | `.continue/rules/readmeai.md` | Continue | once per session |
 | `.rules` | Zed (`@rules` mention) | on-demand |
+| `.clinerules/readmeai.md` | Cline (VS Code extension, 58k⭐) | every session |
+| `.roo/rules/readmeai.md` | Roo Code (Cline fork, widely deployed) | every session |
+| `.junie/guidelines.md` | Junie (JetBrains AI agent) | every session |
 
 **Cursor gets 3 scoped .mdc files** — `readmeai-context.mdc` (always), `readmeai-security.mdc` (auto-loads on auth files), `readmeai-conventions.mdc` (on-demand). JIT loading: context only when needed.
 
@@ -220,6 +223,9 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 - [x] Git `post-commit` hook — autonomous sync in **any** editor after every commit
 - [x] OpenCode + Kilo Code documented as supported via AGENTS.md
 - [x] `setup.ps1` full Windows parity — `-Sync`, `-Health`, Antigravity CLI, Zed, autonomous hooks
+- [x] Cline support — `.clinerules/readmeai.md` (VS Code extension, 58k⭐)
+- [x] Roo Code support — `.roo/rules/readmeai.md` (widely deployed Cline fork)
+- [x] Junie support — `.junie/guidelines.md` (JetBrains AI agent)
 - [ ] `readmeai` CLI (npm/pip install)
 - [ ] VS Code extension — syntax highlighting + snippets
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI

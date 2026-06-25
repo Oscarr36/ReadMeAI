@@ -1,7 +1,8 @@
-# ReadMeAI v3.7 — Smart Setup Script (Windows PowerShell)
+# ReadMeAI v3.8 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
-#           Aider, Continue, Antigravity CLI (agy), Zed, AGENTS.md universal standard.
+#           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
+#           AGENTS.md universal standard.
 #
 # Usage:
 #   irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
@@ -144,6 +145,9 @@ if ($Validate) {
     "Windsurf"                 = ".windsurfrules"
     "GitHub Copilot"           = ".github\copilot-instructions.md"
     "Zed"                      = ".rules"
+    "Cline"                    = ".clinerules\readmeai.md"
+    "Roo Code"                 = ".roo\rules\readmeai.md"
+    "Junie (JetBrains)"        = ".junie\guidelines.md"
   }.GetEnumerator() | ForEach-Object {
     if (Test-Path $_.Value) { Write-Host "${G}✓${Re} $($_.Key) → $($_.Value)" }
     else { Write-Host "${Gr}–${Re}  $($_.Key) not wired" }
@@ -151,7 +155,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v3.7 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v3.8 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/.readmeAI" -OutFile ".readmeAI"
@@ -187,7 +191,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v3.7](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v3.8](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'
@@ -463,6 +467,21 @@ if ($All -or (Test-Path $continueHome) -or (Test-Path ".continue")) {
 # Zed — reads .rules via @rules mention
 if ($All -or (Get-Command zed -EA SilentlyContinue) -or (Test-Path ".zed")) {
   Write-Integration ".rules" "Zed" $CompactContent
+}
+
+# Cline — VS Code extension (58k stars). Reads .clinerules/ directory.
+if ($All -or (Test-Path ".clinerules")) {
+  Write-Integration ".clinerules\readmeai.md" "Cline" $CompactContent
+}
+
+# Roo Code — Cline fork, widely deployed. Reads .roo/rules/ directory.
+if ($All -or (Test-Path ".roo")) {
+  Write-Integration ".roo\rules\readmeai.md" "Roo Code" $CompactContent
+}
+
+# Junie — JetBrains AI agent. Reads .junie/guidelines.md (also reads AGENTS.md).
+if ($All -or (Test-Path ".junie")) {
+  Write-Integration ".junie\guidelines.md" "Junie (JetBrains)" $CompactContent
 }
 
 # ── 5. Stack detection ────────────────────────────────────────────────────────
