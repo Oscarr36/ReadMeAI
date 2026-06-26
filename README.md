@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="img/Icon.png" alt="ReadMeAI logo" width="180" />
+<img src="img/Icon.png" alt="ReadMeAI" width="480" />
 
-<h1>ReadMeAI</h1>
+<br/><br/>
 
 <p><strong>Your AI coding tool forgets everything between sessions.<br>This fixes it — permanently.</strong></p>
 
