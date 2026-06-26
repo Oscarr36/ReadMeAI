@@ -7,7 +7,7 @@
 <meta name="description" content="Drop .readmeAI in any project. AI reads it first, every session. No re-explaining, no context drift. Works with Claude, ChatGPT, Copilot, Cursor, Windsurf."/>
 <meta property="og:title" content="ReadMeAI — AI never forgets your project"/>
 <meta property="og:description" content="One file. Persistent AI context. No re-explaining ever again."/>
-<meta property="og:image" content="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/Icon.png"/>
+<meta property="og:image" content="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/logo.png"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -150,6 +150,7 @@ nav{position:fixed;inset:0 0 auto;z-index:100;height:56px;display:flex;align-ite
 .feat-ico{width:38px;height:38px;border-radius:9px;background:var(--green-muted);border:1px solid rgba(0,232,122,.15);display:flex;align-items:center;justify-content:center;font-size:.95rem;margin-bottom:16px;position:relative;z-index:1}
 .feat h3{font-size:.9rem;font-weight:700;margin-bottom:8px;letter-spacing:-.015em;position:relative;z-index:1;line-height:1.3}
 .feat p{font-size:.83rem;color:var(--gray);line-height:1.7;position:relative;z-index:1}
+.feat p code{font-family:var(--mono);font-size:.8em;color:var(--green);background:var(--green-muted);border:1px solid rgba(0,232,122,.15);padding:1px 5px;border-radius:3px}
 
 /* ─── INSTALL ────────────────────────────────────────────────────────────── */
 .install-section{text-align:center}
@@ -202,7 +203,7 @@ footer a:hover{color:#fff}
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo"><div class="nav-logo-dot"></div>ReadMeAI</div>
+  <div class="nav-logo"><div class="nav-logo-dot"></div><img src="https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/img/logo.png" alt="ReadMeAI" height="22" style="display:block"/></div>
   <div class="nav-links">
     <a href="#demo">Demo</a>
     <a href="#features">Features</a>
@@ -216,7 +217,7 @@ footer a:hover{color:#fff}
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-badge"><div class="hero-badge-dot"></div><span>v3.0 · Smart Setup · Auto-wires every AI tool</span></div>
+  <div class="hero-badge"><div class="hero-badge-dot"></div><span>v4.6 · Zero dependencies · Works with every AI tool</span></div>
 
   <h1 class="hero-title">
     <span class="hero-line">
@@ -238,7 +239,7 @@ footer a:hover{color:#fff}
     <button class="hi-copy" onclick="heroCopy()">Copy</button>
   </div>
 
-  <div class="hero-compat"><strong>Works with</strong> &nbsp;Claude · ChatGPT · GitHub Copilot · Cursor · Windsurf · Gemini</div>
+  <div class="hero-compat"><strong>Works with</strong> &nbsp;Claude Code · Cursor · Windsurf · GitHub Copilot · Cline · Roo Code · Aider · Continue · Zed · Junie · Antigravity CLI · Codex CLI · any AGENTS.md tool</div>
 
   <div class="hero-scroll">
     <div class="hero-scroll-track"><div class="hero-scroll-dot"></div></div>
@@ -279,11 +280,14 @@ footer a:hover{color:#fff}
     <h2 class="section-h">Built to eliminate friction.</h2>
     <div class="feat-grid">
       <div class="feat"><span class="feat-n">01</span><div class="feat-ico">🧭</div><h3>Auto-read, zero prompts</h3><p>AI reads the file before you type anything. No command, no reminder. Wired into the protocol at session start.</p></div>
-      <div class="feat"><span class="feat-n">02</span><div class="feat-ico">🔌</div><h3>Every AI tool, auto-wired</h3><p>Setup script detects Claude Code, Cursor, Windsurf, Copilot, Aider, Continue — and creates the right hook file for each one.</p></div>
-      <div class="feat"><span class="feat-n">03</span><div class="feat-ico">🏗️</div><h3>Domain rules that stick</h3><p>Non-obvious business rules, gotchas, and architectural decisions — the things that cause bugs when unknown. Captured once, never lost.</p></div>
-      <div class="feat"><span class="feat-n">04</span><div class="feat-ico">✅</div><h3>Code quality gate</h3><p>Built-in checklist before every output: naming, nesting depth, forbidden patterns, no hardcoded values.</p></div>
-      <div class="feat"><span class="feat-n">05</span><div class="feat-ico">📚</div><h3>Decisions log</h3><p>Every architectural choice with rationale, appended automatically. The "why" is preserved even when the code changes.</p></div>
-      <div class="feat"><span class="feat-n">06</span><div class="feat-ico">⚡</div><h3>Lean by default</h3><p>~200 lines. No dead weight, no empty placeholders. Optional sections (security, API, testing) are there when you need them.</p></div>
+      <div class="feat"><span class="feat-n">02</span><div class="feat-ico">🔌</div><h3>13+ AI tools, auto-wired</h3><p>Setup detects Claude Code, Cursor, Windsurf, Copilot, Cline, Roo Code, Aider, Continue, Zed, Junie — and creates the right file for each.</p></div>
+      <div class="feat"><span class="feat-n">03</span><div class="feat-ico">🧠</div><h3>Domain rules that stick</h3><p>Non-obvious business rules, gotchas, architectural decisions — the things that cause bugs when unknown. Captured once, respected every session.</p></div>
+      <div class="feat"><span class="feat-n">04</span><div class="feat-ico">🔄</div><h3>Autonomous sync</h3><p>Git post-commit hook + Claude Code Stop hook update context automatically after every commit — in any editor, with zero commands.</p></div>
+      <div class="feat"><span class="feat-n">05</span><div class="feat-ico">📊</div><h3>--health · --lint · --sync</h3><p>Quality score [0-100], precise issue scanner, post-session context diff, and --compact to archive old entries. Full maintenance toolkit.</p></div>
+      <div class="feat"><span class="feat-n">06</span><div class="feat-ico">🚀</div><h3>New project bootstrap</h3><p><code>--new="your idea"</code> injects the idea into .readmeAI. Your AI recommends the best stack, justifies it, and scaffolds the file structure.</p></div>
+      <div class="feat"><span class="feat-n">07</span><div class="feat-ico">✅</div><h3>Code quality gate</h3><p>Built-in checklist before every output: naming, nesting depth, forbidden patterns, no hardcoded values. Mandatory — AI can't skip it.</p></div>
+      <div class="feat"><span class="feat-n">08</span><div class="feat-ico">⚡</div><h3>Lean by default</h3><p>~300 lines active. Optional sections (Security, API, Testing, Performance) excluded until you need them. No dead weight in your context window.</p></div>
+      <div class="feat"><span class="feat-n">09</span><div class="feat-ico">🔍</div><h3>Symbol index, no scanning</h3><p>Key functions and classes listed with purpose. AI navigates your codebase without grepping every file — faster and more accurate.</p></div>
     </div>
   </div>
 </section>
@@ -344,7 +348,7 @@ footer a:hover{color:#fff}
       <a href="https://github.com/Oscarr36/ReadMeAI/blob/main/.readmeAI" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;border-radius:10px;font-size:.95rem;font-weight:600;border:1px solid var(--border-strong);color:var(--gray);transition:all .25s" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,.22)'" onmouseout="this.style.color='var(--gray)';this.style.borderColor='var(--border-strong)'">View template →</a>
     </div>
     <div class="cta-meta">
-      <span>MIT License</span><span>Zero dependencies</span><span>Works offline</span><span>Any AI assistant</span>
+      <span>MIT License</span><span>Zero dependencies</span><span>Works offline</span><span>13+ AI tools</span><span>v4.6</span>
     </div>
   </div>
 </div>
@@ -442,7 +446,7 @@ footer a:hover{color:#fff}
 })();
 
 /* ── MARQUEE ───────────────────────────────────────────────────────────────── */
-const TOOLS = ['Claude','ChatGPT','GitHub Copilot','Cursor','Windsurf','Gemini','Codeium','Continue','Aider','Tabnine','Copilot Chat','Phind'];
+const TOOLS = ['Claude Code','Cursor','Windsurf','GitHub Copilot','Cline','Roo Code','Aider','Continue','Zed','Junie','Antigravity CLI','Codex CLI','OpenCode','Kilo Code','Any AGENTS.md tool'];
 const mq = document.getElementById('mq');
 [...TOOLS,...TOOLS,...TOOLS,...TOOLS].forEach(t => {
   const d = document.createElement('div');
