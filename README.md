@@ -179,30 +179,31 @@ Lean by default (~300 lines). Every section earns its place:
 ## Setup commands
 
 ```bash
-# First time
+# macOS / Linux
 curl -sSL https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.sh | bash
 
-# Options
-bash setup.sh --all              # wire ALL AI tool integrations
-bash setup.sh --detect           # pre-fill TECH STACK + AI NOTES from git history
-bash setup.sh --all --detect     # everything at once (recommended)
-
-# Maintenance
-bash setup.sh --sync             # flag new files/symbols, patch QUICK REFERENCE from last commit
-bash setup.sh --health           # score .readmeAI quality [0-100] across 5 dimensions
-bash setup.sh --lint             # list every unfilled field + actionable issues
-bash setup.sh --compact          # archive decisions + completed tasks >30 days → .readmeAI.archive
-bash setup.sh --export           # print a compact paste-ready context summary (~500 tokens)
-bash setup.sh --validate         # check all AI tool integrations are wired
-
-# Updates
-bash setup.sh --update           # refresh TECH STACK after adding dependencies
-bash setup.sh --upgrade          # upgrade ReadMeAI to the latest version
-
-# New projects
-bash setup.sh --new="task manager with real-time collaboration"
-# → AI reads the idea, recommends best-fit stack, scaffolds the structure
+# Windows PowerShell
+irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
 ```
+
+### Command reference
+
+| Command | PowerShell | What it does |
+|---------|-----------|--------------|
+| _(no flags)_ | _(no flags)_ | Download `.readmeAI` + detect AI tools |
+| `--all` | `-All` | Wire **all** 13+ AI tool integrations |
+| `--detect` | `-Detect` | Pre-fill TECH STACK + AI NOTES from manifests + git history |
+| `--all --detect` | `-All -Detect` | Everything at once — **recommended first run** |
+| `--sync` | `-Sync` | Flag new files/symbols since last commit, patch QUICK REFERENCE |
+| `--health` | `-Health` | Score `.readmeAI` quality \[0-100\] across 5 dimensions |
+| `--lint` | `-Lint` | List every unfilled field + actionable issues |
+| `--export` | `-Export` | Print compact paste-ready context summary (~500 tokens) |
+| `--compact` | `-Compact` | Archive decisions + completed tasks >30 days → `.readmeAI.archive` |
+| `--validate` | `-Validate` | Check all AI tool integrations are wired |
+| `--update` | `-Update` | Refresh TECH STACK after adding dependencies |
+| `--upgrade` | `-Upgrade` | Upgrade ReadMeAI to the latest version |
+| `--trim` | `-Trim` | Remove template boilerplate once setup is complete |
+| `--new="idea"` | `-New "idea"` | New project: AI recommends stack + scaffolds structure |
 
 > [!NOTE]
 > **Autonomous sync — no commands needed after setup.**
