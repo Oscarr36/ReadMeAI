@@ -6,6 +6,22 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [4.6.0] — 2026-06-26
+
+### Added
+- **`--compact` flag** (`setup.sh`) and **`-Compact`** (`setup.ps1`) — long-term file maintenance:
+  - Archives **DECISIONS LOG** table rows with dates older than 30 days to `.readmeAI.archive`
+  - Archives **PROGRESS Completed** items (`- [x] YYYY-MM-DD — …`) older than 30 days to `.readmeAI.archive`
+  - Archive file is append-only with dated headers — nothing is lost, just moved
+  - Reports lines saved: `File: 487 → 341 lines (−146)`
+  - Gracefully handles: nothing to archive, date calc failures, first-time archive creation
+  - Solves the "my context file keeps growing every week" problem that `--trim` doesn't address
+    (`--trim` removes template boilerplate; `--compact` removes aged *user-created* content)
+  - Usage: `bash setup.sh --compact` / `.\setup.ps1 -Compact`
+- Version bumped to v4.6 across all files.
+
+---
+
 ## [4.5.0] — 2026-06-25
 
 ### Added

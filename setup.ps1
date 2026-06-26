@@ -1,4 +1,4 @@
-﻿# ReadMeAI v4.5 — Smart Setup Script (Windows PowerShell)
+﻿# ReadMeAI v4.6 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -13,10 +13,11 @@
 #   .\setup.ps1 -Sync           # auto-update context from last git commit (no cost)
 #   .\setup.ps1 -Health         # score .readmeAI quality [0-100]
 #   .\setup.ps1 -Lint           # list every unfilled field + actionable issues in .readmeAI
+#   .\setup.ps1 -Compact        # archive decisions + completed tasks older than 30 days → .readmeAI.archive
 #   .\setup.ps1 -Upgrade        # upgrade to the latest ReadMeAI version
 #   .\setup.ps1 -All -Detect
 
-param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Lint, [switch]$Upgrade, [string]$New = "")
+param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Lint, [switch]$Compact, [switch]$Upgrade, [string]$New = "")
 if ($Update) { $Detect = $true }
 
 $ESC = [char]27
@@ -243,6 +244,55 @@ if ($Lint) {
   exit 0
 }
 
+# ── Compact mode ──────────────────────────────────────────────────────────────
+# Archives DECISIONS LOG rows and completed PROGRESS items older than 30 days
+# to .readmeAI.archive — keeps main file lean as the project matures over time.
+if ($Compact) {
+  Write-Host ""; Write-Host "${B}ReadMeAI Compact${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+  if (-not (Test-Path ".readmeAI")) { Write-Host "${R}✗${Re} .readmeAI not found"; exit 1 }
+
+  $cutoff  = ([datetime]::Today.AddDays(-30)).ToString("yyyy-MM-dd")
+  $lines   = Get-Content ".readmeAI"
+  $before  = $lines.Count
+
+  $oldDecisions = @()
+  $oldProgress  = @()
+  foreach ($line in $lines) {
+    if ($line -match '^\| (\d{4}-\d{2}-\d{2}) \|' -and $Matches[1] -lt $cutoff) {
+      $oldDecisions += $line
+    } elseif ($line -match '^- \[x\] (\d{4}-\d{2}-\d{2})' -and $Matches[1] -lt $cutoff) {
+      $oldProgress += $line
+    }
+  }
+
+  $total = $oldDecisions.Count + $oldProgress.Count
+  if ($total -eq 0) {
+    Write-Host "${G}✓${Re} Nothing to archive — all entries are within the last 30 days."
+    Invoke-VersionCheck; exit 0
+  }
+
+  # Append to archive file
+  $archivePath  = ".readmeAI.archive"
+  $archiveLines = @("", "## Archived $([datetime]::Today.ToString('yyyy-MM-dd')) — entries older than $cutoff")
+  if ($oldDecisions.Count -gt 0) { $archiveLines += @("", "### DECISIONS LOG") + $oldDecisions }
+  if ($oldProgress.Count  -gt 0) { $archiveLines += @("", "### PROGRESS Completed") + $oldProgress }
+  Add-Content $archivePath $archiveLines -Encoding utf8
+
+  # Rewrite .readmeAI without archived rows
+  $newLines = $lines | Where-Object {
+    if ($_ -match '^\| (\d{4}-\d{2}-\d{2}) \|'    -and $Matches[1] -lt $cutoff) { return $false }
+    if ($_ -match '^- \[x\] (\d{4}-\d{2}-\d{2})'  -and $Matches[1] -lt $cutoff) { return $false }
+    return $true
+  }
+  Set-Content ".readmeAI" $newLines -Encoding utf8
+
+  $after = $newLines.Count; $saved = $before - $after
+  Write-Host "${G}✓${Re} Archived ${B}$($oldDecisions.Count) decision(s)${Re} + ${B}$($oldProgress.Count) completed task(s)${Re}"
+  Write-Host "${G}✓${Re} File: ${B}$before → $after lines${Re} (−$saved)"
+  Write-Host "${Gr}  Full archive: $archivePath${Re}"
+  Invoke-VersionCheck; exit 0
+}
+
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if ($Validate) {
   Write-Host ""; Write-Host "${B}ReadMeAI Validate${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
@@ -273,7 +323,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v4.5 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v4.6 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI (only if not already present) ──────────────────────
 if (Test-Path ".readmeAI") {
@@ -325,7 +375,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.5](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.6](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'

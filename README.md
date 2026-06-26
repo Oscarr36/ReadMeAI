@@ -10,7 +10,7 @@ One file. Reads itself at session start. Updates itself at session end. Works wi
 
 [![GitHub Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Oscarr36/ReadMeAI?style=social)](https://github.com/Oscarr36/ReadMeAI/forks)
-[![Version](https://img.shields.io/badge/version-4.5-brightgreen.svg)](.readmeAI)
+[![Version](https://img.shields.io/badge/version-4.6-brightgreen.svg)](.readmeAI)
 [![AGENTS.md](https://img.shields.io/badge/AGENTS.md-compatible-blue)](AGENTS.md)
 [![ReadMeAI Sync](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml/badge.svg)](https://github.com/Oscarr36/ReadMeAI/actions/workflows/readmeai-validate.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -144,6 +144,7 @@ bash setup.sh --all --detect # everything at once
 bash setup.sh --sync         # after each coding session: flags new files, new symbols, deleted refs
 bash setup.sh --health       # score your .readmeAI quality [0-100] and find gaps
 bash setup.sh --lint         # list every unfilled field + actionable issues in .readmeAI
+bash setup.sh --compact      # archive decisions + completed tasks >30 days old → .readmeAI.archive
 bash setup.sh --upgrade                  # upgrade to the latest ReadMeAI version (re-runs setup --all)
 bash setup.sh --new="task manager app"   # new project: AI recommends stack + scaffolds structure
 ```
@@ -236,6 +237,7 @@ The setup generates `.github/workflows/readmeai-validate.yml`. On every push it 
 - [x] Enhanced `--sync` — symbol detection extended to 10 languages (+ Ruby, PHP, Kotlin, Java, C#, Elixir)
 - [x] `--new="idea"` / `-New "idea"` — new project bootstrap: inject idea, AI recommends stack + scaffolds
 - [x] `--lint` / `-Lint` — scan for unfilled placeholders, bloat, stale sync — precise issue list vs --health score
+- [x] `--compact` / `-Compact` — archive DECISIONS LOG + completed tasks >30 days → `.readmeAI.archive`, keeps file lean
 - [ ] `readmeai` CLI (npm/pip install)
 - [ ] VS Code extension — syntax highlighting + snippets
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI

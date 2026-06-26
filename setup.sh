@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ReadMeAI v4.5 — Smart Setup Script
+# ReadMeAI v4.6 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -15,6 +15,7 @@
 #   bash setup.sh --sync         # auto-update context from last git session (no cost, no API)
 #   bash setup.sh --health       # score .readmeAI quality and find gaps
 #   bash setup.sh --lint         # list every unfilled field + actionable issues in .readmeAI
+#   bash setup.sh --compact      # archive decisions + completed tasks older than 30 days → .readmeAI.archive
 #   bash setup.sh --upgrade      # upgrade to the latest ReadMeAI version
 #   bash setup.sh --new="idea"   # new project: inject idea so AI bootstraps the project
 
@@ -23,7 +24,7 @@ set -euo pipefail
 GREEN='\033[0;32m'; GRAY='\033[0;90m'; BOLD='\033[1m'
 YELLOW='\033[0;33m'; RED='\033[0;31m'; RESET='\033[0m'
 
-ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; LINT=false; UPGRADE=false; NEW_IDEA=""
+ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; LINT=false; COMPACT=false; UPGRADE=false; NEW_IDEA=""
 for arg in "$@"; do
   case "$arg" in
     --all)      ALL=true ;;
@@ -34,6 +35,7 @@ for arg in "$@"; do
     --sync)     SYNC=true ;;
     --health)   HEALTH=true ;;
     --lint)     LINT=true ;;
+    --compact)  COMPACT=true ;;
     --upgrade)  UPGRADE=true ;;
     --new=*)    NEW_IDEA="${arg#--new=}" ;;
   esac
@@ -430,6 +432,82 @@ if $LINT; then
   exit 0
 fi
 
+# ── Compact mode ──────────────────────────────────────────────────────────────
+# Archives DECISIONS LOG rows and completed PROGRESS items older than 30 days
+# to .readmeAI.archive — keeps main file lean as the project matures over time.
+if $COMPACT; then
+  echo ""; echo -e "${BOLD}ReadMeAI Compact${RESET}"
+  echo -e "${GRAY}────────────────────────────────────${RESET}"
+  [[ ! -f ".readmeAI" ]] && { echo -e "${RED}✗${RESET} .readmeAI not found"; exit 1; }
+
+  CUTOFF=$(date -d "30 days ago" +%Y-%m-%d 2>/dev/null \
+    || date -v-30d +%Y-%m-%d 2>/dev/null || echo "")
+  [[ -z "$CUTOFF" ]] && { echo -e "${RED}✗${RESET} Date calculation not supported on this platform"; exit 1; }
+
+  BEFORE=$(wc -l < .readmeAI)
+
+  # Collect old entries before modifying the file
+  OLD_DECISIONS=()
+  while IFS= read -r row; do
+    row_date=$(echo "$row" | awk -F'|' '{gsub(/ /,""); print $2}')
+    if [[ "$row_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] && [[ "$row_date" < "$CUTOFF" ]]; then
+      OLD_DECISIONS+=("$row")
+    fi
+  done < <(grep -E '^\| [0-9]{4}-[0-9]{2}-[0-9]{2} \|' .readmeAI 2>/dev/null)
+
+  OLD_PROGRESS=()
+  while IFS= read -r line; do
+    prog_date=$(echo "$line" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' | head -1)
+    if [[ -n "$prog_date" ]] && [[ "$prog_date" < "$CUTOFF" ]]; then
+      OLD_PROGRESS+=("$line")
+    fi
+  done < <(grep -E '^- \[x\]' .readmeAI 2>/dev/null)
+
+  TOTAL=$(( ${#OLD_DECISIONS[@]} + ${#OLD_PROGRESS[@]} ))
+
+  if [[ $TOTAL -eq 0 ]]; then
+    echo -e "${GREEN}✓${RESET} Nothing to archive — all entries are within the last 30 days."
+    check_version
+    exit 0
+  fi
+
+  # Append archived entries to .readmeAI.archive
+  {
+    echo ""
+    echo "## Archived $(date '+%Y-%m-%d') — entries older than $CUTOFF"
+    if [[ ${#OLD_DECISIONS[@]} -gt 0 ]]; then
+      echo ""; echo "### DECISIONS LOG"
+      for d in "${OLD_DECISIONS[@]}"; do echo "$d"; done
+    fi
+    if [[ ${#OLD_PROGRESS[@]} -gt 0 ]]; then
+      echo ""; echo "### PROGRESS Completed"
+      for p in "${OLD_PROGRESS[@]}"; do echo "$p"; done
+    fi
+  } >> ".readmeAI.archive"
+
+  # Rewrite .readmeAI omitting archived rows
+  awk -v cutoff="$CUTOFF" '
+    /^\| [0-9]{4}-[0-9]{2}-[0-9]{2} \|/ {
+      split($0, cols, "|"); d = cols[2]; gsub(/ /, "", d)
+      if (d < cutoff) next
+    }
+    /^- \[x\] [0-9]{4}-[0-9]{2}-[0-9]{2}/ {
+      match($0, /[0-9]{4}-[0-9]{2}-[0-9]{2}/)
+      d = substr($0, RSTART, RLENGTH)
+      if (d < cutoff) next
+    }
+    { print }
+  ' .readmeAI > .readmeAI.tmp && mv .readmeAI.tmp .readmeAI
+
+  AFTER=$(wc -l < .readmeAI)
+  SAVED=$(( BEFORE - AFTER ))
+  echo -e "${GREEN}✓${RESET} Archived ${BOLD}${#OLD_DECISIONS[@]} decision(s)${RESET} + ${BOLD}${#OLD_PROGRESS[@]} completed task(s)${RESET}"
+  echo -e "${GREEN}✓${RESET} File: ${BOLD}$BEFORE → $AFTER lines${RESET} (−$SAVED)"
+  echo -e "${GRAY}  Full archive: .readmeAI.archive${RESET}"
+  check_version
+  exit 0
+fi
+
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if $VALIDATE; then
   echo ""; echo -e "${BOLD}ReadMeAI Validate${RESET}"
@@ -472,7 +550,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v4.5 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v4.6 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -528,7 +606,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.5](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.6](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration
