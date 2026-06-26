@@ -11,7 +11,7 @@
 <br/>
 
 [![Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=for-the-badge&color=FFD700&labelColor=1a1a2e)](https://github.com/Oscarr36/ReadMeAI/stargazers)
-[![Version](https://img.shields.io/badge/version-4.6-brightgreen?style=for-the-badge&labelColor=1a1a2e)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-4.7-brightgreen?style=for-the-badge&labelColor=1a1a2e)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/MIT-license-4ecca8?style=for-the-badge&labelColor=1a1a2e)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/Oscarr36/ReadMeAI/readmeai-validate.yml?style=for-the-badge&label=CI&labelColor=1a1a2e)](https://github.com/Oscarr36/ReadMeAI/actions)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange?style=for-the-badge&labelColor=1a1a2e)](CONTRIBUTING.md)
@@ -192,6 +192,7 @@ bash setup.sh --sync             # flag new files/symbols, patch QUICK REFERENCE
 bash setup.sh --health           # score .readmeAI quality [0-100] across 5 dimensions
 bash setup.sh --lint             # list every unfilled field + actionable issues
 bash setup.sh --compact          # archive decisions + completed tasks >30 days → .readmeAI.archive
+bash setup.sh --export           # print a compact paste-ready context summary (~500 tokens)
 bash setup.sh --validate         # check all AI tool integrations are wired
 
 # Updates
@@ -306,6 +307,7 @@ Setup generates `.github/workflows/readmeai-validate.yml`. On every push it chec
 - [x] `--new="idea"` / `-New "idea"` — new project bootstrap: inject idea, AI recommends stack + scaffolds
 - [x] `--lint` / `-Lint` — scan for unfilled placeholders, bloat, stale sync — precise issue list vs --health score
 - [x] `--compact` / `-Compact` — archive DECISIONS LOG + completed tasks >30 days → `.readmeAI.archive`
+- [x] `--export` / `-Export` — compact paste-ready context summary (~500 tokens) for any AI tool
 
 </details>
 

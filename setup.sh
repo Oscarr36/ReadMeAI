@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ReadMeAI v4.6 — Smart Setup Script
+# ReadMeAI v4.7 — Smart Setup Script
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (legacy + modern .mdc), Windsurf, GitHub Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -16,6 +16,7 @@
 #   bash setup.sh --health       # score .readmeAI quality and find gaps
 #   bash setup.sh --lint         # list every unfilled field + actionable issues in .readmeAI
 #   bash setup.sh --compact      # archive decisions + completed tasks older than 30 days → .readmeAI.archive
+#   bash setup.sh --export       # print a compact paste-ready context summary from .readmeAI (~500 tokens)
 #   bash setup.sh --upgrade      # upgrade to the latest ReadMeAI version
 #   bash setup.sh --new="idea"   # new project: inject idea so AI bootstraps the project
 
@@ -24,7 +25,7 @@ set -euo pipefail
 GREEN='\033[0;32m'; GRAY='\033[0;90m'; BOLD='\033[1m'
 YELLOW='\033[0;33m'; RED='\033[0;31m'; RESET='\033[0m'
 
-ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; LINT=false; COMPACT=false; UPGRADE=false; NEW_IDEA=""
+ALL=false; DETECT=false; VALIDATE=false; UPDATE=false; TRIM=false; SYNC=false; HEALTH=false; LINT=false; COMPACT=false; EXPORT=false; UPGRADE=false; NEW_IDEA=""
 for arg in "$@"; do
   case "$arg" in
     --all)      ALL=true ;;
@@ -36,6 +37,7 @@ for arg in "$@"; do
     --health)   HEALTH=true ;;
     --lint)     LINT=true ;;
     --compact)  COMPACT=true ;;
+    --export)   EXPORT=true ;;
     --upgrade)  UPGRADE=true ;;
     --new=*)    NEW_IDEA="${arg#--new=}" ;;
   esac
@@ -508,6 +510,75 @@ if $COMPACT; then
   exit 0
 fi
 
+# ── Export mode ───────────────────────────────────────────────────────────────
+# Prints a compact, paste-ready context summary from .readmeAI (<500 tokens).
+# Paste into any AI tool that doesn't auto-read files: Claude.ai, ChatGPT, etc.
+# To save to a file: bash setup.sh --export > context.md
+if $EXPORT; then
+  [[ ! -f ".readmeAI" ]] && { echo ".readmeAI not found. Run: bash setup.sh"; exit 1; }
+
+  # Extract a single-column table field: | **Key** | value |
+  get_field() {
+    grep -E "^\| \*\*${1}\*\*" .readmeAI 2>/dev/null | head -1 \
+      | awk -F'|' '{v=$3; gsub(/^[ *_]+|[ *_]+$/, "", v); print v}'
+  }
+
+  NAME=$(get_field "Name")
+  STACK=$(get_field "Stack")
+  REPO=$(get_field "Main repo")
+  LAST=$(get_field "Last action")
+
+  # SESSION STATE: line after "### Active objective"
+  OBJ=$(awk '/### Active objective/{found=1;next} found{
+    gsub(/^[[:space:]_>*]+|[[:space:]_>*]+$/,"",$0)
+    if(length($0)>0 && $0!="—"){print;exit}
+  }' .readmeAI 2>/dev/null || true)
+
+  # SESSION STATE: line after "### Next immediate step"
+  NEXT=$(awk '/### Next immediate step/{found=1;next} found{
+    gsub(/^[[:space:]_>*]+|[[:space:]_>*]+$/,"",$0)
+    if(length($0)>0 && $0!="—"){print;exit}
+  }' .readmeAI 2>/dev/null || true)
+
+  # DOMAIN RULES: first 5 real bullets (skip placeholder "- —")
+  RULES=$(awk '
+    /DOMAIN RULES/{in_sec=1;next}
+    /^## [^#]/ && in_sec{exit}
+    in_sec && /^- / && !/^- —/{print; count++}
+    count>=5{exit}
+  ' .readmeAI 2>/dev/null || true)
+
+  # Build compact output
+  {
+    [[ -n "$NAME" && "$NAME" != "—" ]] \
+      && printf "## Project: %s\n" "$NAME" \
+      || printf "## Project Context\n"
+    [[ -n "$STACK" && "$STACK" != "—" ]] && printf "Stack: %s\n" "$STACK"
+    [[ -n "$REPO"  && "$REPO"  != "—" ]] && printf "Repo: %s\n"  "$REPO"
+    printf "\n"
+
+    if [[ -n "$OBJ" && "$OBJ" != "—" ]]; then
+      printf "### Current objective\n%s\n\n" "$OBJ"
+    fi
+    [[ -n "$LAST" && "$LAST" != "—" ]] && printf "Last action: %s\n" "$LAST"
+    [[ -n "$NEXT" && "$NEXT" != "—" ]] && printf "Next step: %s\n"   "$NEXT"
+
+    if [[ -n "$RULES" ]]; then
+      printf "\n### Domain rules (read before writing code)\n%s\n" "$RULES"
+    fi
+
+    printf "\n---\n"
+    printf "*Context from .readmeAI — github.com/Oscarr36/ReadMeAI*\n"
+  }
+
+  TOKENS=$(wc -c < .readmeAI | awk '{printf "%d", $1/4}')
+  echo "" >&2
+  echo -e "${GRAY}Paste the above into any AI tool for instant project context.${RESET}" >&2
+  echo -e "${GRAY}Full file: ~${TOKENS} tokens · To save: bash setup.sh --export > context.md${RESET}" >&2
+  check_version
+  exit 0
+fi
+
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if $VALIDATE; then
   echo ""; echo -e "${BOLD}ReadMeAI Validate${RESET}"
@@ -550,7 +621,7 @@ if $VALIDATE; then
   exit 0
 fi
 
-echo ""; echo -e "${BOLD}ReadMeAI v4.6 Setup${RESET}"
+echo ""; echo -e "${BOLD}ReadMeAI v4.7 Setup${RESET}"
 echo -e "${GRAY}────────────────────────────────────${RESET}"
 
 # ── 1. Download .readmeAI ─────────────────────────────────────────────────────
@@ -606,7 +677,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new or renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.6](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.7](https://github.com/Oscarr36/ReadMeAI)*
 '
 
 # Claude Code — task-aware with memory system integration

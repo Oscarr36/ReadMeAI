@@ -6,6 +6,19 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [4.7.0] — 2026-06-26
+
+### Added
+- **`--export` flag** (`setup.sh`) and **`-Export`** (`setup.ps1`) — paste-ready context summary:
+  - Extracts: project name, stack, repo, current objective, last action, next step, first 5 domain rules
+  - Output is plain text, under ~500 tokens — paste into Claude.ai, ChatGPT, or any AI tool that doesn't auto-read files
+  - To save to a file: `bash setup.sh --export > context.md` / `.\setup.ps1 -Export | Out-File context.md`
+  - Zero dependencies — pure bash/awk and PowerShell string parsing
+  - Hint line printed to stderr so stdout output is clean for piping/redirection
+- Version bumped to v4.7 across all files.
+
+---
+
 ## [4.6.0] — 2026-06-26
 
 ### Added

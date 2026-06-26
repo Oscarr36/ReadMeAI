@@ -1,4 +1,4 @@
-﻿# ReadMeAI v4.6 — Smart Setup Script (Windows PowerShell)
+﻿# ReadMeAI v4.7 — Smart Setup Script (Windows PowerShell)
 # Downloads .readmeAI and wires it into every AI tool automatically.
 # Supports: Claude Code, Cursor (.mdc + legacy), Windsurf, Copilot,
 #           Aider, Continue, Antigravity CLI (agy), Zed, Cline, Roo Code, Junie,
@@ -14,10 +14,11 @@
 #   .\setup.ps1 -Health         # score .readmeAI quality [0-100]
 #   .\setup.ps1 -Lint           # list every unfilled field + actionable issues in .readmeAI
 #   .\setup.ps1 -Compact        # archive decisions + completed tasks older than 30 days → .readmeAI.archive
+#   .\setup.ps1 -Export         # print a compact paste-ready context summary from .readmeAI (~500 tokens)
 #   .\setup.ps1 -Upgrade        # upgrade to the latest ReadMeAI version
 #   .\setup.ps1 -All -Detect
 
-param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Lint, [switch]$Compact, [switch]$Upgrade, [string]$New = "")
+param([switch]$All, [switch]$Detect, [switch]$Validate, [switch]$Update, [switch]$Sync, [switch]$Health, [switch]$Trim, [switch]$Lint, [switch]$Compact, [switch]$Export, [switch]$Upgrade, [string]$New = "")
 if ($Update) { $Detect = $true }
 
 $ESC = [char]27
@@ -293,6 +294,80 @@ if ($Compact) {
   Invoke-VersionCheck; exit 0
 }
 
+# ── Export mode ───────────────────────────────────────────────────────────────
+# Prints a compact, paste-ready context summary from .readmeAI (<500 tokens).
+# Paste into any AI tool that doesn't auto-read files: Claude.ai, ChatGPT, etc.
+# To save: .\setup.ps1 -Export | Out-File context.md -Encoding utf8
+if ($Export) {
+  if (-not (Test-Path ".readmeAI")) { Write-Host ".readmeAI not found. Run: .\setup.ps1"; exit 1 }
+  $content = Get-Content ".readmeAI" -Raw
+  $lines   = Get-Content ".readmeAI"
+
+  # Extract single-column table field: | **Key** | value |
+  function Get-Field([string]$key) {
+    $row = $lines | Where-Object { $_ -match "^\| \*\*${key}\*\*" } | Select-Object -First 1
+    if ($row -match '^\| [^|]+ \| (.+) \|') {
+      return $Matches[1].Trim().Trim('_').Trim('*')
+    }
+    return ""
+  }
+
+  $name  = Get-Field "Name"
+  $stack = Get-Field "Stack"
+  $repo  = Get-Field "Main repo"
+  $last  = Get-Field "Last action"
+
+  # SESSION STATE: line after "### Active objective"
+  $obj = ""; $foundObj = $false
+  foreach ($line in $lines) {
+    if ($foundObj) {
+      $v = $line.Trim().Trim('_').Trim('>')
+      if ($v -and $v -ne "—") { $obj = $v; break }
+    }
+    if ($line -match '### Active objective') { $foundObj = $true }
+  }
+
+  # SESSION STATE: line after "### Next immediate step"
+  $nxt = ""; $foundNext = $false
+  foreach ($line in $lines) {
+    if ($foundNext) {
+      $v = $line.Trim().Trim('_').Trim('>')
+      if ($v -and $v -ne "—") { $nxt = $v; break }
+    }
+    if ($line -match '### Next immediate step') { $foundNext = $true }
+  }
+
+  # DOMAIN RULES: first 5 real bullets
+  $rules = @(); $inRules = $false
+  foreach ($line in $lines) {
+    if ($line -match 'DOMAIN RULES') { $inRules = $true; continue }
+    if ($inRules -and $line -match '^## [^#]') { break }
+    if ($inRules -and $line -match '^- ' -and $line -notmatch '^- —') {
+      $rules += $line; if ($rules.Count -ge 5) { break }
+    }
+  }
+
+  # Build output
+  $out = @()
+  if ($name -and $name -ne "—") { $out += "## Project: $name" } else { $out += "## Project Context" }
+  if ($stack -and $stack -ne "—") { $out += "Stack: $stack" }
+  if ($repo  -and $repo  -ne "—") { $out += "Repo: $repo" }
+  $out += ""
+  if ($obj  -and $obj  -ne "—") { $out += "### Current objective"; $out += $obj; $out += "" }
+  if ($last -and $last -ne "—") { $out += "Last action: $last" }
+  if ($nxt  -and $nxt  -ne "—") { $out += "Next step: $nxt" }
+  if ($rules.Count -gt 0) { $out += ""; $out += "### Domain rules (read before writing code)"; $out += $rules }
+  $out += ""; $out += "---"; $out += "*Context from .readmeAI — github.com/Oscarr36/ReadMeAI*"
+
+  $out | Write-Output
+  $tokens = [int]((Get-Item ".readmeAI").Length / 4)
+  Write-Host "" -ForegroundColor DarkGray
+  Write-Host "Paste the above into any AI tool for instant project context." -ForegroundColor DarkGray
+  Write-Host "Full file: ~$tokens tokens  |  To save: .\setup.ps1 -Export | Out-File context.md -Encoding utf8" -ForegroundColor DarkGray
+  Invoke-VersionCheck
+  exit 0
+}
+
 # ── Validate mode ─────────────────────────────────────────────────────────────
 if ($Validate) {
   Write-Host ""; Write-Host "${B}ReadMeAI Validate${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
@@ -323,7 +398,7 @@ if ($Validate) {
   exit 0
 }
 
-Write-Host ""; Write-Host "${B}ReadMeAI v4.6 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
+Write-Host ""; Write-Host "${B}ReadMeAI v4.7 Setup${Re}"; Write-Host "${Gr}────────────────────────────────────${Re}"
 
 # ── 1. Download .readmeAI (only if not already present) ──────────────────────
 if (Test-Path ".readmeAI") {
@@ -375,7 +450,7 @@ Read `.readmeAI` at the project root at the start of every session before respon
 3. Update **SYMBOL INDEX** for new/renamed symbols
 
 ---
-*Context powered by [ReadMeAI v4.6](https://github.com/Oscarr36/ReadMeAI)*
+*Context powered by [ReadMeAI v4.7](https://github.com/Oscarr36/ReadMeAI)*
 '@
 
 $ClaudeContent = @'
