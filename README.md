@@ -11,7 +11,7 @@
 <br/>
 
 [![Stars](https://img.shields.io/github/stars/Oscarr36/ReadMeAI?style=for-the-badge&color=FFD700&labelColor=1a1a2e)](https://github.com/Oscarr36/ReadMeAI/stargazers)
-[![Version](https://img.shields.io/badge/version-4.7-brightgreen?style=for-the-badge&labelColor=1a1a2e)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-5.0-brightgreen?style=for-the-badge&labelColor=1a1a2e)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/MIT-license-4ecca8?style=for-the-badge&labelColor=1a1a2e)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/Oscarr36/ReadMeAI/readmeai-validate.yml?style=for-the-badge&label=CI&labelColor=1a1a2e)](https://github.com/Oscarr36/ReadMeAI/actions)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-orange?style=for-the-badge&labelColor=1a1a2e)](CONTRIBUTING.md)
@@ -133,6 +133,9 @@ Run the setup script **once**. It detects every AI tool you have and creates the
 | `.continue/rules/readmeai.md` | Continue | Every session |
 | `.aider.conf.yml` | Aider | Every run |
 | `.rules` | Zed (`@rules`) | On-demand |
+| `gemini_context.md` | **Google Gemini CLI** (auto-detected from PATH) | Every session |
+| `~/.aws/amazonq/` | **Amazon Q Developer** | Every session |
+| `AGENTS.md` | **OpenAI Codex CLI** (improved Codex-specific instructions) | Every session |
 
 > [!TIP]
 > **Cursor gets 3 scoped `.mdc` files:** `readmeai-context.mdc` (always active), `readmeai-security.mdc` (auto-loads when you touch auth files), `readmeai-conventions.mdc` (on-demand). JIT loading means context budget only spent when relevant.
@@ -191,7 +194,7 @@ irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
 | Command | PowerShell | What it does |
 |---------|-----------|--------------|
 | _(no flags)_ | _(no flags)_ | Download `.readmeAI` + detect AI tools |
-| `--all` | `-All` | Wire **all** 13+ AI tool integrations |
+| `--all` | `-All` | Wire **all** 16+ AI tool integrations |
 | `--detect` | `-Detect` | Pre-fill TECH STACK + AI NOTES from manifests + git history |
 | `--all --detect` | `-All -Detect` | Everything at once — **recommended first run** |
 | `--sync` | `-Sync` | Flag new files/symbols since last commit, patch QUICK REFERENCE |
@@ -204,6 +207,9 @@ irm https://raw.githubusercontent.com/Oscarr36/ReadMeAI/main/setup.ps1 | iex
 | `--upgrade` | `-Upgrade` | Upgrade ReadMeAI to the latest version |
 | `--trim` | `-Trim` | Remove template boilerplate once setup is complete |
 | `--new="idea"` | `-New "idea"` | New project: AI recommends stack + scaffolds structure |
+| `--mcp` | _(n/a)_ | Scan `.mcp.json` and `.claude/settings.json`, add MCP_TOOLS section to `.readmeAI` |
+| `--export-claude` | _(n/a)_ | Export <200-token snippet for Claude Projects persistent memory |
+| `--agents` | _(n/a)_ | Generate `AGENTS.md` for multi-agent coordination |
 
 > [!NOTE]
 > **Autonomous sync — no commands needed after setup.**
@@ -316,6 +322,16 @@ Setup generates `.github/workflows/readmeai-validate.yml`. On every push it chec
 - [ ] `readmeai` CLI — `npm install -g readmeai` / `pip install readmeai`
 - [ ] VS Code extension — syntax highlighting + snippets for `.readmeAI`
 - [ ] Template variants — SPA · REST API · fullstack monorepo · CLI tool
+
+---
+
+## MCP Server Integration (v5.0)
+
+Claude Code users can now auto-document their MCP servers:
+```bash
+setup.sh --mcp
+```
+This scans `.mcp.json` and `.claude/settings.json`, then adds a `MCP_TOOLS` section to `.readmeAI` so your AI knows which tools are available without asking.
 
 ---
 

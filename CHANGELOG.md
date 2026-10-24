@@ -6,6 +6,27 @@ Format: [Semantic Versioning](https://semver.org). Types: `Added`, `Changed`, `D
 
 ---
 
+## [5.0.0] — 2026-10-24
+
+### Added
+- **New integrations**: Google Gemini CLI and Amazon Q Developer — setup now detects both tools and installs the appropriate context files automatically.
+- **`--mcp` flag** (`setup.sh`) and **`-Mcp`** (`setup.ps1`) — generates MCP server configuration stubs and injects the new `MCP_TOOLS` section into `.readmeAI`.
+- **`--export-claude` flag** (`setup.sh`) and **`-ExportClaude`** (`setup.ps1`) — exports a Claude-optimized context snapshot (structured for the Claude API / Projects context window).
+- **`MCP_TOOLS` template section** — new section in `.readmeAI` listing registered MCP servers, their tools, and per-server notes. Keeps the AI aware of available MCP capabilities without reading config files each session.
+- **Extended `--detect` / `-Detect`: 8 new ecosystem targets** — both `setup.sh` and `setup.ps1` now auto-detect:
+  - **bun** — detected via `bun.lockb` or `bunfig.toml`
+  - **pnpm workspaces** — detected via `pnpm-workspace.yaml`
+  - **uv** (Python) — detected via `uv.lock` or `pyproject.toml` with uv toolchain
+  - **Go modules** — detected via `go.mod`; reports module name and Go version
+  - **Cargo / Rust** — detected via `Cargo.toml`; reports crate name and edition
+  - **Terraform** — detected via `*.tf` files; reports provider count
+  - **Docker Compose** — detected via `docker-compose.yml` / `compose.yaml`
+  - **Dev Container** — detected via `.devcontainer/devcontainer.json`
+- **Test suite** — 50 bats (bash) tests and 50 Pester (PowerShell) tests added under `tests/`. See `tests/README.md` for setup and run instructions.
+- Version bumped to v5.0 across all files.
+
+---
+
 ## [4.7.0] — 2026-06-26
 
 ### Added

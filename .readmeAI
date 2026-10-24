@@ -20,6 +20,7 @@
 | **Next step** | — |
 | **Key files** | — |
 | **Blockers** | — |
+| model      | <active-ai-model e.g. claude-opus-4-8 200k context>    |
 
 ---
 
@@ -31,6 +32,10 @@
 1. Read QUICK REFERENCE → go to SESSION STATE → resume without recap.
 2. **First-time setup** (SESSION STATE blank): execute FIRST-TIME SETUP at bottom. Fill every section. Never repeat after that.
 3. **Domain rules beat everything.** If a rule in DOMAIN RULES conflicts with your general knowledge, the domain rule wins.
+
+# v5.0 additions:
+# - If MCP_TOOLS section is populated, check available MCP servers before tool calls
+# - If AGENT_PROTOCOL is populated, follow multi-agent coordination rules
 
 ### Session end — silent, no user prompt needed
 1. Overwrite QUICK REFERENCE and SESSION STATE with current snapshot.
@@ -72,6 +77,17 @@
 | **Build command** | — |
 | **Test command** | — |
 | **Last updated** | — |
+
+---
+
+## -- MCP_TOOLS -------------------------------------------------------- ##
+## Active MCP servers wired into Claude Code (run: setup.sh --mcp)     ##
+#
+# server-name     | capability            | when-to-use
+# -----------------|----------------------|-------------------------------
+# <server-name>   | <what-it-does>       | <trigger-condition>
+#
+## -- END MCP_TOOLS --------------------------------------------------- ##
 
 ---
 
